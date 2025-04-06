@@ -224,6 +224,7 @@ Usage: \"running\" | [<args>]");
             kodo_title("Kodo Toolchain | @ kill");
 
             goto clear;
+            _kodo_();
         } else if (strncmp(ptr_cmds, "title", 5) == 0) {
             char *arg = ptr_cmds + 6;
             while (*arg == ' ') arg++;
