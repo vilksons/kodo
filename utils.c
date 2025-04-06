@@ -1,7 +1,7 @@
 /*
- * Project Name: Kododo Toolchain
- * Project File: Kododo/utils.c
- * Copyright (C) Kododo/Contributors
+ * Project Name: Kodo Toolchain
+ * Project File: Kodo/utils.c
+ * Copyright (C) Kodo/Contributors
  *
  * This program is distributed under the terms of the GNU General Public License v2.0.
  * See the LICENSE file for details.
@@ -425,13 +425,13 @@ size_t write_file(void *ptr,
  * Progress callback for libcurl to show download progress.
  */
 int progress_callback(void *ptr,
-                     double dltotal,
-                     double dlnow,
-                     double ultotal, 
-                     double ulnow
+                      double dltotal,
+                      double dlnow,
+                      double ultotal, 
+                      double ulnow
 ) {
-    if (dltotal > 0 && dltotal < 1000) {
-        printf("\rDownloading: %.0f%%", (dlnow / dltotal) * 100);
+    if (dltotal > 0 && dlnow <= 1000.0) {
+        printf("\rDownloading ...");
         fflush(stdout);
     }
     return 0;

@@ -1,7 +1,7 @@
 /*
- * Project Name: Kododo Toolchain
- * Project File: Kododo/kodo.c
- * Copyright (C) Kododo/Contributors
+ * Project Name: Kodo Toolchain
+ * Project File: Kodo/kodo.c
+ * Copyright (C) Kodo/Contributors
  *
  * This program is distributed under the terms of the GNU General Public License v2.0.
  * See the LICENSE file for details.
@@ -53,7 +53,7 @@ static inline int kd_sys(const char *cmd) {
 int kodo_title(
     const char *custom_title)
  {
-    const char *title = custom_title ? custom_title : "Kododo Toolchain";
+    const char *title = custom_title ? custom_title : "Kodo Toolchain";
     printf("\033]0;%s\007", title);
     return 0;
 }
@@ -76,7 +76,7 @@ void _kodo_ () {
 
     using_history();
 
-    printf("\033[4mWelcome to Kododo!\033[0m\n");
+    printf("\033[4mWelcome to Kodo!\033[0m\n");
 
     signal(SIGINT, _kodo_);
 
@@ -125,7 +125,7 @@ void _kodo_ () {
         }
 
         if (strncmp(ptr_cmds, "help", 4) == 0) {
-            kodo_title("Kododo Toolchain | @ help");
+            kodo_title("Kodo Toolchain | @ help");
 
             char *arg =
                 ptr_cmds + 4;
@@ -138,16 +138,16 @@ void _kodo_ () {
                 println(" gamemode, pawncc");
                 println(" compile, running");
             } else if (strcmp(arg, "exit") == 0) {
-                println("exit: exit from Kododo. | \
+                println("exit: exit from Kodo. | \
 Usage: \"exit\"");
             } else if (strcmp(arg, "clear") == 0) {
-                println("clear: clear screen Kododo. | \
+                println("clear: clear screen Kodo. | \
 Usage: \"clear\"");
             } else if (strcmp(arg, "kill") == 0) {
-                println("kill: kill - restart terminal Kododo. | \
+                println("kill: kill - restart terminal Kodo. | \
 Usage: \"kill\"");
             } else if (strcmp(arg, "title") == 0) {
-                println("title: set-title Terminal Kododo. | \
+                println("title: set-title Terminal Kodo. | \
 Usage: \"title\" | [<args>]");
             } else if (strcmp(arg, "compile") == 0) {
                 println("compile: compile your gamemdoe. | \
@@ -161,7 +161,7 @@ Usage: \"running\" | [<args>]");
             
             continue;
         } else if (strcmp(ptr_cmds, "pawncc") == 0) {
-            kodo_title("Kododo Toolchain | @ pawncc");
+            kodo_title("Kodo Toolchain | @ pawncc");
 
             char platform;
             printf("Select platform:\n");
@@ -180,7 +180,7 @@ Usage: \"running\" | [<args>]");
 
             continue;
         } else if (strcmp(ptr_cmds, "gamemode") == 0) {
-            kodo_title("Kododo Toolchain | @ gamemode");
+            kodo_title("Kodo Toolchain | @ gamemode");
 
             char platform;
             printf("Select platform:\n");
@@ -199,12 +199,12 @@ Usage: \"running\" | [<args>]");
 
             continue;
         } else if (strcmp(ptr_cmds, "clear") == 0) {
-            kodo_title("Kododo Toolchain | @ clear");
+            kodo_title("Kodo Toolchain | @ clear");
 
             clear:
                 kd_sys("clear");
         } else if (strcmp(ptr_cmds, "exit") == 0) {
-            kodo_title("Kododo Toolchain | @ exit");
+            kodo_title("Kodo Toolchain | @ exit");
 
             printf("exit\n");
 
@@ -221,7 +221,7 @@ Usage: \"running\" | [<args>]");
                 }
             }
         } else if (strcmp(ptr_cmds, "kill") == 0) {
-            kodo_title("Kododo Toolchain | @ kill");
+            kodo_title("Kodo Toolchain | @ kill");
 
             goto clear;
         } else if (strncmp(ptr_cmds, "title", 5) == 0) {
@@ -236,7 +236,7 @@ Usage: \"running\" | [<args>]");
         
             continue;
         } else if (strncmp(ptr_cmds, "compile", 7) == 0) {
-            kodo_title("Kododo Toolchain | @ compile");
+            kodo_title("Kodo Toolchain | @ compile");
         
             char *arg = ptr_cmds + 7;
             while (*arg == ' ') arg++;
@@ -336,7 +336,7 @@ Usage: \"running\" | [<args>]");
                 free(ptr_sigA);
             }
         } else if (strncmp(ptr_cmds, "running", 7) == 0) {
-            kodo_title("Kododo Toolchain | @ running");
+            kodo_title("Kodo Toolchain | @ running");
             
             char *arg = ptr_cmds + 7;
             while (*arg == ' ') arg++;
@@ -444,12 +444,12 @@ Usage: \"running\" | [<args>]");
                 free(ptr_sigA);
             }
         } else if (strcmp(ptr_cmds, c_command) != 0 && c_distance <= 1) {
-            kodo_title("Kododo Toolchain | @ undefined");
+            kodo_title("Kodo Toolchain | @ undefined");
             println("Did you mean: '%s'?", c_command);
             continue;
         } else {
             if (strlen(ptr_cmds) > 0) {
-                kodo_title("Kododo Toolchain | @ not found");
+                kodo_title("Kodo Toolchain | @ not found");
                 println("%s not found!", ptr_cmds);
             }
         }
