@@ -73,7 +73,7 @@ function struct_samp_linux()
             
             end_console_main ""
         else
-            tar -xzvf "$call_download_file_CURL" -C "$shell_DIR" --strip-components=1
+            tar -xzvf "$call_download_file_CURL" -C "$shell_DIR"
 
             echo
             echo -n "$(collor_yellow "Download completed successfully.")"
