@@ -46,8 +46,10 @@ const char
     *kd_compiler_opt=NULL;
 
 const char
-    *kd_gamemode_name=NULL;
+    *kd_gamemode_input=NULL;
 
+const char
+    *kd_gamemode_output=NULL;
 
 void printf_color(
                   const char *color, const char *format, ...)
@@ -173,7 +175,8 @@ int kom_toml_data(void)
             fprintf(toml_files, "[compiler]\n");
             fprintf(toml_files, "option = \"-;+ -(+ -d3\"\n");
             fprintf(toml_files, "include_path = [\"sample1\", \"sample2\"]\n");
-            fprintf(toml_files, "gamemode = \"mymodes.pwn\"\n");
+            fprintf(toml_files, "input = \"mymodes.pwn\"\n");
+            fprintf(toml_files, "output = \"mymodes.amx\"\n");
             fclose(toml_files);
         }
     }

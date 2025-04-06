@@ -273,6 +273,11 @@ Usage: \"running\" | [<args>]");
                     if (option_val.ok) {
                         kd_compiler_opt = option_val.u.s;
                     }
+
+                    toml_datum_t output_val = toml_string_in(kom_compiler, "output");
+                    if (output_val.ok) {
+                        kd_gamemode_output = output_val.u.s;
+                    }
             
                     toml_array_t *include_paths = toml_array_in(kom_compiler, "include_path");
                     if (include_paths) {
@@ -291,30 +296,14 @@ Usage: \"running\" | [<args>]");
             
                         char kd_gamemode_rate[120];
                         if (*arg == '\0') {
-                            toml_datum_t kodomodes = toml_string_in(kom_compiler, "gamemode");
+                            toml_datum_t kodomodes = toml_string_in(kom_compiler, "input");
                             if (kodomodes.ok) {
-                                kd_gamemode_name = kodomodes.u.s;
+                                kd_gamemode_input = kodomodes.u.s;
                             }
-                            size_t len = strlen(kd_gamemode_name);
-                            if (len > 4 && strncmp(kd_gamemode_name + len - 4, ".pwn", 4) == 0) {
-                                strncpy(kd_gamemode_rate, kd_gamemode_name, len - 4);
-                                kd_gamemode_rate[len - 4] = '\0';
-                            } else {
-                                strcpy(kd_gamemode_rate, kd_gamemode_name);
-                            }
-                            snprintf(_compiler_, sizeof(_compiler_), "%s %s %s -o%s \"%s\"", pf_found[0], all_paths, kd_gamemode_name, kd_gamemode_rate, kd_compiler_opt);
-                            printf("%s %s %s -o %s \"%s\"", pf_found[0], all_paths, kd_gamemode_name, kd_gamemode_rate, kd_compiler_opt);
+                            snprintf(_compiler_, sizeof(_compiler_), "%s %s \"%s\" -o\"%s\" \"%s\"", pf_found[0], all_paths, kd_gamemode_input, kd_gamemode_output, kd_compiler_opt);
                         } else {
                             char *arg1 = strtok(arg, " ");
-                            size_t len = strlen(arg1);
-                            if (len > 4 && strncmp(arg1 + len - 4, ".pwn", 4) == 0) {
-                                strncpy(kd_gamemode_rate, arg1, len - 4);
-                                kd_gamemode_rate[len - 4] = '\0';
-                            } else {
-                                strcpy(kd_gamemode_rate, arg1);
-                            }
-                            snprintf(_compiler_, sizeof(_compiler_), "%s %s %s -o%s \"%s\"", pf_found[0], all_paths, arg1, kd_gamemode_rate, kd_compiler_opt);
-                            printf("%s %s %s -o %s \"%s\"", pf_found[0], all_paths, arg1, kd_gamemode_rate, kd_compiler_opt);
+                            snprintf(_compiler_, sizeof(_compiler_), "%s %s \"%s\" -o\"%s\" \"%s\"", pf_found[0], all_paths, arg1, kd_gamemode_output, kd_compiler_opt);
                         }
                         printf("\n");
                     }

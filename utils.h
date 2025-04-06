@@ -14,7 +14,8 @@
 int kom_toml_data(void);
 extern const char *kodo_os;
 extern const char *kd_compiler_opt;
-extern const char *kd_gamemode_name;
+extern const char *kd_gamemode_input;
+extern const char *kd_gamemode_output;
 int system_os(void);
 int call_kom_undefined_rate(const char *str1, const char *str2);
 void printf_color(const char *color, const char *format, ...);
