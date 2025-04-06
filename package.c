@@ -38,7 +38,9 @@ void call_download_pawncc(const char *platform) {
     };
 
     printf(":: Do you want to continue downloading PawnCC? (Yy/Nn)\n>> ");
-    scanf(" %c", &selection);
+    if (scanf(" %c", &selection) != 1) {
+        return;
+    }
     if (selection != 'Y' && selection != 'y') {
         void _kodo_();
         return;
@@ -50,7 +52,9 @@ void call_download_pawncc(const char *platform) {
     }
 
     printf(">> ");
-    scanf(" %c", &version_selection);
+    if (scanf(" %c", &version_selection) != 1) {
+        return;
+    }
     int index = (version_selection >= 'A' && version_selection <= 'J') ? version_selection - 'A'
                : (version_selection >= 'a' && version_selection <= 'j') ? version_selection - 'a' : -1;
 
@@ -71,7 +75,9 @@ void call_download_pawncc(const char *platform) {
 void call_download_samp(const char *platform) {
     char sel_c;
     printf(":: Do you want to continue downloading SA-MP? (Yy/Nn): ");
-    scanf(" %c", &sel_c);
+    if (scanf(" %c", &sel_c) != 1) {
+        return;
+    }
     if (sel_c != 'Y' && sel_c != 'y') {
         void _kodo_();
         return;
@@ -111,7 +117,9 @@ void call_download_samp(const char *platform) {
 
     printf(">> ");
     char version_choice;
-    scanf(" %c", &version_choice);
+    if (scanf(" %c", &version_choice) != 1) {
+        return;
+    }
 
     VersionInfo *chosen = NULL;
     for (int i = 0; i < sizeof(versions)/sizeof(versions[0]); i++) {

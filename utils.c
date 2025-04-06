@@ -41,13 +41,10 @@
 
 const char
     *kodo_os;
-
 const char
     *kd_compiler_opt=NULL;
-
 const char
     *kd_gamemode_input=NULL;
-
 const char
     *kd_gamemode_output=NULL;
 

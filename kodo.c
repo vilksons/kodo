@@ -7,8 +7,9 @@
  * See the LICENSE file for details.
  *
  * Compile with GCC or CLANG
- * gcc -D_GNU_SOURCE -g -Os -s kodo.c utils.c package.c compiler.c tomlc99/toml.c -o kodo -lm -lcurl -lncurses -lreadline -lz -lzip -larchive
- * clang -D_GNU_SOURCE -g -Os -s kodo.c utils.c package.c compiler.c tomlc99/toml.c -o kodo -lm -lcurl -lncurses -lreadline -lz -lzip -larchive
+ * Required Library: build-essential, clang. libcurl4-openssl-dev, libncurses-dev, libarchive-dev
+ * gcc -D_GNU_SOURCE -g -Os -s kodo.c utils.c package.c compiler.c tomlc99/toml.c -o kodo -lm -lcurl -lncurses -lreadline -larchive
+ * clang -D_GNU_SOURCE -g -Os -s kodo.c utils.c package.c compiler.c tomlc99/toml.c -o kodo -lm -lcurl -lncurses -lreadline -larchive
  *
  */
 
@@ -168,7 +169,9 @@ Usage: \"running\" | [<args>]");
             printf("[L/l] Linux\n");
             printf("[W/w] Windows\n");
             printf(">> ");
-            scanf(" %c", &platform);
+            if (scanf(" %c", &platform) != 1) {
+                return;
+            }
 
             if (platform == 'L' || platform == 'l') {
                 call_download_pawncc("linux");
@@ -187,7 +190,9 @@ Usage: \"running\" | [<args>]");
             printf("[L/l] Linux\n");
             printf("[W/w] Windows\n");
             printf(">> ");
-            scanf(" %c", &platform);
+            if (scanf(" %c", &platform) != 1) {
+                return;
+            }
 
             if (platform == 'L' || platform == 'l') {
                 call_download_samp("linux");
@@ -251,7 +256,8 @@ Usage: \"running\" | [<args>]");
         
             int find_pawncc = call_kodo_find_file(".", ptr_pawncc);
             if (find_pawncc == 1) {
-                char _compiler_[256];
+                char * _compiler_ = malloc(4096);
+                
                 const char *fname = "kodo.toml";
                 FILE *__fp = fopen(fname, "r");
                 if (!__fp) {
@@ -301,12 +307,14 @@ Usage: \"running\" | [<args>]");
                             if (kodomodes.ok) {
                                 kd_gamemode_input = kodomodes.u.s;
                             }
-                            snprintf(_compiler_, sizeof(_compiler_), "%s %s \"%s\" -o\"%s\" \"%s\"", pf_found[0], all_paths, kd_gamemode_input, kd_gamemode_output, kd_compiler_opt);
+                            snprintf(_compiler_, 4096, "%s %s \"%s\" -o\"%s\" \"%s\"", pf_found[0], all_paths, kd_gamemode_input, kd_gamemode_output, kd_compiler_opt);
                         } else {
                             char *arg1 = strtok(arg, " ");
-                            snprintf(_compiler_, sizeof(_compiler_), "%s %s \"%s\" -o\"%s\" \"%s\"", pf_found[0], all_paths, arg1, kd_gamemode_output, kd_compiler_opt);
+                            snprintf(_compiler_, 4096, "%s %s \"%s\" -o\"%s\" \"%s\"", pf_found[0], all_paths, arg1, kd_gamemode_output, kd_compiler_opt);
                         }
                         printf("\n");
+
+                        free(_compiler_);
                     }
                 }
             
