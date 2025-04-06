@@ -151,7 +151,6 @@ debug yourmode.pwn
 | `bot_model`        | AI model from [Groq Console](https://console.groq.com/).                   |
 | `bot_profile`      | Additional chatbot configuration info.                                     |
 | `remcache_auto`    | Automatically remove `.cache`, table history, etc. (`true`/`false`).       |
-| `repository`       | Repository source for sync. (`stable` or `testing`).                       |
 
 ### Example for `include_paths`:
 If your script uses `includes/`, set:

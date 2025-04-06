@@ -170,26 +170,49 @@ Starting & Debugging
 Configuration: ``kodo.json``
 ----------------------------
 
-+---------------------+-------------------------------------------------------------------------------------------+
-| Key                 | Description                                                                               |
-+=====================+===========================================================================================+
-| ``amx_flags``       | Compiler option flags. See `Compiler Options <https://github.com/vilksons/kodo/wiki/Compiler-Option>`_ |
-| ``include_paths``   | Directory path for additional includes used in compilation.                              |
-| ``exclude_paths``   | Paths to exclude from compilation.                                                        |
-| ``samp_log``        | SA-MP server log file path.                                                               |
-| ``samp_config``     | SA-MP configuration file (for Zapman).                                                    |
-| ``samp_init``       | SA-MP main server file (for Zapman).                                                      |
-| ``samp_executable`` | Path to the SA-MP server executable.                                                     |
-| ``include_dir``     | Directory for includes managed by the package manager (Zapman).                           |
-| ``plugins_dir``     | Directory where ``.dll`` and ``.so`` plugin files are stored (Zapman).                    |
-| ``bot_token``       | API key from `Groq Console <https://console.groq.com/keys>`_                             |
-| ``bot_model``       | AI model from `Groq Console <https://console.groq.com/>`_                                |
-| ``bot_profile``     | Additional chatbot configuration info.                                                   |
-| ``remcache_auto``   | Automatically remove `.cache`, table history, etc. (``true``/``false``)                  |
-| ``repository``      | Repository source for sync. (``stable`` or ``testing``)                                  |
-+---------------------+-------------------------------------------------------------------------------------------+
+Configuration Details
+=====================
 
-**Example for ``include_paths``:**
+- ``amx_flags``  
+  Option Flags: https://github.com/vilksons/kodo/wiki/Compiler-Option
+
+- ``include_paths``  
+  Default compiler include directory.
+
+- ``exclude_paths``  
+  Directories excluded from compilation.
+
+- ``samp_log``  
+  SA-MP server log file.
+
+- ``samp_config``  
+  SA-MP server configuration file. *(Zapman)*
+
+- ``samp_init``  
+  SA-MP main server file. *(Zapman)*
+
+- ``samp_executable``  
+  SA-MP server executable.
+
+- ``include_dir``  
+  Package manager include directory. *(Zapman)*
+
+- ``plugins_dir``  
+  Directory for ``.dll`` and ``.so`` plugins. *(Zapman)*
+
+- ``bot_token``  
+  API key from https://console.groq.com/keys
+
+- ``bot_model``  
+  AI model from https://console.groq.com/
+
+- ``bot_profile``  
+  Additional chatbot configuration.
+
+- ``remcache_auto``  
+  Auto-remove ``/.cache`` & Table history and others. *(true/false)*
+
+**Example for** ``include_paths``:
 
 If your script uses ``includes/``, set:
 

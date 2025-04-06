@@ -197,9 +197,7 @@ CONFIGURATION DETAILS
   o "bot_profile"
     Additional chatbot configuration.                           
   o "remcache_auto"
-    Auto-remove `/.cache` & Table history and others. (true/false).                         
-  o "repository"
-    Repository of kodo for Sync - (stable/testing) ~ testing faster before main
+    Auto-remove `/.cache` & Table history and others. (true/false).
 
 EXAMPLE: `include_paths` USAGE
 ------------------------------
