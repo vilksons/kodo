@@ -1080,6 +1080,10 @@ export mode_KODO
 function not_found_kd()
 {
     echo "error: $kd_table: command not found"
+    if [ "$console_module_loaded" -eq 1 ]; then
+        printf_green "warn:" "need to kill."
+        sleep 1.0
+    fi
     struct_console_main ""
 }
 
