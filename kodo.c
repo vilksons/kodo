@@ -165,10 +165,13 @@ Usage: \"running\" | [<args>]");
             kodo_title("Kodo Toolchain | @ pawncc");
 
             char platform;
-            printf("Select platform:\n");
-            printf("[L/l] Linux\n");
-            printf("[W/w] Windows\n");
-            printf(">> ");
+
+            ret_pcc:
+                printf("Select platform:\n");
+                printf("[L/l] Linux\n");
+                printf("[W/w] Windows\n");
+                printf(">> ");
+
             if (scanf(" %c", &platform) != 1) {
                 return;
             }
@@ -178,7 +181,8 @@ Usage: \"running\" | [<args>]");
             } else if (platform == 'W' || platform == 'w') {
                 call_download_pawncc("windows");
             } else {
-                printf("Invalid platform selection.\n");
+                printf("Invalid platform selection. use C^ to exit.\n");
+                goto ret_pcc;
             }
 
             continue;
@@ -186,10 +190,13 @@ Usage: \"running\" | [<args>]");
             kodo_title("Kodo Toolchain | @ gamemode");
 
             char platform;
-            printf("Select platform:\n");
-            printf("[L/l] Linux\n");
-            printf("[W/w] Windows\n");
-            printf(">> ");
+
+            ret_gm:
+                printf("Select platform:\n");
+                printf("[L/l] Linux\n");
+                printf("[W/w] Windows\n");
+                printf(">> ");
+
             if (scanf(" %c", &platform) != 1) {
                 return;
             }
@@ -199,7 +206,8 @@ Usage: \"running\" | [<args>]");
             } else if (platform == 'W' || platform == 'w') {
                 call_download_samp("windows");
             } else {
-                printf("Invalid platform selection.\n");
+                printf("Invalid platform selection. use C^ to exit.\n");
+                goto ret_gm;
             }
 
             continue;
