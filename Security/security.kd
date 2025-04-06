@@ -1,0 +1,109 @@
+#!/usr/bin/bash
+
+: '
+    encryption
+'
+: '
+    Cleanup function
+    Removes temporary files and terminates the process if needed
+'
+
+function @ENCRYPTION_CREATE()
+{
+    if [ "$console_save_notice" -eq 1 ]; then
+        if [ ! -f "$HOME/.enkodo" ] && [ -n "$RHASH_256" ]; then
+            # Create an empty string to hold the hashes
+            encryption_content=""
+
+            ignore_this sleep 1.0
+            ignore_this clear
+
+            for i in {1..100}; do
+                random_text=$(openssl rand -base64 1000 | sha256sum | awk '{print $1}')
+                random_text=$(echo "$random_text" | tr '[:upper:]' '[:lower:]')
+                
+                encryption_content="$encryption_content$random_text"$'\n'
+                encryption_content="$encryption_content$random_text"$'\n'
+            done
+
+            echo -n "$encryption_content" > "$HOME/.enkodo"
+            chmod 444 "$HOME/.enkodo"
+        fi
+            
+        TKODO_DECRYPT=$(grep -oP '(?<=RHASH_256=).*' "$HOME/.enkodo" || head -n 1 "$HOME/.enkodo")        
+        TKODO_DECRYPT=$(grep -oP '(?<=RHASH_256=).*' "$HOME/.enkodo" || head -n 1 "$HOME/.enkodo")
+    fi
+}
+
+function @ENCRYPTION_TOKEN()
+{
+    if command -v openssl &> /dev/null; then
+        TKODO_DECRYPT=$(grep -oP '(?<=RHASH_256=).*' "$HOME/.enkodo" || head -n 1 "$HOME/.enkodo")
+
+        __BOT_TOKEN=$(jq -r '.bot_token' kodo.json)
+
+        if [[ "$__BOT_TOKEN" =~ ^gsk_ ]] && [ -n "$__BOT_TOKEN" ]; then
+            echo -e "$(collor_red "encryption:") bot_token will be encrypted in 5 seconds.."
+            sleep 5.0
+
+            CHATBOT_encrypted_data=$(echo "$__BOT_TOKEN" | openssl enc -aes-256-cbc -salt -pbkdf2 -pass pass:$TKODO_DECRYPT -base64)
+            jq --arg token "$CHATBOT_encrypted_data" '.bot_token = $token' kodo.json > ._ignoreme.json && mv ._ignoreme.json kodo.json
+        fi
+    else
+        printf_red "crit:" "can't create encryption - openssl not found!"
+    fi
+}
+
+function security_file_rm()
+{
+    : ' Remove File Logs '
+    cd "$shell_DIR" >/dev/null 2>&1 || echo "" &&
+
+    if [[ "$json_RM_CACHE" == "true" ]]; then
+        ignore_this rm -rf "$shell_DIR/.cache"
+
+        for __file in wget-log*; do
+            if [ -f "$__file" ]; then
+                shred -u "$__file"
+            fi
+        done
+
+        if [ -f ".cache_tmp" ]; then
+            shred -u ".cache_tmp"
+        fi
+
+        if [ -f ".__ignored,json" ]; then
+            shred -u ".__ignored,json"
+        fi
+
+        if [ -f "$HOME/.kodo" ]; then
+            shred -u "$HOME/.kodo"
+        fi
+    fi
+
+    if [ -f ".cach" ]; then
+        ignore_this shred -u ".cach"
+    fi
+}
+
+security_cleanup() {
+    security_file_rm ""
+    ignore_this pkill -9 -f "$shell_NAME"
+    wait && exit
+}
+
+: '
+    @cleanup
+    Trap cleanup function for termination signals
+
+    @list security_cleanup
+        SIGTERM: Signal Terminate
+        SIGQUIT: Signal Quit
+        SIGHUP: Signal Hangup
+'
+trap security_cleanup SIGTERM SIGQUIT SIGHUP
+
+: '
+	anti exit for SIGINT (^C)
+'
+trap end_console_main SIGINT

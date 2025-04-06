@@ -1,0 +1,1131 @@
+#!/usr/bin/bash
+
+clear && cd "$(dirname "$(realpath "$0")")" || echo
+
+__OS_NOTICE__=0
+export __OS_NOTICE__
+
+##################
+###  "nul"     ###
+###  "linux"   ###
+###  "windows" ###
+##################
+__OS__="nul"
+export __OS__
+
+# Server
+SERVERS_NEXT=0
+export SERVERS_NEXT
+
+# Compat
+__PAWNCC__="nul"
+export __PAWNCC__
+SAMP_WARGS_STATUS=0
+export SAMP_WARGS_STATUS
+__SAMP_SERVER=""
+export __SAMP_SERVER
+
+# TKodo
+PAC_encrypted_data=""
+
+save_autoinstall=0
+export save_autoinstall
+
+# Chatbot
+CHATBOT_encrypted_data=""
+export CHATBOT_encrypted_data
+
+# Notice Var
+console_save_messages=0
+export console_save_messages
+console_save_notice=0
+export console_save_notice
+console_module_loaded=0
+export console_module_loaded
+
+# Static
+shell_TITLE=""
+export shell_TITLE
+shell_DIR="$(dirname "$(realpath "$0")")"
+export shell_DIR
+shell_NAME="$(basename "$0")"
+export shell_NAME
+
+# Licenses
+LICENSES="GPL v2.0 or MIT Licenses"
+export LICENSES
+
+# Compiler
+__cache_save_compile=""
+export __cache_save_compile
+
+compiler_MODE="nul"
+export compiler_MODE
+COMPILER_PAWNCC=""
+export COMPILER_PAWNCC
+COMPILER_NEXT=0
+export COMPILER_NEXT
+
+function collor_yellow() {
+# Color Text {Yellow}
+# ' echo "$(collor_yellow "label")" content '
+COLOR_Y="\e[33m"
+    local color="$COLOR_Y"
+    local label="$1"
+    echo -e "${color}${label}\e[0m"
+}
+export collor_yellow
+
+function printf_yellow() {
+    if [ -n "$2" ]; then
+        echo -e "$(collor_yellow "$1") $2"
+    elif [ -z "$2" ]; then
+        echo -e "$(collor_yellow "$1")"
+    fi
+}
+
+function collor_green() {
+# Color Text {Green}
+# ' echo "$(collor_green "label")" content '
+COLOR_G="\e[32m"
+    local color="$COLOR_G"
+    local label="$1"
+    echo -e "${color}${label}\e[0m"
+}
+export collor_green
+
+function printf_green() {
+    if [ -n "$2" ]; then
+        echo -e "$(collor_green "$1") $2"
+    elif [ -z "$2" ]; then
+        echo -e "$(collor_green "$1")"
+    fi
+}
+
+function collor_red() {
+# Color Text {Red}
+# ' echo "$(collor_red "label")" content '
+COLOR_R="\e[91m"
+    local color="$COLOR_R"
+    local label="$1"
+    echo -e "${color}${label}\e[0m" 
+}
+export collor_red
+
+function printf_red() {
+    if [ -n "$2" ]; then
+        echo -e "$(collor_red "$1") $2"
+    elif [ -z "$2" ]; then
+        echo -e "$(collor_red "$1")"
+    fi
+}
+
+function collor_gray() {
+# Color Text {Gray} 
+# ' echo "$(collor_gray "label")" content '
+COLOR_A="\e[97m"
+    local color="$COLOR_A"
+    local label="$1"
+    echo -e "${color}${label}\e[0m"
+}
+export collor_gray
+
+function printf_gray() {
+    if [ -n "$2" ]; then
+        echo -e "$(collor_gray "$1") $2"
+    elif [ -z "$2" ]; then
+        echo -e "$(collor_gray "$1")"
+    fi
+}
+
+function bash_title() {
+    echo -ne "\033]0;$1\007"
+}
+
+function console_TITLE()
+{
+# Tile Functions
+# ' console_TITLE "title" '
+    local title=$1
+    shell_TITLE="$title"
+    bash_title "user:~/ $shell_TITLE"
+}
+export console_TITLE
+
+if [ ! -d ".cache" ]; then
+    mkdir ".cache" && chmod +x ".cache"
+fi
+
+function SIGNAL_KILL()
+{
+    kd_table="kill"
+    mode_KODO "$kd_table"
+}
+
+function ignore_this() {
+    # ignore succes/error/warning to null
+    "$@" > /dev/null 2>&1
+}
+export ignore_this
+
+function rest_var() {
+    # Reset Variables #
+
+    : ' Checking before unset '
+    [ -n "${compiler_MODE+x}" ] && unset compiler_MODE
+    [ -n "${COMPILER_PAWNCC+x}" ] && unset COMPILER_PAWNCC
+    [ -n "${COMPILER_NEXT+x}" ] && unset COMPILER_NEXT
+    [ -n "${SERVERS_NEXT+x}" ] && unset SERVERS_NEXT
+    [ -n "${SAMP_WARGS_STATUS+x}" ] && unset SAMP_WARGS_STATUS
+
+    compiler_MODE="nul"
+    COMPILER_PAWNCC=""
+    COMPILER_NEXT=0
+    SERVERS_NEXT=0
+    SAMP_WARGS_STATUS=0
+    save_autoinstall=0
+}
+
+function @LANG_CREATE()
+{
+if [ ! -f "kodo.json" ]; then
+    if [[ "$__SAMP_SERVER" == "samp" ]]; then
+    cat > kodo.json <<EOF
+{
+    "amx_flags": [
+        "-;+",
+        "-(+",
+        "-d3"
+    ],
+    "include_paths": "pawno/include",
+    "exclude_paths": [
+        "includes",
+        "includes2",
+        "includes3"
+    ],
+    "samp_log": "server_log.txt",
+    "samp_config": "server.cfg",
+    "samp_init": "main.pwn",
+    "samp_executable": "samp03svr",
+    "include_dir": "pawno/include",
+    "plugins_dir": "plugins",
+    "bot_token": "",
+    "bot_model": "qwen-2.5-32b",
+    "bot_profile": "",
+    "remcache_auto": "false"
+}
+EOF
+SIGNAL_KILL ""
+    elif [[ "$__SAMP_SERVER" == "omp" ]]; then
+        cat > kodo.json <<EOF
+{
+    "amx_flags": [
+        "-;+",
+        "-(+",
+        "-d3"
+    ],
+    "include_paths": "qawno/include",
+    "exclude_paths": [
+        "includes",
+        "includes2",
+        "includes3"
+    ],
+    "samp_log": "log.txt",
+    "samp_config": "config.json",
+    "samp_init": "main.pwn",
+    "samp_executable": "omp-server",
+    "include_dir": "qawno/include",
+    "plugins_dir": "components",
+    "bot_token": "",
+    "bot_model": "qwen-2.5-32b",
+    "bot_profile": "",
+    "remcache_auto": "false"
+EOF
+SIGNAL_KILL ""
+    fi
+else
+    ignore_this @ENCRYPTION_TOKEN ""  || {
+        if [ "$console_module_loaded" -eq 1 ]; then
+                printf_red "crit:" "err.. need to kill."
+                sleep 1.0
+                mode_KODO ""
+            fi
+        }
+    fi
+}
+
+function struct_console_main() {
+    #
+    #   @mode.Typeof
+    #
+
+    local console_missing_cmds=()
+    local console_missing_save_cmds
+
+    for console_missing_save_cmds in python3 wget curl grep awk sed tr jq aria2c openssl; do
+        command -v "$console_missing_save_cmds" &>/dev/null || console_missing_cmds+=("$console_missing_save_cmds")
+    done
+
+    if ((${#console_missing_cmds[@]} > 0)); then
+        if [ "$console_save_notice" -ne 1 ]; then		
+            printf_red "Can't load Workspace Module."
+            printf_red " Missing packages:" "${console_missing_cmds[*]}"
+            ignore_this sleep 1.0
+            console_save_notice=1
+        fi
+    else
+        if [ "$console_save_notice" -ne 1 ]; then
+            # Recheck Sync
+            if [ -f ".sync" ]; then
+                : ' If there is a problem with creating the ".syncs" file, 
+                    the module will be automatically reinstalled because the ".kodo" folder is deleted. '
+                shred -u .sync
+                if [ -d "$shell_DIR/.kodo" ]; then
+                    rm -rf ".kodo"
+                fi
+                ignore_this sleep 0.10
+            fi
+
+            if [ ! -d ".kodo" ]; then
+                mkdir ".kodo" && chmod +x ".kodo"
+            fi
+
+            function console_pack() {
+                : ' Install or Load modules '
+                if [ -f "$shell_DIR/$1" ] && [ "$console_module_loaded" -ne 1 ]; then
+                    chmod +x "$shell_DIR/$1"
+                    if [[ "$1" == ".wpython" ]]; then
+                        source <(python3 .wpython 2>/dev/null) >/dev/null 2>&1 || sleep 1.0
+                    else
+                        source "$shell_DIR/$1" || sleep 1.0
+                    fi
+
+                    if [[ "$3" == "compat" ]]; then 
+                        ignore_this compat_now  || {
+                            if [ "$console_module_loaded" -eq 1 ]; then
+                                printf_red "crit:" "err.. need to kill."
+                                sleep 1.0
+                                mode_KODO ""
+                            fi
+                        }
+                    fi
+                else
+                    console_module_loaded=1
+                    
+                    bash_title "Waiting resources.."
+
+                    ignore_this mkdir -p "$shell_DIR"
+
+                    if [ "$3" != "ignore" ]; then
+                        wget -q -O "$shell_DIR/$1" "$2" &>/dev/null
+                    else
+                        wget -q -O "$shell_DIR/$1" "$2" &>/dev/null &
+                    fi
+
+                    if [ "$3" = "end" ]; then
+                        clear && cd "$(dirname "$(realpath "$0")")" || echo
+                        typeof ""
+                    fi
+                fi
+            }
+
+            # wpython
+            console_pack ".wpython" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/wpython" ""
+
+            cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
+            
+            # security.kd
+            console_pack ".kodo/security.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Security/security.kd" "ignore" 
+            # compat.kd
+            console_pack ".kodo/compat.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compat/compat.kd" "compat" 
+            # compiler.kd
+            console_pack ".kodo/compiler.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compiler/compiler.kd" "ignore" 
+            # TKodo.kd
+            console_pack ".kodo/tkodo.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/TKodo/tkodo.kd" "ignore" 
+            # samp.kd
+            console_pack ".kodo/samp.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/samp.kd" "ignore" 
+            # pawncc.kd
+            console_pack ".kodo/pawncc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/pawncc.kd" "ignore" 
+            # misc.kd
+            console_pack ".kodo/misc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Misc/misc.kd" "ignore" 
+            # server.kd
+            console_pack ".kodo/server.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Server/server.kd" "end"
+            
+            console_save_notice=1
+        fi
+    fi
+    
+    __cache_save_compile=".cache/compiler.log"
+    export __cache_save_compile
+
+    cd "$shell_DIR" >/dev/null 2>&1 || echo ""
+
+    u_openmp=$(find . -maxdepth 1 -type f \( -name "omp-server" -o -name "omp-server.exe" \) | head -n 1)
+    u_samp=$(find . -maxdepth 1 -type f \( -name "samp03svr" -o -name "samp-server.exe" \) | head -n 1)
+
+    if [[ -n "$u_samp" ]] && [[ -n "$u_openmp" ]]; then
+        __SAMP_SERVER="samp"
+    elif [[ -n "$u_samp" ]]; then
+        __SAMP_SERVER="samp"
+    elif [[ -n "$u_openmp" ]]; then
+        __SAMP_SERVER="omp"
+    else
+        __SAMP_SERVER="samp"
+    fi
+
+    if [ ! -f "$HOME/.enkodo" ] && [ -n "$RHASH_256" ]; then
+        echo "Generate Pass for encryption.."
+    fi
+
+    @ENCRYPTION_CREATE ""
+    @LANG_CREATE ""
+	
+    rest_var ""
+
+    typeof ""
+}
+export struct_console_main
+
+function typeof() {
+    if [ "$console_save_messages" -ne 1 ]; then
+        console_save_messages=1
+        printf "Welcome to Kodo!"
+        echo
+    fi
+    
+    console_TITLE "Kodo Mode | Usage \`kill\` to refresh"
+
+    HISTFILE="$HOME/.kodo.txt"
+    touch "$HISTFILE"
+
+    history -r "$HISTFILE"
+
+    read -e -r -p "kodo:~$ " kd_table
+    
+    if [ -n "$kd_table" ]; then
+        echo "$kd_table" >> "$HISTFILE"
+    fi
+
+    mode_KODO "$kd_table"
+}
+export typeof
+
+function mode_KODO() {
+    #
+    #   @Send.kd-Mode
+    #
+    #
+    
+    : ' WARNING '
+    #   always remember to end use 'end_console_main' or 'struct_console_main' so it doesn't crash or exit Kodo
+    
+    local trigger_kd="kodo"
+
+    case "$kd_table" in
+        "compile"*)
+            console_TITLE "Compiler"
+
+            local commands_ARGS="${kd_table#compile }"
+            local commands_INPUT=""
+            local commands_OPAMX=()
+
+            for arg in $commands_ARGS; do
+                if [ -z "$commands_INPUT" ]; then
+                    commands_INPUT="$arg"
+                else
+                    commands_OPAMX+=("$arg")
+                fi
+            done
+
+            local amx_valid=false
+
+            if [[ "$kd_table" == "compile" ]]; then
+                compiler_MODE="true"
+                kodo_compilers "" || {
+                    if [ "$console_module_loaded" -eq 1 ]; then
+                        printf_red "crit:" "err.. need to kill."
+                        sleep 1.0
+                        mode_KODO ""
+                    fi
+                }
+            else
+                if [[ -n "$commands_INPUT" ]]; then
+                    if [[ "$commands_INPUT" == "." ]]; then
+                        compiler_MODE="true"
+                        kodo_compilers "" || {
+                            if [ "$console_module_loaded" -eq 1 ]; then
+                                printf_red "crit:" "err.. need to kill."
+                                sleep 1.0
+                                mode_KODO ""
+                            fi
+                        }
+                    else
+                        if [[ "${#commands_OPAMX[@]}" -eq 0 ]]; then
+                            COMPILER_NEXT=1
+                        else
+                            local amx_valid=true
+
+                            for option in "${commands_OPAMX[@]}"; do
+                                # option checking
+                                if [[ " ${COMPILER_AMX_FLAGS[*]} " != *" $option "* ]]; then
+                                    # not valid
+                                    printf_red "crit:" "compiler option \`$option\` not found!"
+                                    amx_valid=false
+                                    end_console_main ""
+                                fi
+                            done
+
+                            if $amx_valid; then
+                                COMPILER_NEXT=2
+                            fi
+                        fi
+                    fi
+                fi
+
+                while IFS= read -r -d '' pawncc; do
+                    if [ -f "$pawncc" ]; then
+                        COMPILER_PAWNCC="$pawncc"
+                        break
+                    fi
+                done < <(find "$shell_DIR" -type f -iname "$__PAWNCC__" -print0)
+
+                if [ -z "$COMPILER_PAWNCC" ]; then
+                    printf_red "crit:" "$__PAWNCC__ not found!. You can get this in \`pawncc\`"
+                    echo
+                    read -r -p "install now? [y/n] " INSTALL_NOW
+
+                    while true; do
+                        case "$INSTALL_NOW" in
+                            [Yy])
+                                struct_choice_pawncc "" || {
+                                    if [ "$console_module_loaded" -eq 1 ]; then
+                                        printf_red "crit:" "err.. need to kill."
+                                        sleep 1.0
+                                        mode_KODO ""
+                                    fi
+                                }
+                                ;;
+                            [Nn])
+                                struct_console_main "" || {
+                                    if [ "$console_module_loaded" -eq 1 ]; then
+                                        printf_red "crit:" "err.. need to kill."
+                                        sleep 1.0
+                                        mode_KODO ""
+                                    fi
+                                }
+                                ;;
+                            *)
+                                struct_choice_pawncc "" || {
+                                    if [ "$console_module_loaded" -eq 1 ]; then
+                                        printf_red "crit:" "err.. need to kill."
+                                        sleep 1.0
+                                        mode_KODO ""
+                                    fi
+                                }
+                                ;;
+                        esac
+                    done
+                fi
+
+                if ! find "$shell_DIR" -type f -name "$commands_INPUT" | grep -q .; then
+                    printf_red "crit:" "$commands_INPUT not found!."
+                    struct_console_main ""
+                fi
+
+                : '
+                    @Map
+                '
+                while IFS= read -r -d '' __LOOP_COMPILES_FILE; do
+                    __files+=("$__LOOP_COMPILES_FILE")
+                done < <(find "$shell_DIR" -name "$commands_INPUT" -type f -print0)
+
+                for __LOOP_COMPILES_FILE in "${__files[@]}"; do
+                    if [ -f "$__LOOP_COMPILES_FILE" ] && [[ "$__LOOP_COMPILES_FILE" != *.amx ]]; then
+                        bash_title "$__LOOP_COMPILES_FILE"
+
+                        local AMX_O
+                        AMX_O="$(dirname "$__LOOP_COMPILES_FILE")/$(basename "${__LOOP_COMPILES_FILE%.*}.amx")"
+
+                        echo
+                        echo -e "$(collor_green " Compiling: $commands_INPUT")"
+                        echo
+
+                        : '
+                            @PawnCC.Compile
+                        '
+                        
+                        local start_time
+                        start_time=$(date +%s%3N)
+
+                            for _ in {1..10}; do
+                                if [ "$COMPILER_NEXT" -eq 1 ]; then
+                                    "$COMPILER_PAWNCC" -i"$json_INCLUDE" "$json_EXCLUDE" "$__LOOP_COMPILES_FILE" -o"$AMX_O" "$json_AMX_OPT_F" > "$__cache_save_compile" 2>&1
+                                elif [ "$COMPILER_NEXT" -eq 2 ]; then
+                                    "$COMPILER_PAWNCC" -i"$json_INCLUDE" "$json_EXCLUDE" "$__LOOP_COMPILES_FILE" -o"$AMX_O" "$json_AMX_OPT_F" "${commands_OPAMX[@]}" > "$__cache_save_compile" 2>&1
+                                fi
+                            done
+                        
+                        local end_time
+                        end_time=$(date +%s%3N)
+
+                        local elapsed=$((end_time - start_time))
+                        
+                        bash_cache_compiler "" || {
+                            if [ "$console_module_loaded" -eq 1 ]; then
+                                printf_red "crit:" "err.. need to kill."
+                                sleep 1.0
+                                mode_KODO ""
+                            fi
+                        }
+                        ignore_this sleep 0.1
+                        cat "$__cache_save_compile"
+                        ignore_this sleep 0.1
+
+                        if [[ "$json_RM_CACHE" == "true" ]]; then
+                            cache_compiler=".cache/compiler.log"
+                            if [ -f "$cache_compiler" ]; then
+                                shred -u "$cache_compiler"
+                            fi
+                        fi
+
+                        if [ -s "$AMX_O" ]; then
+                            echo
+                            echo -e "$(collor_green " Finished: $AMX_O")"
+                            
+                            if [[ "$compiler_MODE" == "true" ]]; then
+                                console_TITLE "compilers"
+                            elif [[ "$compiler_MODE" == "false" ]]; then
+                                console_TITLE "compiler - running"
+                            fi
+                            echo
+                            echo "total size: $(stat -c%s "$AMX_O") bytes"
+                            if [ "$COMPILER_NEXT" == 2 ]; then
+                                echo -n "with +option compiler: "
+                                echo "${commands_OPAMX[@]}"
+                            fi
+                            echo "Total execution time: ${elapsed} ms"
+                        fi
+                    fi
+                done
+            fi
+
+            end_console_main ""
+            ;;
+        "running"*)
+            console_TITLE "Running"
+            
+            local commands_ARGS="${kd_table#running }"
+            
+            if [[ -n "$commands_ARGS" && "$commands_ARGS" != "$kd_table" ]]; then
+                commands_INPUT="$commands_ARGS"
+            else
+                space_servers ""
+            fi
+
+            SERVERS_NEXT=1
+
+            if [[ "$commands_INPUT" == "." ]]; then
+                space_servers "" || {
+                    if [ "$console_module_loaded" -eq 1 ]; then
+                        printf_red "crit:" "err.. need to kill."
+                        sleep 1.0
+                        mode_KODO ""
+                    fi
+                }
+            else
+                space_wargs_servers "$commands_INPUT" || {
+                    if [ "$console_module_loaded" -eq 1 ]; then
+                        printf_red "crit:" "err.. need to kill."
+                        sleep 1.0
+                        mode_KODO ""
+                    fi
+                }
+            fi
+            end_console_main ""
+            ;;
+        "irunn")
+            console_TITLE "Compile & Running"
+
+            compiler_MODE="false"
+            kodo_compilers "" || {
+                if [ "$console_module_loaded" -eq 1 ]; then
+                    printf_red "crit:" "err.. need to kill."
+                    sleep 1.0
+                    mode_KODO ""
+                fi
+            }
+            ;;
+        "debug"*)
+            console_TITLE "Debugging"
+
+            local commands_ARGS="${kd_table#debug }"
+            
+            if [[ -n "$commands_ARGS" && "$commands_ARGS" != "$kd_table" ]]; then
+                commands_INPUT="$commands_ARGS"
+            else
+                printf_gray ":: Enter GM Name:"
+                while true; do
+                    read -r -p ">>> " commands_INPUT
+                    [[ -n "$commands_INPUT" ]] && break
+                done
+            fi
+
+            SERVERS_NEXT=2
+            
+            if [[ "$commands_INPUT" == "." ]]; then
+                space_servers "" || {
+                    if [ "$console_module_loaded" -eq 1 ]; then
+                        printf_red "crit:" "err.. need to kill."
+                        sleep 1.0
+                        mode_KODO ""
+                    fi
+                }
+            else
+                space_wargs_servers "$commands_INPUT" || {
+                    if [ "$console_module_loaded" -eq 1 ]; then
+                        printf_red "crit:" "err.. need to kill."
+                        sleep 1.0
+                        mode_KODO ""
+                    fi
+                }
+            fi
+            end_console_main ""
+            ;;
+        "stop")
+            console_TITLE "Stop"
+
+            ignore_this pkill -9 -f "$json_EXE_SERV"
+
+            end_console_main ""
+            ;;
+        "restart")
+            console_TITLE "Restart"
+
+            ignore_this pkill -9 -f "$json_EXE_SERV" && sleep 1
+            space_servers ""
+
+            end_console_main ""
+            ;;
+        "gamemode")
+            console_TITLE "Downloads | GameMode"
+
+            struct_choice_samp ""
+
+            end_console_main "" || {
+                if [ "$console_module_loaded" -eq 1 ]; then
+                    printf_red "crit:" "err.. need to kill."
+                    sleep 1.0
+                    mode_KODO ""
+                fi
+            }
+            ;;
+        "pawncc")
+            console_TITLE "Downloads | PawnCC"
+
+            struct_choice_pawncc ""
+
+            end_console_main "" || {
+                if [ "$console_module_loaded" -eq 1 ]; then
+                    printf_red "crit:" "err.. need to kill."
+                    sleep 1.0
+                    mode_KODO ""
+                fi
+            }
+            ;;
+        "cat"*)
+            console_TITLE "Cat"
+
+            local commands_ARGS="${kd_table#cat }"
+            
+            if [[ -n "$commands_ARGS" && "$commands_ARGS" != "$kd_table" ]]; then
+                commands_INPUT="$commands_ARGS"
+            else
+                printf_gray ":: Enter File Name:"
+                while true; do
+                    read -r -p ">>> " commands_INPUT
+                    [[ -n "$commands_INPUT" ]] && break
+                done
+            fi
+
+            cat "$commands_INPUT"
+            echo
+            end_console_main ""
+            ;;
+        "directory"*)
+            console_TITLE "Directory - $shell_DIR"
+
+            local commands_ARGS="${kd_table#directory }"
+            
+            if [[ -n "$commands_ARGS" && "$commands_ARGS" != "$kd_table" ]]; then
+                commands_INPUT="$commands_ARGS"
+            else
+                ls -a
+                end_console_main ""
+            fi
+
+            ignore_this cd "$commands_INPUT" && ls -a && shell_TITLE="directory - $shell_DIR" && bash_title "user:~/ $shell_TITLE" || echo
+            struct_console_main ""
+            ;;
+        "ls")
+            ls -a
+            struct_console_main ""
+            ;;
+        "kill")
+            console_TITLE "Kill"
+
+            console_save_notice=0
+            console_save_messages=0
+            
+            ignore_this clear
+            ignore_this sleep 0.10
+            chmod +x "$shell_NAME"
+            exec bash ./"$shell_NAME"
+            ;;
+        "sync")
+            if [[ "$kd_table" == "sync" ]]; then
+                console_TITLE "Sync"
+            fi
+
+            local latest
+            latest=$(curl -s "https://api.github.com/repos/vilksons/kodo/commits/kodo" | grep -o '"sha": "[^"]*' | awk -F': "' '{print $2}')
+
+            local current
+            current=$(cat "$shell_DIR/.itskodo" 2>/dev/null)
+
+            if [[ "$latest" == "$current" ]]; then
+                echo "warning: $shell_NAME is up to date, Nothing to do."
+                end_console_main ""
+            else
+                printf_gray ":: New Commits is Found..: Commits: (SHA1): "
+                echo "$latest"
+                
+                read -r -n1 -p ":: Do you want to continue Sync Kodo? [y/n] " PERMISSION_NEED_S
+
+                echo
+                [[ -z "$PERMISSION_NEED_S" ]] && PERMISSION_NEED_S="Y"
+
+                while true; do
+                    case "$PERMISSION_NEED_S" in
+                        [Yy])
+                            if [ -d "$shell_DIR/.kodo" ]; then
+                                rm -rf ".kodo" && ignore_this sleep 0.1 && mkdir ".kodo" && chmod +x ".kodo"
+                            fi
+
+                            echo "Updating.."
+                            
+                            echo "$latest" > "$shell_DIR/.itskodo"
+                            
+                            cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
+                                
+                            wget -q --show-progress -O "security.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Security/security.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
+                            wget -q --show-progress -O "compat.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compat/compat.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
+                            wget -q --show-progress -O "tkodo.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/TKodo/tkodo.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
+                            wget -q --show-progress -O "samp.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/samp.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
+                            wget -q --show-progress -O "pawncc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/pawncc.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
+                            wget -q --show-progress -O "server.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Server/server.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
+                            wget -q --show-progress -O "misc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Misc/misc.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
+                            wget -q --show-progress -O "compiler.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compiler/compiler.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
+
+                            ignore_this sleep 1 && cd "$shell_DIR" >/dev/null 2>&1 || echo ""
+
+                            wget -q --show-progress -O ".wpython" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/wpython"
+                            wget -q --show-progress -O "workspace" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace"
+
+                            echo "$latest" > "$shell_DIR/.itskodo"
+
+                            cd "$shell_DIR" >/dev/null 2>&1 || echo ""
+
+                            ignore_this sleep 1 && bash ./workspace
+                            ;;
+                        *)
+                            end_console_main ""
+                            break
+                            ;;
+                    esac
+                done
+            fi
+            ;;
+        "lang")
+            if [ -f "$shell_DIR/kodo.json" ]; then
+                mv kodo.json kodo.json.old.txt
+            fi
+
+            struct_console_main ""
+            ;;
+        "checksums"*)
+            console_TITLE "Checksums"
+
+            local commands_ARGS="${kd_table#checksums }"
+
+            ignore_this cd "$shell_DIR" || echo ""
+
+            if [[ -n "$commands_ARGS" && "$commands_ARGS" != "$kd_table" ]]; then
+                commands_INPUT="$commands_ARGS"
+            else
+                echo "sha1:" && sha1sum "$shell_NAME" && echo "sha256:" && sha256sum "$shell_NAME" && echo "md5:" && md5sum "$shell_NAME"
+                end_console_main ""
+            fi
+
+            for algo in $commands_INPUT; do
+                if [[ "$algo" == "sha1" ]]; then
+                    echo "sha1:" && sha1sum "$shell_NAME"
+                elif [[ "$algo" == "sha256" ]]; then
+                    echo "sha256:" && sha256sum "$shell_NAME"
+                elif [[ "$algo" == "md5" ]]; then
+                    echo "md5:" && md5sum "$shell_NAME"
+                else
+                    echo "Invalid option: $algo (use sha1, sha256, md5)"
+                fi
+            done
+
+            end_console_main ""
+            ;;
+        "exit"*)
+            console_TITLE "Exit"
+
+            local commands_ARGS="${kd_table#exit }"
+
+            if [[ -n "$commands_ARGS" && "$commands_ARGS" != "$kd_table" ]]; then
+                commands_INPUT="$commands_ARGS"
+            else
+                ignore_this sleep 0.100 &&
+                bash
+            fi
+            bash
+            ;;
+        "chatbot"*)
+            console_TITLE "Chatbot"
+
+            local commands_ARGS="${kd_table#chatbot }"
+
+            if [[ -n "$commands_ARGS" && "$commands_ARGS" != "$kd_table" ]]; then
+                commands_INPUT="$commands_ARGS"
+            else
+                printf_gray ":: Enter Question:"
+                while true; do
+                    read -r -p ">>> " commands_INPUT
+                    [[ -n "$commands_INPUT" ]] && break
+                done
+            fi
+            
+            ai_initialize "$commands_INPUT"
+            ;;
+        "nano"*)
+            if ! command -v nano &> /dev/null; then
+                printf_red "crit:" "nano not found!, install first."
+                end_console_main ""
+            fi
+            
+            console_TITLE "GNU/Nano"
+            
+            local commands_ARGS="${kd_table#nano }"
+
+            if [[ -n "$commands_ARGS" && "$commands_ARGS" != "$kd_table" ]]; then
+                commands_INPUT="$commands_ARGS"
+            else
+                printf_gray ":: Enter Names:"
+                while true; do
+                    read -r -p ">>> " commands_INPUT
+                    [[ -n "$commands_INPUT" ]] && break
+                done
+            fi
+
+            nano "$commands_INPUT"
+            end_console_main ""
+            ;;
+        "remcac")
+            console_TITLE "Remove Cache"
+
+            if [ "$compiler_MODE" != "nul" ]; then
+                printf_red "crit:" "can't remove cache!."
+                end_console_main ""
+            fi
+
+            if [ ! -f "$shell_DIR/.cache/tkodo" ] && [ ! -f "$shell_DIR/.cache/compiler.log" ]; then
+                echo "no cache found."
+                end_console_main ""
+            fi
+
+            if [ -f "$shell_DIR/.cache/tkodo" ]; then
+                printf_gray ":: Cache Dir: $shell_DIR/.cache/tlitkodogpac"
+                read -r -p ":: Do you want to remove ALL files from $shell_DIR/.cache/tkodo? [y/n] " PERMISSION_NEED_RC
+                echo
+                [[ -z "$PERMISSION_NEED_RC" ]] && PERMISSION_NEED_RC="Y"
+
+                while true; do
+                    case "$PERMISSION_NEED_RC" in
+                        [Yy])
+                            cd "$shell_DIR" || echo
+                            shred -u ".cache/tkodo" && printf_yellow " successfully"
+                            sleep 1
+                            break
+                            ;;
+                        *)
+                            echo "Operation cancelled"
+                            break
+                            ;;
+                    esac
+                done
+            fi
+
+            if [ -f "$shell_DIR/.cache/compiler.log" ]; then
+                printf_gray ":: Cache Dir: $shell_DIR/.cache/compiler.log"
+                read -r -p ":: Do you want to remove ALL files from $shell_DIR/.cache/compiler.log? [y/n] " PERMISSION_NEED_RC
+                echo
+                [[ -z "$PERMISSION_NEED_RC" ]] && PERMISSION_NEED_RC="Y"
+
+                while true; do
+                    case "$PERMISSION_NEED_RC" in
+                        [Yy])
+                            cd "$shell_DIR" || echo
+                            shred -u ".cache/compiler.log" && printf_yellow " successfully"
+                            sleep 1
+                            end_console_main ""
+                            ;;
+                        *)
+                            echo "Operation cancelled"
+                            end_console_main ""
+                            ;;
+                    esac
+                done
+            else
+                end_console_main ""
+            fi
+        
+            ;;
+        "fetch")
+            fetch_now ""
+            ;;
+        "tkodo")
+            mode_KODO "" || {
+                if [ "$console_module_loaded" -eq 1 ]; then
+                    printf_red "crit:" "err.. need to kill."
+                    sleep 1.0
+                    mode_KODO ""
+                fi
+            }
+            ;;
+        "clear" | "c" | "C" | "cc")
+            console_save_messages=0
+            clear; echo -ne "\033[3J"
+            struct_console_main ""
+            ;;
+        "help"* | "$trigger_kd -h"* | "$trigger_kd --h"*)
+            local commands_ARGS="${kd_table#"$trigger_kd -h "}"
+            local commands_ARGS="${commands_ARGS#help }"
+            local commands_ARGS="${commands_ARGS#"$trigger_kd --h "}"
+
+            declare -A descriptions=(
+                ["compile"]=":: Compile a project - Usage: compile | (+) [<args>] [target]"
+                ["running"]=":: Running a project - Usage: running | (+) [<args>] [target]"
+                ["irunn"]=":: Compile & Running a project - Usage: irunn"
+                ["debug"]=":: Debug a project - Usage: debug | (+) [<args>] [target]"
+                ["stop"]=":: stop all running server progress - Usage: stop"
+                ["restart"]=":: Restart all Server - Usage: restart"
+                ["gamemode"]=":: Download GameModes SA-MP with Selection - Usage: gamemode"
+                ["pawncc"]=":: Download PawnCC SA-MP with Selection - Usage: pawncc"
+                ["clear"]=":: Clear Screen Terminal - Usage: clear"
+                ["checksums"]=":: Checksums of Kodo - Usage: checksums"
+                ["cat"]=":: Display a files to Kodo Terminal - Usage: cat"
+                ["kill"]=":: Kill a Kodo Terminal - Usage: kill"
+                ["exit"]=":: Exit/End Kodo Terminal - Usage: exit | (+) [<args>] \"all\" to kill all tasks"
+                ["lang"]=":: Rebuild kodo.json - Usage: lang"
+                ["directory"]=":: Display or Change Terminal Directory - Usage: directory | ls"
+                ["update"]=":: Update/Upgrade/Sync Kodo Shell up-to-date - Usage: sync"
+                ["remcac"]=":: Remove cache \".cache\" Kodo - Usage: remcac"
+                ["chatbot"]=":: Chatbot Terminal - Usage: chatbot"
+                ["nano"]=":: GNU/Nano Editor - Usage: nano"
+                ["tkodo"]=":: Kodo Mode to TKodo Mode - Usage: tkodo"
+                ["sync"]=":: Sync Normal - Usage: sync"
+                ["fetch"]=":: Fetch Kodo -> Usage: fetch"
+            )
+            
+            if [[ -n "$commands_ARGS" && "$commands_ARGS" != "$kd_table" ]]; then
+                if [[ -n "${descriptions[$commands_ARGS]}" ]]; then
+                    if [[ "$commands_ARGS" == "nano" ]]; then
+                        if ! command -v nano &> /dev/null; then
+                            help_dialog_kd "invalid"
+                        else
+                            echo "${descriptions[$commands_ARGS]}"
+                        fi
+                    elif [[ "$commands_ARGS" == "compile" ]]; then
+                        echo "${descriptions[$commands_ARGS]}"
+                        echo " Example: compile bare.pwn +option_amx"
+                        echo " For Option. Please See: github.com/vilksons/kodo/wiki/Compiler-Option"
+                    else
+                        echo "${descriptions[$commands_ARGS]}"
+                    fi
+                else
+                    help_dialog_kd "invalid"
+                fi
+            else
+                help_dialog_kd ""
+            fi
+
+            struct_console_main ""
+            ;;
+        "$trigger_kd" | "user:~$:" | "user:~$:")
+            struct_console_main ""
+            ;;
+        "")
+            struct_console_main ""
+            ;;
+        *)
+            not_found_kd ""
+            ;;
+    esac
+}
+export mode_KODO
+
+function not_found_kd()
+{
+    echo "error: $kd_table: command not found"
+    struct_console_main ""
+}
+
+function help_dialog_kd()
+{
+    : '
+        @Send.Help
+    '
+    local check_param=$1
+
+    if [[ "$check_param" == "invalid" ]]; then
+        echo "Invalid!.. Please Use:"
+    fi
+
+    echo "Usage: kodo <flags> | help | -h | --h | [<commands>] [<args>]"
+    echo "Commands:"
+    echo " compile, running, irunn (compile-run), debug (debugger)"
+    echo " stop (stopped server), restart (restart server)"
+    echo " gamemode, pawncc, clear (clear-screen)"
+    echo " checksums, cat, tkodo, kill"
+    echo " sync (update/upgrade), lang, directory"
+
+    if ! command -v nano &> /dev/null; then
+        echo " exit, remcac, chatbot, fetch"
+    else
+        echo " exit, remcac, chatbot, nano, fetch"
+    fi
+}
+
+function help_dialog_pac()
+{
+    echo "Usage: kodo <command> [<args>]"
+    echo "Commands:"
+    echo " autoinstall - auto Install from TKodo cache"
+    echo " install     - Install/Reinstall Packages"
+    echo " remove      - Remove Packages"
+    echo " exit        - Exit TKodo Mode"
+}
+
+function end_console_main() {
+    echo -e "$(collor_yellow "# Press any key to return.")"
+    read -r -n 1 -s
+    struct_console_main ""
+}
+
+: '
+    @summary: Main
+'
+struct_console_main ""

@@ -1,0 +1,274 @@
+KODO TOOLCHAIN
+================
+
+WIKI GUIDE
+==========
+Essential references to understand and use Kodo:
+  - Compiler Options https://github.com/vilksons/kodo/wiki/Compiler-Option) 
+  - Required Packages https://github.com/vilksons/kodo/wiki/Required-Packages 
+  - PawnCC Installation https://github.com/vilksons/kodo/wiki/PawnCC-Installation
+  - CODE OF CONDUCT https://github.com/vilksons/kodo/wiki/CODE-OF-CONDUCT
+
+WHAT IS KODO?
+===============
+ - Kodo https://github.com/vilksons/kodo/tree/kodo
+   Kodo is an SA:MP-specific toolchain designed for debugging, compiling, and package management.
+---------------
+WHAT IS CKODO?
+===============
+  - cKodo https://github.com/vilksons/kodo/tree/ckodo
+    cKodo is a Kodo Toolchain built on the C language without any connection to Shell/Bash.
+
+KEEPING UP-TO-DATE
+==================
+Always update using:
+    `sync`
+
+PREREQUISITES
+=============
+
+INSTALLATION
+------------
+Supported Platforms:
+- Linux, Darwin, Windows, macOS, and Android/iPhone via:
+  - Docker (Windows/macOS): https://www.docker.com/
+  - WSL/WSL2 (Windows): https://learn.microsoft.com/en-us/windows/wsl/install
+  - MSYS2 (Windows): https://www.msys2.org/
+  - mingw-w64 (Windows/macOS): https://www.mingw-w64.org/
+  - Cygwin (Windows): https://www.cygwin.com/
+  - Babun (Windows): https://github.com/babun/babun
+  - Termux (Android/Emulator): https://termux.dev/en/
+  - UserLAnd (Android/Emulator): https://github.com/CypherpunkArmory/UserLAnd
+  - Linux Deploy (Android/Emulator): https://github.com/meefik/linuxdeploy
+  - iSH (iPhone): https://github.com/ish-app/ish
+  - a-Shell (iPhone): https://github.com/holzschu/a-shell
+
+INSTALL `kodo/workspace` SCRIPT
+---------------------------------
+  - Download via GNU/Wget:
+      * wget -q --show-progress -O workspace https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace
+  - Download via cURL:
+      * curl -L -o workspace https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace
+
+INSTALL REQUIRED PACKAGES
+*************************
+Full list available at:
+  - https://github.com/vilksons/kodo/wiki/Required-Packages
+
+INSTALLATION STEPS
+*************************
+1. Open the Terminal.
+2. Make the `workspace` script executable:
+   - chmod +x workspace
+3. Run the script:
+   - bash ./workspace
+
+Docker Usage
+*************************
+  (MacOS)
+  @ docker run -it ubuntu
+    @ docker run -v ~/Downloads:/mnt/downloads -it ubuntu
+      ^ allowed downloads directory
+    * apt update
+      ^ refresh repository
+    - apt upgrade
+      ^ (optional) upgrade packages if needed
+    * dpkg --add-architecture i386
+    * apt update
+      ^ refresh repository
+    * apt install libc6:i386 libstdc++6:i386
+      |           ^ -------- ^ i386 configuration
+      ^ x86 support for x64 (needed)
+    * apt install python3 wget curl grep awk sed coreutils yq jq aria2 unzip tar 
+      | ↸ ------- ^ ----- ^ -- ^ -- ^ -- ^ - ^ - ^ ------- ^ --- ^ --- ^ --- ^ - ^
+      ^ (required) packages required for kodo/workspace              
+  @ cd /path/to/kodo/
+    ^ cd to kodo/workspace
+  @ chmod +x workspace
+    |     ^ type of permissions, recommended +x : 755
+    ^ give permissions for the kodo/workspace
+  @ ./workspace
+    ^ runn the kodo/workspace
+
+  (Linux/WSL2)
+  @ sudo usermod -aG docker $USER
+    ^ added docker user to Your Linux.
+  @ newgrp docker
+    ^ added new group for docker
+  @ sudo systemctl start docker
+    ^ start docker
+  @ sudo systemctl enable docker
+    ^ enabler docker
+  @ docker run -it ubuntu
+    @ docker run -v ~/Downloads:/mnt/downloads -it ubuntu
+      ^ allowed downloads directory
+    * apt update
+      ^ refresh repository
+    - apt upgrade
+      ^ (optional) upgrade packages if needed
+    * dpkg --add-architecture i386
+    * apt update
+      ^ refresh repository
+    * apt install libc6:i386 libstdc++6:i386
+      |           ^ -------- ^ i386 added configuration
+      ^ x86 support for x64 (needed)
+    * apt install python3 wget curl grep awk sed coreutils yq jq aria2 unzip tar
+      | ↸ ------- ^ ----- ^ -- ^ -- ^ -- ^ - ^ - ^ ------- ^ --- ^ --- ^ --- ^ - ^
+      ^ (required) packages required for kodo/workspace                        
+  @ cd /path/to/kodo/
+    ^ cd to kodo/workspace
+  @ chmod +x workspace
+    |     ^ type of permissions, recommended +x : 755
+    ^ give permissions for the kodo/workspace
+  @ ./workspace
+    ^ runn the kodo/workspace
+
+  (Additional)
+    @ docker ps -a
+      ^ check all running/previously run docker
+      - docker start <container-names>
+        |            ^ docker container names
+        ^ for start a docker images
+      - docker exec -it <container-names> /bin/bash
+        |                                 ^ location session, /bin/bash : /bin/sh 
+        ^ to running the containers
+    @ docker stop <container-names>
+      ^ to stop a docker containers
+    @ docker rm -f <container-names>
+      |         ^ -f for forcing
+      ^ to remove a docker containers
+      - docker rm -f $(docker ps -a -q)
+        |         ^ -f for forcing
+        ^ to remove all docker containers
+
+USAGE
+=====
+FILE RENAMING
+-------------
+You can rename `yourmode.pwn` files to a project-appropriate format (e.g., `yourmode.io.pwn`) for consistency.
+
+COMPILATION
+-----------
+ o Default compilation:
+	compile .
+ o Specific file compilation:
+	compile yourmode.pwn
+ o Compilation with options:
+	compile yourmode.pwn opt1 opt2 opt3
+
+STARTING & DEBUGGING
+--------------------
+ o Run a compiled script:
+	running yourmode.pwn
+ o Debug a script:
+	debug yourmode.pwn
+
+CONFIGURATION `kodo.json`
+========================
+
+NOTICE
+*************************
+Almost all are equipped with Hashing, Hashing SHA256 Double. including Bot Token Encryption when there is a bot token that is automatically detected in Ecnryption and its Pass uses Hashing Double SHA256 again. but for speed there is no need to worry because all are balanced, efficient.
+
+CONFIGURATION DETAILS
+------------------------------
+  o "amx_flags"
+    option Flags: https://github.com/vilksons/kodo/wiki/Compiler-Option
+  o "include_paths"
+    Default compiler include directory.
+  o "exclude_paths"
+    Directories excluded from compilation.                      
+  o "samp_log"
+    SA-MP server log file.                                      
+  o "samp_config"
+    SA-MP server configuration file. (TKodo)
+  o "samp_init"
+    SA-MP main server file. (TKodo)           
+  o "samp_executable"
+    SA-MP server executable.                                    
+  o "include_dir"
+    Package manager include directory. (TKodo).               
+  o "plugins_dir"
+    Directory for `.dll` and `.so` plugins. (TKodo).          
+  o "bot_token"
+    API key from https://console.groq.com/keys
+  o "bot_model"
+    AI model from https://console.groq.com/                     
+  o "bot_profile"
+    Additional chatbot configuration.                           
+  o "remcache_auto"
+    Auto-remove `/.cache` & Table history and others. (true/false).                         
+  o "repository"
+    Repository of kodo for Sync - (stable/testing) ~ testing faster before main
+
+EXAMPLE: `include_paths` USAGE
+------------------------------
+    If a script inside `includes/` is not recognized, define:
+        "include_paths": "includes"
+    in `kodo.json`.
+
+EXAMPLE DIRECTORY STRUCTURE
+---------------------------
+    samp-server/
+    ├── gamemodes/
+    │   ├── mygamemode.pwn
+    │   └── ...
+    │
+    ├── includes/
+    │   ├── customFile.pwn
+    │   ├── anotherFile.pwn
+    │   └── ...
+    │
+    └── server.cfg
+
+PACKAGE MANAGER - TKodo
+-------------------------
+    kodo operates in two modes:
+    1. Kodo Mode (default, without package manager)
+    2. TKodo Mode (enables package fetching and installation)
+
+Security
+*************************
+Security on TKodo is very well maintained, in addition to the TKodo cache which only has a history of taking one URL, TKodo also provides hashing and encryption on its cache, and also TKodo only reads the installed ".so", ".dll", and ".inc" files, otherwise it will be ignored and the installation folder/archive will be deleted quickly. In addition, TKodo uses aria2 to manage the download process in a safer and more efficient way. aria2 ensures that every downloaded file is verified for its authenticity by combining various protocols and transfer methods that can mitigate the potential risk of attacks from unauthorized or corrupted files. By using aria2, TKodo can increase download speeds while maintaining data integrity during the download process.
+
+PACKAGE MANAGEMENT
+==================
+ o Switch to TKodo Mode
+    tkodo
+ o Exit from TKodo Mode
+    exit
+
+ o Installing Packages:
+    install github/samp-incognito/samp-streamer-plugin
+ o Removing Packages:
+    remove streamer
+ o If you previously used args in the installation, the URL is applied to the TKodo cache. and you can reinstall with `autoinstall`
+    autoinstall
+  
+TKodo CONFIGURATION
+---------------------
+TKodo uses `tkodo.toml` or `tkodo.json`.
+
+Example `tkodo.toml`:
+    [package]
+    urls = [
+      "github/user/repository",
+      "gitlab/user/repository",
+      "sourceforge/user/repository"
+    ]
+
+Example `tkodo.json`:
+    {
+        "package": [
+            "github/user/repository",
+            "gitlab/user/repository",
+            "sourceforge/user/repository"
+        ]
+    }
+
+FINAL NOTES
+===========
+Keep your environment updated using `sync` or `syncc`.
+Refer to the Wiki: https://github.com/vilksons/kodo/wiki
+For issues, visit GitHub Discussions: https://github.com/vilksons/kodo/discussions
+Report bugs via GitHub Issues.

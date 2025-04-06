@@ -1,0 +1,135 @@
+#!/usr/bin/bash
+
+: ' compiler option '
+COMPILER_AMX_FLAGS=(
+    "-A" "-a" "-C+" "-C-" "-c" "-D" "-d0" "-d1" "-d2" "-d3" "-e" "-H" 
+    "-i" "-l" "-O" "-p" "-R+" "-R-" "-r" "-S" "-s" "-t" "-v0" "-v1" "-v2"
+    "-W" "-X" "-XD" "-Z+" "-Z-" "-E+" "-E-" "-^" "-;+" "-;-" "-(+" "-(-" "sym=" "sym=val"
+)
+export COMPILER_AMX_FLAGS
+
+function kodo_compilers() {
+    local SHFILE="false"
+    while IFS= read -r -d '' pawncc; do
+        if [ -f "$pawncc" ]; then
+            COMPILER_PAWNCC="$pawncc"
+            break
+        fi
+    done < <(find "$shell_DIR" -type f -iname "$__PAWNCC__" -print0)
+
+    if [ -z "$COMPILER_PAWNCC" ]; then
+        printf_red "crit:" "$__PAWNCC__ not found!. You can get this in \`pawncc\`"
+        echo
+        read -r -p "install now? [y/n] " INSTALL_NOW
+
+        while true; do
+            case "$INSTALL_NOW" in
+                [Yy])
+                    struct_choice_pawncc ""
+                    ;;
+                [Nn])
+                    struct_console_main ""
+                    ;;
+                *)
+                    struct_choice_pawncc ""
+                    ;;
+            esac
+        done
+    fi
+
+    : '
+        @Map
+    '
+    __files=()
+    while IFS= read -r -d '' __LOOP_COMPILES_FILE; do
+        __files+=("$__LOOP_COMPILES_FILE")
+    done < <(find "$shell_DIR" -name "*.io*" -type f -print0)
+
+    for __LOOP_COMPILES_FILE in "${__files[@]}"; do
+        if [ -f "$__LOOP_COMPILES_FILE" ] && [[ "$__LOOP_COMPILES_FILE" != *.amx ]]; then
+            SHFILE="true"
+            bash_title "$__LOOP_COMPILES_FILE"
+
+            local AMX_O
+            AMX_O="$(dirname "$__LOOP_COMPILES_FILE")/$(basename "${__LOOP_COMPILES_FILE%.io*}.amx")"
+
+            echo
+            echo -e "$(collor_green " Compiling: $__LOOP_COMPILES_FILE")"
+            echo
+
+            : '
+                @PawnCC.Compile
+            '
+            for option in $json_AMX_OPT_F; do
+                # option checking
+                if [[ " ${COMPILER_AMX_FLAGS[*]} " != *" $option "* ]]; then
+                    # not valid
+                    printf_red "crit:" "compiler option \`$option\` not found!"
+                    continue
+                fi
+            done
+
+            local start_time
+            start_time=$(date +%s%3N)
+
+                for _ in {1..10}; do
+                    "$COMPILER_PAWNCC" -i"$json_INCLUDE" "$json_EXCLUDE" "$__LOOP_COMPILES_FILE" -o"$AMX_O" "$json_AMX_OPT_F" > "$__cache_save_compile" 2>&1
+                done
+
+            local end_time
+            end_time=$(date +%s%3N)
+
+            local elapsed=$((end_time - start_time))
+
+            bash_cache_compiler ""
+            ignore_this sleep 0.1
+            cat "$__cache_save_compile"
+            ignore_this sleep 0.1
+
+            if [[ "$json_RM_CACHE" == "true" ]]; then
+                cache_compiler=".cache/compiler.log"
+                if [ -f "$cache_compiler" ]; then
+                    shred -u "$cache_compiler"
+                fi
+            fi
+            
+            if [ -s "$AMX_O" ]; then
+                echo
+                echo -e "$(collor_green " Finished: $AMX_O")"
+
+                if [[ "$compiler_MODE" == "true" ]]; then
+                    console_TITLE "compilers"
+                elif [[ "$compiler_MODE" == "false" ]]; then
+                    console_TITLE "compiler - running"
+                fi
+                echo
+                echo "total size: $(stat -c%s "$AMX_O") bytes"
+                echo "Total execution time: ${elapsed} ms"
+            fi
+        fi
+    done
+
+    if [[ "$SHFILE" == "false" ]]; then
+        echo -e "$(collor_red "..io not found!")"
+        echo
+        end_console_main ""
+    fi
+    if [[ "$compiler_MODE" == "true" || "$compiler_MODE" == "nul" || "$compiler_MODE" == "" ]]; then
+        end_console_main ""
+    elif [[ "$compiler_MODE" == "false" ]]; then
+        space_servers ""
+    fi
+}
+export kodo_compilers
+
+function bash_cache_compiler() {
+    cache_compiler=".cache/compiler.log"
+    _cache_compiler=".cache/.compiler.log"
+    while IFS= read -r line; do
+        echo "~" >> "$_cache_compiler"
+        echo "$line" >> "$_cache_compiler"
+    done < "$cache_compiler"
+    ignore_this mv "$_cache_compiler" "$cache_compiler"
+    chmod +x "$cache_compiler"
+}
+export bash_cache_compiler

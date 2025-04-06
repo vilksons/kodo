@@ -1,0 +1,200 @@
+#!/bin/bash
+
+function struct_compilers_linux()
+{
+    echo ":: Do you want to continue downloading PawnCC? (Yy/Nn)"
+    read -r -p ">> " SEL_C
+
+    if [[ -z "$SEL_C" || "$SEL_C" =~ ^[Yy]$ ]]; then
+        cd "$shell_DIR" || end_console_main ""
+        echo "Select the PawnCC version to download:"
+        echo "[A/a] PawnCC 3.10.10"
+        echo "[B/b] PawnCC 3.10.9"
+        echo "[C/c] PawnCC 3.10.8"
+        echo "[D/d] PawnCC 3.10.7"
+        echo "[E/e] PawnCC 3.10.6"
+        echo "[F/f] PawnCC 3.10.5"
+        echo "[G/g] PawnCC 3.10.4"
+        echo "[H/h] PawnCC 3.10.3"
+        echo "[I/i] PawnCC 3.10.2"
+        echo "[J/j] PawnCC 3.10.1"
+        read -r -p ">> " VERSION_NEED
+
+        while true; do
+            case "$VERSION_NEED" in
+                [Aa])
+                    DOWNLOAD_URL_CURL="https://github.com/pawn-lang/compiler/releases/download/v3.10.10/pawnc-3.10.10-linux.tar.gz"
+                    call_download_file_CURL="pawnc-3.10.10-linux.tar.gz"
+                    break
+                    ;;
+                [Bb])
+                    DOWNLOAD_URL_CURL="https://github.com/pawn-lang/compiler/releases/download/v3.10.9/pawnc-3.10.9-linux.tar.gz"
+                    call_download_file_CURL="pawnc-3.10.9-linux.tar.gz"
+                    break
+                    ;;
+                [Cc])
+                    DOWNLOAD_URL_CURL="https://github.com/pawn-lang/compiler/releases/download/v3.10.8/pawnc-3.10.8-linux.tar.gz"
+                    call_download_file_CURL="pawnc-3.10.8-linux.tar.gz"
+                    break
+                    ;;
+                [Dd])
+                    DOWNLOAD_URL_CURL="https://github.com/pawn-lang/compiler/releases/download/v3.10.7/pawnc-3.10.7-linux.tar.gz"
+                    call_download_file_CURL="pawnc-3.10.7-linux.tar.gz"
+                    break
+                    ;;
+                [Ee])
+                    DOWNLOAD_URL_CURL="https://github.com/pawn-lang/compiler/releases/download/v3.10.6/pawnc-3.10.6-linux.tar.gz"
+                    call_download_file_CURL="pawnc-3.10.6-linux.tar.gz"
+                    break
+                    ;;
+                [Ff])
+                    DOWNLOAD_URL_CURL="https://github.com/pawn-lang/compiler/releases/download/v3.10.5/pawnc-3.10.5-linux.tar.gz"
+                    call_download_file_CURL="pawnc-3.10.5-linux.tar.gz"
+                    break
+                    ;;
+                [Gg])
+                    DOWNLOAD_URL_CURL="https://github.com/pawn-lang/compiler/releases/download/v3.10.4/pawnc-3.10.4-linux.tar.gz"
+                    call_download_file_CURL="pawnc-3.10.4-linux.tar.gz"
+                    break
+                    ;;
+                [Hh])
+                    DOWNLOAD_URL_CURL="https://github.com/pawn-lang/compiler/releases/download/v3.10.3/pawnc-3.10.3-linux.tar.gz"
+                    call_download_file_CURL="pawnc-3.10.3-linux.tar.gz"
+                    break
+                    ;;
+                [Ii])
+                    DOWNLOAD_URL_CURL="https://github.com/pawn-lang/compiler/releases/download/v3.10.2/pawnc-3.10.2-linux.tar.gz"
+                    call_download_file_CURL="pawnc-3.10.2-linux.tar.gz"
+                    break
+                    ;;
+                [Jj])
+                    DOWNLOAD_URL_CURL="https://github.com/pawn-lang/compiler/releases/download/v3.10.1/pawnc-3.10.1-linux.tar.gz"
+                    call_download_file_CURL="pawnc-3.10.1-linux.tar.gz"
+                    break
+                    ;;
+                *)
+                    echo -e "$(collor_red "err:") Invalid selection. Please enter the Number!"
+                    read -r -p ">> " VERSION_NEED
+                    ;;
+            esac
+        done
+
+        echo -e "\nDownloading: $DOWNLOAD_URL_CURL -> $call_download_file_CURL"
+        if ! curl -L --progress-bar -o "$call_download_file_CURL" "$DOWNLOAD_URL_CURL"; then
+            echo -e "$(collor_red "fail:") Failed to download the file.."
+
+            end_console_main ""
+        else
+            tar -xzvf "$call_download_file_CURL" -C "$shell_DIR" --strip-components=1
+
+            echo
+            echo -e "$(collor_yellow "Download completed successfully.")"
+            echo "See https://github.com/vilksons/kodo/wiki/PawnCC-Installation for Docs."
+
+            end_console_main ""
+        fi
+    else
+        end_console_main ""
+    fi
+}
+export struct_compilers_linux
+
+function struct_compilers_win()
+{
+    echo ":: Do you want to continue downloading PawnCC? (Yy/Nn)"
+    read -r -p ">> " SEL_C
+    
+    if [[ -z "$SEL_C" || "$SEL_C" =~ ^[Yy]$ ]]; then
+        cd "$shell_DIR" || end_console_main ""
+        echo "Select the PawnCC version to download:"
+        echo "[A/a] PawnCC 3.10.10"
+        echo "[B/b] PawnCC 3.10.9"
+        echo "[C/c] PawnCC 3.10.8"
+        echo "[D/d] PawnCC 3.10.7"
+        echo "[E/e] PawnCC 3.10.6"
+        echo "[F/f] PawnCC 3.10.5"
+        echo "[G/g] PawnCC 3.10.4"
+        echo "[H/h] PawnCC 3.10.3"
+        echo "[I/i] PawnCC 3.10.2"
+        echo "[J/j] PawnCC 3.10.1"
+        read -r -p ">> " VERSION_NEED
+
+        while true; do
+            case "$VERSION_NEED" in
+                [Aa])
+                    DOWNLOAD_URL_CURL="https://github.com/pawn-lang/compiler/releases/download/v3.10.10/pawnc-3.10.10-windows.zip"
+                    call_download_file_CURL="pawnc-3.10.10-windows.zip"
+                    break
+                    ;;
+                [Bb])
+                    DOWNLOAD_URL_CURL="https://github.com/pawn-lang/compiler/releases/download/v3.10.9/pawnc-3.10.9-windows.zip"
+                    call_download_file_CURL="pawnc-3.10.9-windows.zip"
+                    break
+                    ;;
+                [Cc])
+                    DOWNLOAD_URL_CURL="https://github.com/pawn-lang/compiler/releases/download/v3.10.8/pawnc-3.10.8-windows.zip"
+                    call_download_file_CURL="pawnc-3.10.8-windows.zip"
+                    break
+                    ;;
+                [Dd])
+                    DOWNLOAD_URL_CURL="https://github.com/pawn-lang/compiler/releases/download/v3.10.7/pawnc-3.10.7-windows.zip"
+                    call_download_file_CURL="pawnc-3.10.7-windows.zip"
+                    break
+                    ;;
+                [Ee])
+                    DOWNLOAD_URL_CURL="https://github.com/pawn-lang/compiler/releases/download/v3.10.6/pawnc-3.10.6-windows.zip"
+                    call_download_file_CURL="pawnc-3.10.6-windows.zip"
+                    break
+                    ;;
+                [Ff])
+                    DOWNLOAD_URL_CURL="https://github.com/pawn-lang/compiler/releases/download/v3.10.5/pawnc-3.10.5-windows.zip"
+                    call_download_file_CURL="pawnc-3.10.5-windows.zip"
+                    break
+                    ;;
+                [Gg])
+                    DOWNLOAD_URL_CURL="https://github.com/pawn-lang/compiler/releases/download/v3.10.4/pawnc-3.10.4-windows.zip"
+                    call_download_file_CURL="pawnc-3.10.4-windows.zip"
+                    break
+                    ;;
+                [Hh])
+                    DOWNLOAD_URL_CURL="https://github.com/pawn-lang/compiler/releases/download/v3.10.3/pawnc-3.10.3-windows.zip"
+                    call_download_file_CURL="pawnc-3.10.3-windows.zip"
+                    break
+                    ;;
+                [Ii])
+                    DOWNLOAD_URL_CURL="https://github.com/pawn-lang/compiler/releases/download/v3.10.2/pawnc-3.10.2-windows.zip"
+                    call_download_file_CURL="pawnc-3.10.2-windows.zip"
+                    break
+                    ;;
+                [Jj])
+                    DOWNLOAD_URL_CURL="https://github.com/pawn-lang/compiler/releases/download/v3.10.1/pawnc-3.10.1-windows.zip"
+                    call_download_file_CURL="pawnc-3.10.1-windows.zip"
+                    break
+                    ;;
+                *)
+                    echo -e "$(collor_red "err:") Invalid selection. Please enter the Number!"
+                    read -r -p ">> " VERSION_NEED
+                    ;;
+            esac
+        done
+
+        echo -e "\nDownloading: $DOWNLOAD_URL_CURL -> $call_download_file_CURL"
+        if ! curl -L --progress-bar -o "$call_download_file_CURL" "$DOWNLOAD_URL_CURL"; then
+            echo -e "$(collor_red "fail:") Failed to download the file.."
+
+            end_console_main ""
+        else
+            unzip -q "$call_download_file_CURL" -d "$shell_DIR"
+
+            echo
+            echo -e "$(collor_yellow "Download completed successfully.")"
+            echo
+
+            end_console_main ""
+        fi
+    else
+        end_console_main ""
+    fi
+}
+export struct_compilers_win
+

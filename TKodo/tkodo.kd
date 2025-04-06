@@ -1,0 +1,677 @@
+#!/usr/bin/bash
+
+function mode_TKODO() {
+    #
+    #   @mode.TKODO
+    #
+
+    console_TITLE "TKodo Mode"
+    
+    rest_var ""
+    
+    HISTFILE="$HOME/.kodo.txt"
+    touch "$HISTFILE"
+
+    history -r "$HISTFILE"
+
+    read -e -r -p "tkodo:~$ " pac_table
+
+    if [ -n "$pac_table" ]; then
+        echo "$pac_table" >> "$HISTFILE"
+    fi
+
+    struct_TKODO "$pac_table"
+}
+export mode_TKODO
+
+function struct_TKODO()
+{
+    : '
+        TKODO Mode
+    '
+
+    local trigger_pac="tkodo"
+
+    # Variable. if url is unknown (not github/gitlab/sourceforge)
+    local pac_uhost=0
+
+    # AutoInstall depends
+    local tables1="autoinstall"
+    # Install/Reinstall depends
+    local tables2="install"
+    # Remove depends
+    local tables3="remove"
+
+    case "$pac_table" in
+        "$tables1")
+            if [ ! -f "$shell_DIR/.cache/tkodo" ]; then
+                printf_red "crit:" "No download history found in cache!"
+                mode_TKODO ""
+            fi
+
+            local tables1_url_cache
+
+            # Read the encrypted data from the cache
+            PAC_encrypted_data=$(tail -n 1 "$shell_DIR/.cache/tkodo")
+
+            # Decrypt the URL
+            tables1_url_cache=$(echo "$PAC_encrypted_data" | openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:$TKODO_DECRYPT -base64 -in "$shell_DIR/.cache/tkodo")
+
+            # Check if decryption was successful and if the URL is valid
+            if [[ -z "$tables1_url_cache" || ! "$tables1_url_cache" =~ ^https:// ]]; then
+                printf_red "crit:" "No valid URL found in cache!"
+                mode_TKODO ""
+            fi
+
+            # Debug output: Show the decrypted URL
+            printf_yellow "dbg:" "Using last history: $tables1_url_cache"
+
+            # Prevent rewriting the cache, which could corrupt it
+            save_autoinstall=1
+
+            pac_table="install $tables1_url_cache"
+            struct_TKODO "$pac_table"
+            ;;
+        ########################################################################################################################################################
+        "$tables2"*)
+            console_TITLE "Install Packages"
+
+            local tables2_input_args="${pac_table#"$tables2 "}"
+
+            local SAVE_QUICK=0
+
+            local tables2_url_args=()
+
+            # Check if the repository URL is non-empty and not equal to "install"
+            if [[ -n "$tables2_input_args" && "$tables2_input_args" != "install" ]]; then
+                # If a valid repository URL is provided, store it in the tables2_url_args array
+                tables2_url_args=("$tables2_input_args")
+
+                SAVE_QUICK=1
+            else
+                SAVE_QUICK=0
+                # Check if tkodo.json file exists
+                if [ -f "tkodo.json" ] && [ -f "tkodo.toml" ]; then
+                    printf_red "crit:" "tkodo.json and tkodo.toml Cannot be merged!. choose tkodo.json.."
+                elif [ -f "tkodo.json" ]; then
+                    mapfile -t tables2_url_args < <(python3 -c 'import json, sys; data = json.load(sys.stdin); print("\n".join(data["package"]))' < tkodo.json)
+                elif [ -f "tkodo.toml" ]; then
+                    mapfile -t tables2_url_args < <(tomlq -r '.package.urls[]' tkodo.toml)
+                else
+                    printf_red "crit:" "tkodo.json or tkodo.toml not found!"
+                    sleep 2.2
+                    cat > tkodo.json <<EOF
+{
+    "package": [
+        "github/user/repository",
+        "gitlab/user/repository",
+        "sourceforge/user/repository"
+    ]
+}
+EOF
+                    if command -v nano &> /dev/null; then
+                        nano "$shell_DIR/tkodo.json"
+                    fi
+                    mode_TKODO ""
+                fi
+            fi
+
+            for tables2_input_args in "${tables2_url_args[@]}"; do
+                : ' array to variable '
+
+                if [[ "$tables2_input_args" != https://* ]]; then
+                : ' TKodo: package URL to https
+                '
+                    if [[ "$tables2_input_args" == github/* ]]; then
+                        : ' github '
+                        tables2_input_args="https://github.com/${tables2_input_args#github/}"
+                    elif [[ "$tables2_input_args" == gitlab/* ]]; then
+                        : ' gitlab '
+                        tables2_input_args="https://gitlab.com/${tables2_input_args#gitlab/}"
+                    elif [[ "$tables2_input_args" == sourceforge/* ]]; then
+                        : ' sourceforge '
+                        tables2_input_args="https://sourceforge.net/projects/${tables2_input_args#sourceforge/}"
+                    else
+                        : ' unknown '
+                        pac_uhost=1
+                        continue
+                    fi
+                fi
+                
+                if [[ "$tables2_input_args" == *"/releases/download/"* ]]; then
+                    pac_ARCH_URL="$tables2_input_args"
+                elif [[ "$tables2_input_args" == *"/releases/tag/"* ]]; then
+                    local pac_REPOS
+                    pac_REPOS=$(echo "$tables2_input_args" | awk -F '/' '{print $(NF-3) "/" $(NF-2)}')
+                    local pac_REPOS_TAG
+                    pac_REPOS_TAG=$(echo "$tables2_input_args" | awk -F '/' '{print $NF}')
+                
+                    if [[ "$tables2_input_args" == *"github.com"* ]]; then
+                        : ' github '
+                        pac_API_URL="https://api.github.com/repos/$pac_REPOS/git/refs/tags/$pac_REPOS_TAG"
+                    elif [[ "$tables2_input_args" == *"gitlab.com"* ]]; then
+                        : ' gitlab '
+                        pac_API_URL="https://gitlab.com/api/v4/projects/$(echo "$pac_REPOS" | tr '/' '%2F')/releases/$pac_REPOS_TAG"
+                    elif [[ "$tables2_input_args" == *"sourceforge.net"* ]]; then
+                        : ' sourceforge '
+                        pac_API_URL="https://sourceforge.net/projects/$pac_REPOS/files/latest/download"
+                    else
+                        : ' unknown '
+                        pac_uhost=1
+                        continue
+                    fi
+                
+                    if [ "$pac_uhost" -eq 1 ]; then
+                        [[ -z "$pac_ARCH_URL" ]] && pac_ARCH_URL=$(curl -s "$tables2_input_args" | grep "browser_download_url" | grep -E ".zip|.tar.gz" | awk -F '"' '{print $4}' | head -n 1)
+                    elif [ "$pac_uhost" -eq 0 ]; then
+                        [[ -z "$pac_ARCH_URL" ]] && pac_ARCH_URL=$(curl -s "$pac_API_URL" | grep "browser_download_url" | grep -E ".zip|.tar.gz" | awk -F '"' '{print $4}' | head -n 1)
+                    fi
+                else
+                    local pac_REPOS
+                    pac_REPOS=$(echo "$tables2_input_args" | awk -F '/' '{print $(NF-1) "/" $NF}')
+                
+                    if [[ "$tables2_input_args" == *"github.com"* ]]; then
+                        : ' github '
+                        pac_API_URL="https://api.github.com/repos/$pac_REPOS/releases/latest"
+                    elif [[ "$tables2_input_args" == *"gitlab.com"* ]]; then
+                        : ' gitlab '
+                        pac_API_URL="https://gitlab.com/api/v4/projects/$(echo "$pac_REPOS" | tr '/' '%2F')/releases/permalink/latest"
+                    elif [[ "$tables2_input_args" == *"sourceforge.net"* ]]; then
+                        : ' sourceforge '
+                        pac_ARCH_URL="https://sourceforge.net/projects/$pac_REPOS/files/latest/download"
+                    else
+                        : ' unknown '
+                        pac_uhost=1
+                        continue
+                    fi
+
+                    if [ "$pac_uhost" -eq 1 ]; then
+                        [[ -z "$pac_ARCH_URL" ]] && pac_ARCH_URL=$(curl -s "$tables2_input_args" | grep "browser_download_url" | grep -E ".zip|.tar.gz" | awk -F '"' '{print $4}' | head -n 1)
+                    elif [ "$pac_uhost" -eq 0 ]; then
+                        [[ -z "$pac_ARCH_URL" ]] && pac_ARCH_URL=$(curl -s "$pac_API_URL" | grep "browser_download_url" | grep -E ".zip|.tar.gz" | awk -F '"' '{print $4}' | head -n 1)
+                    fi
+                fi
+
+                : ' Prevents overheating gap '
+                sleep 0.5
+
+                # cache extract directory
+                local pac_extract_dirs=".tcache"
+                if [[ -d "$pac_extract_dirs" && "$pac_extract_dirs" == .tcache ]]; then
+                    rm -rf "$pac_extract_dirs"
+                fi
+                mkdir -p "$pac_extract_dirs"
+
+                if [ -n "$json_PAC_INCLUDE" ]; then
+                    # if not null
+                    if [ ! -d "$json_PAC_INCLUDE" ]; then
+                        # if not exist -> d : dir - f : file
+                        mkdir -p "$json_PAC_INCLUDE"
+                    fi
+                else
+                    if [ ! -d "$json_PAC_INCLUDE" ]; then
+                        # if not exist -> d : dir - f : file
+                        mkdir -p "pawno/include"
+                        json_PAC_INCLUDE="pawno/include"
+                    fi
+                fi
+
+                if [ ! -d "$json_PAC_PLUGINS" ]; then
+                    # if not exist -> d : dir - f : file
+                    mkdir "$json_PAC_PLUGINS" >/dev/null 2>&1 || mkdir "plugins" >/dev/null 2>&1
+                fi
+
+                #
+                #   handle name / version.
+                #
+
+                # Extract the base name of the repository URL and remove the file extension (if any)
+                local pac_DEPENDS
+                pac_DEPENDS=$(basename "$tables2_input_args")
+                local pac_DEPENDS
+                pac_DEPENDS="${pac_DEPENDS%.*}"
+
+                # Initialize an empty variable for repository version
+                local new_vrepo=""
+
+                # Check if the repository URL contains '/releases/tag/' or '/releases/download/'
+                # and extract the version information from the URL accordingly
+                if [[ "$tables2_input_args" == *"/releases/tag/"* ]]; then
+                    # If it's a tag release, the version is the last part of the URL
+                    vrepo=$(echo "$tables2_input_args" | awk -F '/' '{print $NF}')
+                elif [[ "$tables2_input_args" == *"/releases/download/"* ]]; then
+                    # If it's a download release, the version is the second-to-last part of the URL
+                    vrepo=$(echo "$tables2_input_args" | awk -F '/' '{print $(NF-1)}')
+                else
+                    # If neither tag nor download, set the version as "Unknown's"
+                    vrepo="Unknown's"
+                fi
+
+                # Remove the 'v' prefix if present in the version
+                local vrepo=${vrepo#v}
+
+                # Store the version in another variable for later use
+                local new_vrepo="$vrepo"
+
+                # If the version doesn't contain any digits, mark it as an unknown version
+                if ! [[ "$vrepo" =~ [0-9] ]]; then
+                    # If no version detected, clear the version variable and set it as "Unknown's"
+                    vrepo=""
+                    new_vrepo="Unknown's"
+                fi
+
+                # If the package name wasn't extracted, set it as "Unknown's"
+                if [[ -z "$pac_DEPENDS" ]]; then
+                    pac_DEPENDS="Unknown's"
+                fi
+
+                local new_pac_DEPENDS="$pac_DEPENDS"
+
+                sleep 0.1
+
+                # Extract the package name from the repository URL by removing the file extension and hyphen
+                pac_DEPENDS=$(basename "$tables2_input_args")
+                pac_DEPENDS="${pac_DEPENDS%%-*}"
+
+                # Determine the archive file format based on the URL
+                # If the URL ends with .zip, set the archive file to be .zip
+                if [[ "$pac_ARCH_URL" =~ \.zip$ ]]; then
+                    arch_files="$new_pac_DEPENDS.zip"
+                # If the URL ends with .tar.gz, set the archive file to be .tar.gz
+                elif [[ "$pac_ARCH_URL" =~ \.tar\.gz$ ]]; then
+                    arch_files="$new_pac_DEPENDS.tar.gz"
+                # Default to .zip if neither .zip nor .tar.gz is detected
+                else
+                    arch_files="$new_pac_DEPENDS.zip"
+                fi
+
+                # Inform the user that the download is starting
+                echo -e "$(collor_yellow "Downloading") $new_pac_DEPENDS v$vrepo"
+                
+                # Download the archive using wget with progress showing
+                aria2c --summary-interval=1 --console-log-level=warn --download-result=hide -o "$arch_files" "$pac_ARCH_URL"
+                
+                if [ "$SAVE_QUICK" -eq 1 ]; then
+                    # Encryption
+                    PAC_encrypted_data=$(echo "$tables2_input_args" | openssl enc -aes-256-cbc -salt -pbkdf2 -pass pass:$TKODO_DECRYPT -base64)
+
+                    # Save Encryption to Cache/TKodo
+                    if [ "$save_autoinstall" -ne 1 ]; then
+                        echo "$PAC_encrypted_data" > "$shell_DIR/.cache/tkodo"
+                    fi
+                fi
+
+                echo
+
+                # Archive Check
+                if [ -f "$arch_files" ]; then
+                    # Check if the downloaded file is a ZIP archive
+                    if file "$arch_files" | grep -q "Zip archive data"; then
+                        # If it's a ZIP file, unzip it to the extraction directory
+                        unzip -q "$arch_files" -d "$pac_extract_dirs"
+                    # Check if the downloaded file is a GZIP compressed TAR file
+                    elif file "$arch_files" | grep -q "gzip compressed data"; then
+                        # If it's a TAR.GZ file, extract it to the extraction directory
+                        mkdir -p "$pac_extract_dirs"
+                        tar -xzf "$arch_files" -C "$pac_extract_dirs" --strip-components=1
+                    else
+                        # If the downloaded file is neither a ZIP nor a TAR.GZ, report an error and clean up
+                        printf_red "crit:" "Downloaded file is not a valid ZIP or TAR.GZ.."
+                        
+                        # Verify before removing
+                        if [ -f "$arch_files" ]; then
+                            printf_yellow "[OK]" "Removing invalid archive: $arch_files"
+                            shred -u "$arch_files"
+                        fi
+                        
+                        if [ -d "$pac_extract_dirs" ]; then
+                            printf_yellow "[OK]" "Removing extracted directory: $pac_extract_dirs"
+                            rm -rf "$pac_extract_dirs"
+                        fi
+                        
+                        continue
+                    fi
+                else
+                    # If not exist
+                    printf_red "crit:" "Download failed!. Check the installer"
+                    mode_TKODO ""
+                fi
+
+                mapfile -t _pac_include < <(find "$pac_extract_dirs" -type f -name "*.inc" -exec basename {} \;)
+
+                if [ -d "$json_PAC_INCLUDE" ]; then
+                    find "$pac_extract_dirs" -type f -name "*.inc" | while IFS= read -r inc_file; do
+                        _real_path=$(realpath --relative-to="$pac_extract_dirs" "$inc_file" 2> /dev/null || echo "$inc_file")
+                        
+                        # Check if $_real_path contains '/include/'
+                        # If it does, the part before '/include/' will be removed
+                        # This ensures we only get the path after 'include/'
+                        if [[ "$_real_path" =~ (^|/)include/ ]]; then
+                            _real_path="${_real_path#*include/}"
+                        fi
+
+                        # Check if $_real_path contains '/' which indicates a more complete path
+                        # If there is a '/', we need to get the directory from $_real_path
+                        # $json_PAC_INCLUDE will be combined with the directory of that path
+                        if [[ "$_real_path" == */* ]]; then
+                            _dest_path="$json_PAC_INCLUDE/$(dirname "$_real_path")"
+                        else
+                            # If there is no '/', $_real_path is just a file name
+                            # So, we just point to the base directory $json_PAC_INCLUDE
+                            _dest_path="$json_PAC_INCLUDE"
+                        fi
+
+                        mkdir -p "$_dest_path"
+                        mv -f "$inc_file" "$_dest_path/"
+                    done
+
+                    # Check if both "components" and "plugins" directories exist
+                    # If they do, move them both to shell_DIR
+                    if [ -d "$pac_extract_dirs/components" ] && [ -d "$pac_extract_dirs/plugins" ]; then
+                        mkdir -p "$shell_DIR/components" "$shell_DIR/plugins"
+                        echo -e "$(collor_yellow "Detected & Moving") plugins & components to $shell_DIR"
+                        cp -r "$pac_extract_dirs/components/"* "$shell_DIR/components/"
+                        cp -r "$pac_extract_dirs/plugins/"* "$shell_DIR/plugins/"
+
+                        rm -rf "$pac_extract_dirs/components" "$pac_extract_dirs/plugins"
+
+                    # Check if only "components" directory exists, then move it
+                    elif [ -d "$pac_extract_dirs/components" ]; then
+                        mkdir -p "$shell_DIR/components"
+                        echo -e "$(collor_yellow "Detected & Moving") components to $shell_DIR"
+                        cp -r "$pac_extract_dirs/components/"* "$shell_DIR/components/"
+
+                    # Check if only "plugins" directory exists, then move it
+                    elif [ -d "$pac_extract_dirs/plugins" ]; then
+                        mkdir -p "$shell_DIR/plugins"
+                        echo -e "$(collor_yellow "Detected & Moving") plugins to $shell_DIR"
+                        cp -r "$pac_extract_dirs/plugins/"* "$shell_DIR/plugins/"
+
+                    # If neither "components" nor "plugins" exist, move .dll and .so files instead
+                    else
+                        find "$pac_extract_dirs" -type f \( -name "*.dll" -o -name "*.so" \) -exec mv -f {} "$json_PAC_PLUGINS/" \;
+                    fi
+
+                    # Cleanup: Remove the extracted archive and its directory
+                    if [[ -f "$arch_files" && -d "$pac_extract_dirs" ]]; then
+                        shred -u "$arch_files" && rm -rf "$pac_extract_dirs"
+                        printf_yellow "[OK]" "Removed: $arch_files and $pac_extract_dirs"
+                    fi
+
+                    # Print completion message with package and repo version info
+                    echo -e "$(collor_yellow "Complete!.") Packages: $new_pac_DEPENDS | $new_vrepo"
+                fi
+            done
+
+        pac_include_serv() {
+            # Check if the main file exists
+            if [[ -f "$shell_DIR/gamemodes/$json_FILE_SERV" ]]; then
+                # Check if the include already exists in the file
+                if ! grep -qxF "#include <$1>" "$shell_DIR/gamemodes/$json_FILE_SERV"; then
+                    # Check if a_samp or open.mp includes are present
+                    if grep -Eq "^a_samp|a_samp.inc|open\.mp" "$shell_DIR/gamemodes/$json_FILE_SERV"; then
+                        # Debug message
+                        printf_yellow "dbg:" "Adding #include <$1> after #include <a_samp> or #include <open.mp>"
+                        # Insert the include after a_samp or open.mp
+                        awk -v inc="#include <$1>" '
+                            /^#include (<|")?(a_samp|a_samp.inc|open\.mp)(>|")?/ { print; print inc; next }
+                            { print }
+                        ' "$shell_DIR/gamemodes/$json_FILE_SERV" > "$shell_DIR/gamemodes/$json_FILE_SERV.tmp" && mv "$shell_DIR/gamemodes/$json_FILE_SERV.tmp" "$shell_DIR/gamemodes/$json_FILE_SERV"
+                    else
+                        # Debug message if no a_samp or open.mp found
+                        printf_yellow "dbg:" "No #include <a_samp> | \"a_samp\" or #include <open.mp> | \"open.mp\" found, adding at the beginning"
+                        # Add the include at the beginning of the file
+                        sed -i "1i#include <$1>" "$shell_DIR/gamemodes/$json_FILE_SERV"
+                    fi
+                else
+                    # Debug message if the include already exists
+                    printf_yellow "dbg:" "#include <$1> already exists in $shell_DIR/gamemodes/$json_FILE_SERV"
+                fi
+            else
+                # Debug message if the file is not found
+                printf_yellow "dbg:" "$shell_DIR/gamemodes/$json_FILE_SERV not found."
+            fi
+        }
+
+            # Loop through each package name in the _pac_include array
+            for __packages__ in "${_pac_include[@]}"; do
+                # Check if the package name is not empty
+                if [ -n "$__packages__" ]; then
+                    pac_include_serv "$__packages__"
+                fi
+            done
+
+    if [ -f "$shell_DIR/$json_SERVER_CONFIG" ]; then
+        if [[ "$__SAMP_SERVER" == "samp" ]]; then
+                pac_plugin_serv_samp() {
+                    # Check if the plugin is already listed in server.cfg
+                    if ! grep -qE "^plugins.*\b$1\b" "$json_SERVER_CONFIG"; then
+                        # If both .so and .dll files exist
+                        if [[ -f "$json_PAC_PLUGINS/$1.so" && -f "$json_PAC_PLUGINS/$1.dll" ]]; then
+                            printf_yellow "dbg:" "Adding $1.so and $1.dll to the plugins"
+                            sed -i -E "s/^(plugins.*)/\1 $1.dll $1.so/" "$json_SERVER_CONFIG"
+                        # If only .so exists
+                        elif [[ -f "$json_PAC_PLUGINS/$1.so" ]]; then
+                            printf_yellow "dbg:" "Adding $1.so to the plugins"
+                            sed -i -E "s/^(plugins.*)/\1 $1.so/" "$json_SERVER_CONFIG"
+                        # If only .dll exists
+                        elif [[ -f "$json_PAC_PLUGINS/$1.dll" ]]; then
+                            printf_yellow "dbg:" "Adding $1.dll to the plugins"
+                            sed -i -E "s/^(plugins.*)/\1 $1.dll/" "$json_SERVER_CONFIG"
+                        fi
+                    else
+                        printf_yellow "dbg:" "Plugin $1 already exists, not added."
+                    fi
+                }
+
+                # Check if the "plugins" line exists in server.cfg
+                if ! grep -q "^plugins" "$json_SERVER_CONFIG"; then
+                    echo "plugins" >> "$json_SERVER_CONFIG"
+                    printf_yellow "dbg:" "The 'plugins' line has been added to server.cfg."
+                fi
+
+                # Loop to ensure all plugins are properly added
+                for __plugins__ in $pac_DEPENDS $new_pac_DEPENDS; do
+                    pac_plugin_serv_samp "$__plugins__"
+                done
+        elif [[ "$__SAMP_SERVER" == "omp" ]]; then
+            pac_plugin_serv_omp() {
+                # Check if the plugin already exists in the "legacy_plugins" array within the "pawn" object
+                if ! grep -q -E "$1\.(so|dll)" "$json_SERVER_CONFIG"; then
+                    # If both .so and .dll exist
+                    if [[ -f "$json_PAC_PLUGINS/$1.so" && -f "$json_PAC_PLUGINS/$1.dll" ]]; then
+                        printf_yellow "dbg:" "Adding $1.so and $1.dll to pawn.legacy_plugins"
+                        jq ".pawn.legacy_plugins += [\"$1.dll\", \"$1.so\"]" "$json_SERVER_CONFIG" 2>/dev/null > .__ignored,json && mv .__ignored,json "$json_SERVER_CONFIG"
+                    # If only .so exists
+                    elif [[ -f "$json_PAC_PLUGINS/$1.so" ]]; then
+                        printf_yellow "dbg:" "Adding $1.so to pawn.legacy_plugins"
+                        jq ".pawn.legacy_plugins += [\"$1.so\"]" "$json_SERVER_CONFIG" 2>/dev/null > .__ignored,json && mv .__ignored,json "$json_SERVER_CONFIG"
+                    # If only .dll exists
+                    elif [[ -f "$json_PAC_PLUGINS/$1.dll" ]]; then
+                        printf_yellow "dbg:" "Adding $1.dll to pawn.legacy_plugins"
+                        jq ".pawn.legacy_plugins += [\"$1.dll\"]" "$json_SERVER_CONFIG" 2>/dev/null > .__ignored,json && mv .__ignored,json "$json_SERVER_CONFIG"
+                    fi
+                else
+                    printf_yellow "dbg:" "Plugin $1 already exists in pawn.legacy_plugins, not added."
+                fi
+            }
+
+            # Checking if the JSON file has the correct structure
+            # Ensure the config.json file is an object and has a "pawn" object with a "legacy_plugins" array
+            if ! jq -e '.pawn.legacy_plugins' "$json_SERVER_CONFIG" 2>/dev/null > /dev/null; then
+                # Add or fix the JSON structure by adding the "pawn" key containing "legacy_plugins" as an empty array
+                if jq -e '. | type == "object"' "$json_SERVER_CONFIG" 2>/dev/null > /dev/null; then
+                    jq '.pawn = {legacy_plugins: []} + .' "$json_SERVER_CONFIG" 2>/dev/null > .__ignored,json && mv .__ignored,json "$json_SERVER_CONFIG"
+                    printf_yellow "dbg:" "Key 'pawn.legacy_plugins' has been added as an empty array."
+                fi
+            fi
+
+            # Remove duplicates from the legacy_plugins array
+            jq '.pawn.legacy_plugins |= unique' "$json_SERVER_CONFIG" > .__ignored,json && mv .__ignored,json "$json_SERVER_CONFIG"
+
+            # Adding plugins based on pac_DEPENDS and new_pac_DEPENDS variables
+            pac_plugin_serv_omp "$pac_DEPENDS"
+            pac_plugin_serv_omp "$new_pac_DEPENDS"
+        fi
+    fi
+            # end.
+            printf_yellow "[All packages installed]"
+
+            ignore_this sleep 0.1
+
+            mode_TKODO ""
+            ;;
+        ########################################################################################################################################################
+        "$tables3"*)
+            console_TITLE "Remove Packages"
+
+            local tables3_input_args="${pac_table#"$tables3 "}"
+
+            if [[ -n "$tables3_input_args" ]]; then
+                rm_input_save="$tables3_input_args"
+            else
+                echo ":: Enter the name pattern of the include/plugin to remove:"
+                read -r -p ">>> " rm_input_save
+
+                printf_gray ":: Enter the name pattern of the include/plugin to remove:"
+                while true; do
+                    read -r -p ">>> " rm_input_save
+                    [[ -n "$commands_INPUT" ]] && break
+                done
+            fi
+
+            # Function to filter and remove files based on a pattern
+            # Takes one argument, a pattern, which will be used to match file names
+            regex_to_remove() {
+                # Read each line (file path) passed to the function
+                while read -r __file; do
+                    _file=$(basename "$__file")  # Extract the file name from the full path
+                    if [[ "$_file" =~ ^$$1([0-9]{1,4})?(\.[a-z]+)?$ || "$_file" =~ .*-?$$1([0-9]{1,4})?(\.[a-z]+)?$ ]]; then
+                        echo "$__file"
+                    fi
+                done
+            }
+
+            if [ -d "$json_PAC_INCLUDE" ]; then
+                pac_INCLUDES=$(find "$json_PAC_INCLUDE" -type f -name "*.inc" -print0 | regex_to_remove "$rm_input_save")
+
+                if [[ -n "$pac_INCLUDES" ]]; then
+                    echo "$pac_INCLUDES" | xargs -0 shred -u
+                    printf_yellow "[OK]" "Removed includes: $pac_INCLUDES"
+                else
+                    printf_yellow "dbg:" "No matching include files found: $rm_input_save"
+                fi
+            else
+                # If the $json_PAC_INCLUDE folder does not exist, print a warning message
+                printf_green "warn:" "$json_PAC_INCLUDE not found"
+            fi
+
+            if [ -d "$json_PAC_PLUGINS" ]; then
+                _pac_plugins=$(find "$json_PAC_PLUGINS" -type f \( -name "*.dll" -o -name "*.so" \) -print0 | regex_to_remove "$rm_input_save")
+
+                if [[ -n "$_pac_plugins" ]]; then
+                    echo "$_pac_plugins" | xargs -0 shred -u
+                    printf_yellow "[OK]" "Removed plugins: $_pac_plugins"
+                else
+                    printf_yellow "dbg:" "No matching plugin files found: $rm_input_save"
+                fi
+            else
+                # If the $json_PAC_PLUGINS folder does not exist, print a warning message
+                printf_green "warn:" "$json_PAC_PLUGINS not found"
+            fi
+
+            # Function to remove #include <find_plugin_name> from main.pwn
+        __rm_include_f_main() {
+                local escaped_plugins
+                escaped_plugins=$(echo "$1" | sed 's/[&/\]/\\&/g')  # Escape special characters in the plugin name
+
+                if [[ -f "$shell_DIR/gamemodes/$json_FILE_SERV" ]]; then  # Check if the main server file exists
+                    if grep -q "#include <$escaped_plugins>" "$shell_DIR/gamemodes/$json_FILE_SERV"; then  # Check if the plugin is already included
+                        printf_yellow "dbg:" "Removing #include <$escaped_plugins> from $shell_DIR/gamemodes/$json_FILE_SERV"
+                        # Remove the #include line for the plugin from the main server file
+                        sed -i "/#include <$escaped_plugins>/d" "$shell_DIR/gamemodes/$json_FILE_SERV"
+                    else
+                        printf_yellow "dbg:" "#include <$escaped_plugins> not found in $shell_DIR/gamemodes/$json_FILE_SERV"
+                    fi
+                else
+                    printf_yellow "dbg:" "$shell_DIR/gamemodes/$json_FILE_SERV not found."
+                fi
+        }
+
+            # Loop to remove plugins from main.pwn
+            for __packages__ in $rm_input_save; do  # Iterate through each pattern in the rm_input_save variable
+                if [ -n "$__packages__" ]; then
+                    __rm_include_f_main "$__packages__"
+                fi
+            done
+
+        if [[ "$__SAMP_SERVER" == "samp" ]]; then
+            # Check if the $json_SERVER_CONFIG file exists
+            if [ -f "$json_SERVER_CONFIG" ]; then
+                # Check if the 'plugins' entry exists in the $json_SERVER_CONFIG file
+                if grep -q "^plugins" "$json_SERVER_CONFIG"; then
+                    # Remove occurrences of $rm_input_save followed by .so, .dll, or no extension
+                    # This pattern is globally replaced in the file
+                    sed -i "/^plugins /s/\b$rm_input_save\(\.so\|\.dll\|\)//g" "$json_SERVER_CONFIG"
+                    # Replace double spaces with single space throughout the file
+                    sed -i 's/  / /g' "$json_SERVER_CONFIG"
+                    # Ensure that the 'plugins' entry is not an empty line
+                    sed -i 's/^plugins *$/plugins /' "$json_SERVER_CONFIG"
+                    # Print a success message after the modifications
+                    printf_yellow "[OK]" "Removed $rm_input_save from $json_SERVER_CONFIG"
+                else
+                    # If no 'plugins' entry is found, print a debug message
+                    printf_yellow "dbg:" "No 'plugins' entry found in $json_SERVER_CONFIG"
+                fi
+            else
+                # If the $json_SERVER_CONFIG file does not exist, print a warning message
+                printf_green "warn:" "$json_SERVER_CONFIG not found"
+            fi
+        elif [[ "$__SAMP_SERVER" == "omp" ]]; then
+            # Check if the $json_SERVER_CONFIG file exists
+            if [ -f "$json_SERVER_CONFIG" ]; then
+            # Check if the 'legacy_plugins' entry exists in the $json_SERVER_CONFIG file
+                if grep -qE '"legacy_plugins"[[:space:]]*:' "$json_SERVER_CONFIG"; then
+                    # Handle array format
+                    jq --arg pattern "$rm_input_save" 'walk(if type == "array" then map(select(. != $pattern)) else . end)' "$json_SERVER_CONFIG" > .cache_tmp && mv .cache_tmp "$json_SERVER_CONFIG"
+                    # Print a success message after the modifications
+                    printf_yellow "[OK]" "Removed $rm_input_save from $json_SERVER_CONFIG"
+                else
+                    # If no 'legacy_plugins' entry is found, print a debug message
+                    printf_yellow "dbg:" "No 'legacy_plugins' entry found in $json_SERVER_CONFIG"
+                fi
+            else
+                # If the $json_SERVER_CONFIG file does not exist, print a warning message
+                printf_green "warn:" "$json_SERVER_CONFIG not found"
+            fi
+        fi
+
+            # end.
+            printf_yellow "[OK]" "Removal process completed!"
+
+            mode_TKODO ""
+            ;;
+        "$trigger_pac -C" | "clear" | "cc")
+            clear; echo -ne "\033[3J"
+            mode_TKODO ""
+            ;;
+        "$trigger_pac" | "$trigger_pac " | "" | " ")
+            help_dialog_pac
+            mode_TKODO ""
+            ;;
+        "help")
+            shell_TITLE="help"
+            console_TITLE "help"
+
+            help_dialog_pac
+            mode_TKODO ""
+            ;;
+       "exit")
+            struct_console_main ""
+            ;;
+        *)
+            echo "error: $pac_table: command not found"
+            mode_TKODO ""
+            ;;
+    esac
+}

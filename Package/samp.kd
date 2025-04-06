@@ -1,0 +1,178 @@
+#!/usr/bin/bash
+
+function struct_samp_linux()
+{
+    echo ":: Do you want to continue downloading SA-MP? (Yy/Nn)"
+    read -r -p ">> " SEL_C
+
+    if [[ -z "$SEL_C" || "$SEL_C" =~ ^[Yy]$ ]]; then
+        cd "$shell_DIR" || end_console_main ""
+        echo "Select the SA-MP version to download:"
+        echo "[A/a] SA-MP  0.3.DL R1"
+        echo "[B/b] SA-MP  0.3.7 R3"
+        echo "[C/c] SA-MP  0.3.7 R2-2-1"
+        echo "[D/d] SA-MP  0.3.7 R2-1"
+        echo "[E/e] OpenMP v1.4.0.2779"
+        echo "[F/f] OpenMP v1.3.1.2748"
+        echo "[G/g] OpenMP v1.2.0.2670"
+        echo "[H/h] OpenMP v1.1.0.2612"
+        read -r -p ">> " VERSION_NEED
+        
+        while true; do
+            case "$VERSION_NEED" in
+                [Aa])
+                    DOWNLOAD_URL_CURL="https://github.com/vilksons/files.sa-mp.com-Archive/raw/refs/heads/master/samp03DLsvr_R1.tar.gz"
+                    call_download_file_CURL="samp03DLsvr_R1.tar.gz"
+                    break
+                    ;;
+                [Bb])
+                    DOWNLOAD_URL_CURL="https://github.com/vilksons/files.sa-mp.com-Archive/raw/refs/heads/master/samp037svr_R3.tar.gz"
+                    call_download_file_CURL="samp037svr_R3.tar.gz"
+                    break
+                    ;;
+                [Cc])
+                    DOWNLOAD_URL_CURL="https://github.com/vilksons/files.sa-mp.com-Archive/raw/refs/heads/master/samp037svr_R2-2-1.tar.gz"
+                    call_download_file_CURL="samp037svr_R2-2-1.tar.gz"
+                    break
+                    ;;
+                [Dd])
+                    DOWNLOAD_URL_CURL="https://github.com/vilksons/files.sa-mp.com-Archive/raw/refs/heads/master/samp037svr_R2-1.tar.gz"
+                    call_download_file_CURL="samp037svr_R2-1.tar.gz"
+                    break
+                    ;;
+                [Ee])
+                    DOWNLOAD_URL_CURL="https://github.com/openmultiplayer/open.mp/releases/download/v1.4.0.2779/open.mp-linux-x86.tar.gz"
+                    call_download_file_CURL="open.mp-win-x86.zip"
+                    break
+                    ;;
+                [Ff])
+                    DOWNLOAD_URL_CURL="https://github.com/openmultiplayer/open.mp/releases/download/v1.3.1.2748/open.mp-linux-x86.tar.gz"
+                    call_download_file_CURL="open.mp-linux-x86.tar.gz"
+                    break
+                    ;;
+                [Gg])
+                    DOWNLOAD_URL_CURL="https://github.com/openmultiplayer/open.mp/releases/download/v1.2.0.2670/open.mp-linux-x86.tar.gz"
+                    call_download_file_CURL="open.mp-linux-x86.tar.gz"
+                    break
+                    ;;
+                [Hh])
+                    DOWNLOAD_URL_CURL="https://github.com/openmultiplayer/open.mp/releases/download/v1.1.0.2612/open.mp-linux-x86.tar.gz"
+                    call_download_file_CURL="open.mp-linux-x86.tar.gz"
+                    break
+                    ;;
+                *)
+                    echo -e "$(collor_red "err:") Invalid selection. Please enter the Number!"
+                    read -r -p ">> " VERSION_NEED
+                    ;;
+            esac
+        done
+
+        echo -e "\nDownloading: $DOWNLOAD_URL_CURL -> $call_download_file_CURL"
+        if ! curl -L --progress-bar -o "$call_download_file_CURL" "$DOWNLOAD_URL_CURL"; then
+            echo -e "$(collor_red "fail:") Failed to download the file.."
+            
+            end_console_main ""
+        else
+            tar -xzvf "$call_download_file_CURL" -C "$shell_DIR" --strip-components=1
+
+            echo
+            echo -n "$(collor_yellow "Download completed successfully.")"
+            echo
+            echo "Please rename \"rcon_password\" before running this command again"
+
+            end_console_main ""
+        fi
+    else
+        end_console_main ""
+    fi
+}
+export struct_samp_linux
+
+function struct_samp_win()
+{
+    echo ":: Do you want to continue downloading SA-MP? (Yy/Nn)"
+    read -r -p ">> " SEL_C
+    
+    if [[ -z "$SEL_C" || "$SEL_C" =~ ^[Yy]$ ]]; then
+        cd "$shell_DIR" || end_console_main ""
+        echo "Select the SA-MP version to download:"
+        echo "[A/a] SA-MP 0.3.DL R1"
+        echo "[B/b] SA-MP 0.3.7 R3"
+        echo "[C/c] SA-MP 0.3.7 R2-2-1"
+        echo "[D/d] SA-MP 0.3.7 R2-1-1"
+        echo "[E/e] OpenMP v1.4.0.2779"
+        echo "[F/f] OpenMP v1.3.1.2748"
+        echo "[G/g] OpenMP v1.2.0.2670"
+        echo "[H/h] OpenMP v1.1.0.2612"
+        read -r -p ">> " VERSION_NEED
+
+        while true; do
+            case "$VERSION_NEED" in
+                [Aa])
+                    DOWNLOAD_URL_CURL="https://github.com/vilksons/files.sa-mp.com-Archive/raw/refs/heads/master/samp03DL_svr_R1_win32.zip"
+                    call_download_file_CURL="samp03DL_svr_R1_win32.zip"
+                    break
+                    ;;
+                [Bb])
+                    DOWNLOAD_URL_CURL="https://github.com/vilksons/files.sa-mp.com-Archive/raw/refs/heads/master/samp037_svr_R3_win32.zip"
+                    call_download_file_CURL="samp037_svr_R3_win32.zip"
+                    break
+                    ;;
+                [Cc])
+                    DOWNLOAD_URL_CURL="https://github.com/vilksons/files.sa-mp.com-Archive/raw/refs/heads/master/samp037_svr_R2-1-1_win32.zip"
+                    call_download_file_CURL="samp037_svr_R2-2-1_win32.zip"
+                    break
+                    ;;
+                [Dd])
+                    DOWNLOAD_URL_CURL="https://github.com/vilksons/files.sa-mp.com-Archive/raw/refs/heads/master/samp037_svr_R2-1-1_win32.zip"
+                    call_download_file_CURL="samp037_svr_R2-1-1_win32.zip"
+                    break
+                    ;;
+                [Ee])
+                    DOWNLOAD_URL_CURL="https://github.com/openmultiplayer/open.mp/releases/download/v1.4.0.2779/open.mp-win-x86.zip"
+                    call_download_file_CURL="open.mp-win-x86.zip"
+                    break
+                    ;;
+                [Ff])
+                    DOWNLOAD_URL_CURL="https://github.com/openmultiplayer/open.mp/releases/download/v1.3.1.2748/open.mp-win-x86.zip"
+                    call_download_file_CURL="open.mp-win-x86.zip"
+                    break
+                    ;;
+                [Gg])
+                    DOWNLOAD_URL_CURL="https://github.com/openmultiplayer/open.mp/releases/download/v1.2.0.2670/open.mp-win-x86.zip"
+                    call_download_file_CURL="open.mp-win-x86.zip"
+                    break
+                    ;;
+                [Hh])
+                    DOWNLOAD_URL_CURL="https://github.com/openmultiplayer/open.mp/releases/download/v1.1.0.2612/open.mp-win-x86.zip"
+                    call_download_file_CURL="open.mp-win-x86.zip"
+                    break
+                    ;;
+                *)
+                    echo -e "$(collor_red "err:") Invalid selection. Please enter the Number!"
+                    read -r -p ">> " VERSION_NEED
+                    ;;
+            esac
+        done
+
+        echo -e "\nDownloading: $DOWNLOAD_URL_CURL -> $call_download_file_CURL"
+        if ! curl -L --progress-bar -o "$call_download_file_CURL" "$DOWNLOAD_URL_CURL"; then
+            echo -e "$(collor_red "fail:") Failed to download the file.."
+
+            end_console_main ""
+        else
+            unzip -q "$call_download_file_CURL" -d "$shell_DIR"
+
+            echo
+            echo -n "$(collor_yellow "Download completed successfully.")"
+            echo
+            echo "Please rename \"rcon_password\" before running this command again"
+
+            end_console_main ""
+        fi
+    else
+        end_console_main ""
+    fi
+}
+export struct_samp_win
+

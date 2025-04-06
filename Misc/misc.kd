@@ -1,0 +1,163 @@
+#!/bin/bash
+
+function struct_choice_samp()
+{
+    while true; do
+        echo "# Select: [L]inux for Linux Files [W]indows for Windows Files"
+        read -r -p ">> " SEL_CO
+        case "$SEL_CO" in
+            [Ll])
+                struct_samp_linux "" && break ;;
+            [Ww])
+                struct_samp_win "" && break ;;
+            *)
+                echo -e "$(collor_red "err:") Invalid selection. Please enter L or W." ;;
+        esac
+    done
+}
+export struct_choice_samp
+
+function struct_choice_pawncc()
+{
+    while true; do
+        echo "# Select: [L]inux for Linux Files [W]indows for Windows Files"
+        read -r -p ">> " SEL_CO
+        case "$SEL_CO" in
+            [Ll])
+                struct_compilers_linux "" && break ;;
+            [Ww])
+                struct_compilers_win "" && break ;;
+            *)
+                echo -e "$(collor_red "err:") Invalid selection. Please enter L or W." ;;
+        esac
+    done
+}
+export struct_choice_pawncc
+
+ai_initialize()
+{
+    local commands_INPUT=$1
+
+    local SIZEOF_TOKEN
+    SIZEOF_TOKEN=$(jq -r '.bot_token' kodo.json)
+    local DECRYPT_TOKEN
+    DECRYPT_TOKEN=$(echo "$SIZEOF_TOKEN" | openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:$TKODO_DECRYPT -base64)
+
+    chatbot_response=$(curl -s -X POST https://api.groq.com/openai/v1/chat/completions \
+        -H "Authorization: Bearer $DECRYPT_TOKEN" \
+        -H "Content-Type: application/json" \
+        -d "{
+            \"model\": \"$json_CHATBOT_MODEL\",
+            \"messages\": [
+                {
+                \"role\": \"system\",
+                \"content\": \"$json_CHATBOT_BIODATA\"
+                },
+                {
+                \"role\": \"user\",
+                \"content\": \"$commands_INPUT\"
+                }
+            ],
+            \"temperature\": 1,
+            \"max_tokens\": 1024,
+            \"top_p\": 1,
+            \"stream\": false,
+            \"stop\": null
+        }")
+                
+__GREEN=$(tput setaf 2)
+__RED=$(tput setaf 1)
+__ORANGE=$(tput setaf 3)
+__RESET=$(tput sgr0)
+
+echo "$chatbot_response" |
+python3 -c "
+import sys, json, re
+import time
+
+COLORS = {
+    'true': '${__GREEN}', 'false': '${__RED}',
+    'string': '${__GREEN}', 'int': '${__GREEN}', 'float': '${__GREEN}', 'bool': '${__GREEN}', 
+    'double': '${__GREEN}', 'char': '${__GREEN}', 'return': '${__RED}', 'if': '${__GREEN}', 
+    'else': '${__GREEN}', 'while': '${__GREEN}', 'for': '${__GREEN}', 'do': '${__GREEN}', 
+    'try': '${__ORANGE}', 'catch': '${__ORANGE}', 'finally': '${__ORANGE}', 'throw': '${__RED}', 
+    'goto': '${__ORANGE}', 'switch': '${__GREEN}', 'case': '${__GREEN}', 'break': '${__RED}', 
+    'continue': '${__RED}', 'class': '${__GREEN}', 'void': '${__GREEN}', 'inline': '${__GREEN}',
+    'main': '${__ORANGE}', 'foo': '${__RED}', 'include': '${__GREEN}', 'end': '${__GREEN}'
+}
+
+def colorize(match):
+    word = match.group(0).lower()
+    return f'{COLORS.get(word, '')}{word}${__RESET}'
+
+try:
+    data = json.loads(sys.stdin.read())
+    chatbot_response = data.get('choices', [{}])[0].get('message', {}).get('content')
+
+    if not chatbot_response:
+        raise ValueError('Error: Response API Failed/not found.')
+
+    chatbot_response = re.sub(r'\b(?:' + '|'.join(COLORS.keys()) + r')\b', colorize, chatbot_response, flags=re.IGNORECASE)
+
+    for char in chatbot_response:
+        print(char, end='', flush=True)
+        time.sleep(0.03)
+
+    print()
+
+except json.JSONDecodeError:
+    print('Error: Invalid JSON', flush=True)
+
+except ValueError as e:
+    print(e, flush=True)
+
+except KeyboardInterrupt:
+    print(' Cancelled', end='', flush=True)
+    sys.exit(130)
+"
+
+	end_console_main ""
+	echo
+}
+export ai_initialize
+
+function fetch_now()
+{
+    local latest=""
+    local current=""
+    if [ -f "$shell_DIR/.itskodo" ]; then
+        current=$(cat "$shell_DIR/.itskodo" 2>/dev/null)
+    else
+        current=""
+    fi
+    
+    latest=$(curl -s "https://api.github.com/repos/vilksons/kodo/commits/kodo" | grep -o '"sha": "[^"]*' | awk -F': "' '{print $2}')
+
+    echo "oooo                        .o8            "
+    echo "\`888                       \"888            "
+    echo " 888  oooo   .ooooo.   .oooo888   .ooooo.  "
+    echo " 888 .8P'   d88' \`88b d88' \`888  d88' \`88b "
+    echo " 888888.    888   888 888   888  888   888 "
+    echo " 888 \`88b.  888   888 888   888  888   888 "
+    echo "o888o o888o \`Y8bod8P' \`Y8bod88P\" \`Y8bod8P' "
+
+    if [[ "$latest" == "$current" ]]; then
+        echo "Kodo is up-to-date."
+    else
+        echo "Kodo is behind the times"
+    fi
+    
+    echo "Kodo Licenses: $LICENSES"
+
+    find_PLATFORM=""
+    if [[ "$__OS__" == "linux" ]]; then find_PLATFORM="Linux"; fi
+    if [[ "$__OS__" == "windows" ]]; then find_PLATFORM="${find_PLATFORM:+$find_PLATFORM & }Windows"; fi
+
+    if [ -n "$find_PLATFORM" ]; then
+        echo "Kodo Platform: $find_PLATFORM"
+    else
+        echo "Kodo Platform: Unknown"
+    fi
+    end_console_main ""
+}
+export fetch_now
