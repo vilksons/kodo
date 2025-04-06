@@ -30,15 +30,15 @@ function @ENCRYPTION_CREATE()
             chmod 444 "$HOME/.enkodo"
         fi
             
-        TKODO_DECRYPT=$(grep -oP '(?<=RHASH_256=).*' "$HOME/.enkodo" || head -n 1 "$HOME/.enkodo")        
-        TKODO_DECRYPT=$(grep -oP '(?<=RHASH_256=).*' "$HOME/.enkodo" || head -n 1 "$HOME/.enkodo")
+        ZAPMAN_DECRYPT=$(grep -oP '(?<=RHASH_256=).*' "$HOME/.enkodo" || head -n 1 "$HOME/.enkodo")        
+        ZAPMAN_DECRYPT=$(grep -oP '(?<=RHASH_256=).*' "$HOME/.enkodo" || head -n 1 "$HOME/.enkodo")
     fi
 }
 
 function @ENCRYPTION_TOKEN()
 {
     if command -v openssl &> /dev/null; then
-        TKODO_DECRYPT=$(grep -oP '(?<=RHASH_256=).*' "$HOME/.enkodo" || head -n 1 "$HOME/.enkodo")
+        ZAPMAN_DECRYPT=$(grep -oP '(?<=RHASH_256=).*' "$HOME/.enkodo" || head -n 1 "$HOME/.enkodo")
 
         __BOT_TOKEN=$(jq -r '.bot_token' kodo.json)
 
@@ -46,7 +46,7 @@ function @ENCRYPTION_TOKEN()
             echo -e "$(collor_red "encryption:") bot_token will be encrypted in 5 seconds.."
             sleep 5.0
 
-            CHATBOT_encrypted_data=$(echo "$__BOT_TOKEN" | openssl enc -aes-256-cbc -salt -pbkdf2 -pass pass:$TKODO_DECRYPT -base64)
+            CHATBOT_encrypted_data=$(echo "$__BOT_TOKEN" | openssl enc -aes-256-cbc -salt -pbkdf2 -pass pass:$ZAPMAN_DECRYPT -base64)
             jq --arg token "$CHATBOT_encrypted_data" '.bot_token = $token' kodo.json > ._ignoreme.json && mv ._ignoreme.json kodo.json
         fi
     else

@@ -1,11 +1,11 @@
 #!/usr/bin/bash
 
-function mode_TKODO() {
+function mode_ZAPMAN() {
     #
-    #   @mode.TKODO
+    #   @mode.ZAPMAN
     #
 
-    console_TITLE "TKodo Mode"
+    console_TITLE "Zapman Mode"
     
     rest_var ""
     
@@ -14,23 +14,23 @@ function mode_TKODO() {
 
     history -r "$HISTFILE"
 
-    read -e -r -p "tkodo:~$ " pac_table
+    read -e -r -p "zapman:~$ " pac_table
 
     if [ -n "$pac_table" ]; then
         echo "$pac_table" >> "$HISTFILE"
     fi
 
-    struct_TKODO "$pac_table"
+    struct_ZAPMAN "$pac_table"
 }
-export mode_TKODO
+export mode_ZAPMAN
 
-function struct_TKODO()
+function struct_ZAPMAN()
 {
     : '
-        TKODO Mode
+        ZAPMAN Mode
     '
 
-    local trigger_pac="tkodo"
+    local trigger_pac="zapman"
 
     # Variable. if url is unknown (not github/gitlab/sourceforge)
     local pac_uhost=0
@@ -44,23 +44,23 @@ function struct_TKODO()
 
     case "$pac_table" in
         "$tables1")
-            if [ ! -f "$shell_DIR/.cache/tkodo" ]; then
+            if [ ! -f "$shell_DIR/.cache/zapman" ]; then
                 printf_red "crit:" "No download history found in cache!"
-                mode_TKODO ""
+                mode_ZAPMAN ""
             fi
 
             local tables1_url_cache
 
             # Read the encrypted data from the cache
-            PAC_encrypted_data=$(tail -n 1 "$shell_DIR/.cache/tkodo")
+            PAC_encrypted_data=$(tail -n 1 "$shell_DIR/.cache/zapman")
 
             # Decrypt the URL
-            tables1_url_cache=$(echo "$PAC_encrypted_data" | openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:$TKODO_DECRYPT -base64 -in "$shell_DIR/.cache/tkodo")
+            tables1_url_cache=$(echo "$PAC_encrypted_data" | openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:$ZAPMAN_DECRYPT -base64 -in "$shell_DIR/.cache/zapman")
 
             # Check if decryption was successful and if the URL is valid
             if [[ -z "$tables1_url_cache" || ! "$tables1_url_cache" =~ ^https:// ]]; then
                 printf_red "crit:" "No valid URL found in cache!"
-                mode_TKODO ""
+                mode_ZAPMAN ""
             fi
 
             # Debug output: Show the decrypted URL
@@ -70,7 +70,7 @@ function struct_TKODO()
             save_autoinstall=1
 
             pac_table="install $tables1_url_cache"
-            struct_TKODO "$pac_table"
+            struct_ZAPMAN "$pac_table"
             ;;
         ########################################################################################################################################################
         "$tables2"*)
@@ -90,17 +90,17 @@ function struct_TKODO()
                 SAVE_QUICK=1
             else
                 SAVE_QUICK=0
-                # Check if tkodo.json file exists
-                if [ -f "tkodo.json" ] && [ -f "tkodo.toml" ]; then
-                    printf_red "crit:" "tkodo.json and tkodo.toml Cannot be merged!. choose tkodo.json.."
-                elif [ -f "tkodo.json" ]; then
-                    mapfile -t tables2_url_args < <(python3 -c 'import json, sys; data = json.load(sys.stdin); print("\n".join(data["package"]))' < tkodo.json)
-                elif [ -f "tkodo.toml" ]; then
-                    mapfile -t tables2_url_args < <(tomlq -r '.package.urls[]' tkodo.toml)
+                # Check if zapman.json file exists
+                if [ -f "zapman.json" ] && [ -f "zapman.toml" ]; then
+                    printf_red "crit:" "zapman.json and zapman.toml Cannot be merged!. choose zapman.json.."
+                elif [ -f "zapman.json" ]; then
+                    mapfile -t tables2_url_args < <(python3 -c 'import json, sys; data = json.load(sys.stdin); print("\n".join(data["package"]))' < zapman.json)
+                elif [ -f "zapman.toml" ]; then
+                    mapfile -t tables2_url_args < <(tomlq -r '.package.urls[]' zapman.toml)
                 else
-                    printf_red "crit:" "tkodo.json or tkodo.toml not found!"
+                    printf_red "crit:" "zapman.json or zapman.toml not found!"
                     sleep 2.2
-                    cat > tkodo.json <<EOF
+                    cat > zapman.json <<EOF
 {
     "package": [
         "github/user/repository",
@@ -110,9 +110,9 @@ function struct_TKODO()
 }
 EOF
                     if command -v nano &> /dev/null; then
-                        nano "$shell_DIR/tkodo.json"
+                        nano "$shell_DIR/zapman.json"
                     fi
-                    mode_TKODO ""
+                    mode_ZAPMAN ""
                 fi
             fi
 
@@ -120,7 +120,7 @@ EOF
                 : ' array to variable '
 
                 if [[ "$tables2_input_args" != https://* ]]; then
-                : ' TKodo: package URL to https
+                : ' Zapman: package URL to https
                 '
                     if [[ "$tables2_input_args" == github/* ]]; then
                         : ' github '
@@ -293,11 +293,11 @@ EOF
                 
                 if [ "$SAVE_QUICK" -eq 1 ]; then
                     # Encryption
-                    PAC_encrypted_data=$(echo "$tables2_input_args" | openssl enc -aes-256-cbc -salt -pbkdf2 -pass pass:$TKODO_DECRYPT -base64)
+                    PAC_encrypted_data=$(echo "$tables2_input_args" | openssl enc -aes-256-cbc -salt -pbkdf2 -pass pass:$ZAPMAN_DECRYPT -base64)
 
-                    # Save Encryption to Cache/TKodo
+                    # Save Encryption to Cache/Zapman
                     if [ "$save_autoinstall" -ne 1 ]; then
-                        echo "$PAC_encrypted_data" > "$shell_DIR/.cache/tkodo"
+                        echo "$PAC_encrypted_data" > "$shell_DIR/.cache/zapman"
                     fi
                 fi
 
@@ -334,7 +334,7 @@ EOF
                 else
                     # If not exist
                     printf_red "crit:" "Download failed!. Check the installer"
-                    mode_TKODO ""
+                    mode_ZAPMAN ""
                 fi
 
                 mapfile -t _pac_include < <(find "$pac_extract_dirs" -type f -name "*.inc" -exec basename {} \;)
@@ -519,7 +519,7 @@ EOF
 
             ignore_this sleep 0.1
 
-            mode_TKODO ""
+            mode_ZAPMAN ""
             ;;
         ########################################################################################################################################################
         "$tables3"*)
@@ -649,29 +649,29 @@ EOF
             # end.
             printf_yellow "[OK]" "Removal process completed!"
 
-            mode_TKODO ""
+            mode_ZAPMAN ""
             ;;
         "$trigger_pac -C" | "clear" | "cc")
             clear; echo -ne "\033[3J"
-            mode_TKODO ""
+            mode_ZAPMAN ""
             ;;
         "$trigger_pac" | "$trigger_pac " | "" | " ")
             help_dialog_pac
-            mode_TKODO ""
+            mode_ZAPMAN ""
             ;;
         "help")
             shell_TITLE="help"
             console_TITLE "help"
 
             help_dialog_pac
-            mode_TKODO ""
+            mode_ZAPMAN ""
             ;;
        "exit")
             struct_console_main ""
             ;;
         *)
             echo "error: $pac_table: command not found"
-            mode_TKODO ""
+            mode_ZAPMAN ""
             ;;
     esac
 }

@@ -181,15 +181,15 @@ CONFIGURATION DETAILS
   o "samp_log"
     SA-MP server log file.                                      
   o "samp_config"
-    SA-MP server configuration file. (TKodo)
+    SA-MP server configuration file. (Zapman)
   o "samp_init"
-    SA-MP main server file. (TKodo)           
+    SA-MP main server file. (Zapman)           
   o "samp_executable"
     SA-MP server executable.                                    
   o "include_dir"
-    Package manager include directory. (TKodo).               
+    Package manager include directory. (Zapman).               
   o "plugins_dir"
-    Directory for `.dll` and `.so` plugins. (TKodo).          
+    Directory for `.dll` and `.so` plugins. (Zapman).          
   o "bot_token"
     API key from https://console.groq.com/keys
   o "bot_model"
@@ -221,35 +221,35 @@ EXAMPLE DIRECTORY STRUCTURE
     │
     └── server.cfg
 
-PACKAGE MANAGER - TKodo
+PACKAGE MANAGER - Zapman
 -------------------------
     kodo operates in two modes:
     1. Kodo Mode (default, without package manager)
-    2. TKodo Mode (enables package fetching and installation)
+    2. Zapman Mode (enables package fetching and installation)
 
 Security
 *************************
-Security on TKodo is very well maintained, in addition to the TKodo cache which only has a history of taking one URL, TKodo also provides hashing and encryption on its cache, and also TKodo only reads the installed ".so", ".dll", and ".inc" files, otherwise it will be ignored and the installation folder/archive will be deleted quickly. In addition, TKodo uses aria2 to manage the download process in a safer and more efficient way. aria2 ensures that every downloaded file is verified for its authenticity by combining various protocols and transfer methods that can mitigate the potential risk of attacks from unauthorized or corrupted files. By using aria2, TKodo can increase download speeds while maintaining data integrity during the download process.
+Security on Zapman is very well maintained, in addition to the Zapman cache which only has a history of taking one URL, Zapman also provides hashing and encryption on its cache, and also Zapman only reads the installed ".so", ".dll", and ".inc" files, otherwise it will be ignored and the installation folder/archive will be deleted quickly. In addition, Zapman uses aria2 to manage the download process in a safer and more efficient way. aria2 ensures that every downloaded file is verified for its authenticity by combining various protocols and transfer methods that can mitigate the potential risk of attacks from unauthorized or corrupted files. By using aria2, Zapman can increase download speeds while maintaining data integrity during the download process.
 
 PACKAGE MANAGEMENT
 ==================
- o Switch to TKodo Mode
-    tkodo
- o Exit from TKodo Mode
+ o Switch to Zapman Mode
+    zapman
+ o Exit from Zapman Mode
     exit
 
  o Installing Packages:
     install github/samp-incognito/samp-streamer-plugin
  o Removing Packages:
     remove streamer
- o If you previously used args in the installation, the URL is applied to the TKodo cache. and you can reinstall with `autoinstall`
+ o If you previously used args in the installation, the URL is applied to the Zapman cache. and you can reinstall with `autoinstall`
     autoinstall
   
-TKodo CONFIGURATION
+Zapman CONFIGURATION
 ---------------------
-TKodo uses `tkodo.toml` or `tkodo.json`.
+Zapman uses `zapman.toml` or `zapman.json`.
 
-Example `tkodo.toml`:
+Example `zapman.toml`:
     [package]
     urls = [
       "github/user/repository",
@@ -257,7 +257,7 @@ Example `tkodo.toml`:
       "sourceforge/user/repository"
     ]
 
-Example `tkodo.json`:
+Example `zapman.json`:
     {
         "package": [
             "github/user/repository",

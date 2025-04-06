@@ -177,11 +177,11 @@ Configuration: ``kodo.json``
 | ``include_paths``   | Directory path for additional includes used in compilation.                              |
 | ``exclude_paths``   | Paths to exclude from compilation.                                                        |
 | ``samp_log``        | SA-MP server log file path.                                                               |
-| ``samp_config``     | SA-MP configuration file (for TKodo).                                                    |
-| ``samp_init``       | SA-MP main server file (for TKodo).                                                      |
+| ``samp_config``     | SA-MP configuration file (for Zapman).                                                    |
+| ``samp_init``       | SA-MP main server file (for Zapman).                                                      |
 | ``samp_executable`` | Path to the SA-MP server executable.                                                     |
-| ``include_dir``     | Directory for includes managed by the package manager (TKodo).                           |
-| ``plugins_dir``     | Directory where ``.dll`` and ``.so`` plugin files are stored (TKodo).                    |
+| ``include_dir``     | Directory for includes managed by the package manager (Zapman).                           |
+| ``plugins_dir``     | Directory where ``.dll`` and ``.so`` plugin files are stored (Zapman).                    |
 | ``bot_token``       | API key from `Groq Console <https://console.groq.com/keys>`_                             |
 | ``bot_model``       | AI model from `Groq Console <https://console.groq.com/>`_                                |
 | ``bot_profile``     | Additional chatbot configuration info.                                                   |
@@ -208,22 +208,22 @@ If your script uses ``includes/``, set:
    │   └── customFile.pwn
    └── server.cfg
 
-Package Manager - TKodo
+Package Manager - Zapman
 =======================
 
 Modes
 -----
 
 - Kodo Mode (default)
-- TKodo Mode (with package management)
+- Zapman Mode (with package management)
 
 Switch Modes
 ------------
 
 .. code-block:: bash
 
-   tkodo    # Enter TKodo Mode
-   exit     # Exit TKodo Mode
+   zapman    # Enter Zapman Mode
+   exit     # Exit Zapman Mode
 
 Manage Packages
 ---------------
@@ -234,10 +234,10 @@ Manage Packages
    remove streamer
    autoinstall
 
-TKodo Configuration
+Zapman Configuration
 -------------------
 
-**tkodo.toml**
+**zapman.toml**
 
 .. code-block:: toml
 
@@ -248,7 +248,7 @@ TKodo Configuration
      "sourceforge/user/repository"
    ]
 
-**tkodo.json**
+**zapman.json**
 
 .. code-block:: json
 
@@ -263,7 +263,7 @@ TKodo Configuration
 Security
 ========
 
-TKodo uses:
+Zapman uses:
 
 - Double SHA256 hashing (e.g., for bot tokens)
 - Encrypted cache

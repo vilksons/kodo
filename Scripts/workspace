@@ -25,7 +25,7 @@ export SAMP_WARGS_STATUS
 __SAMP_SERVER=""
 export __SAMP_SERVER
 
-# TKodo
+# Zapman
 PAC_encrypted_data=""
 
 save_autoinstall=0
@@ -340,8 +340,8 @@ function struct_console_main() {
             console_pack ".kodo/compat.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compat/compat.kd" "compat" 
             # compiler.kd
             console_pack ".kodo/compiler.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compiler/compiler.kd" "ignore" 
-            # TKodo.kd
-            console_pack ".kodo/tkodo.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/TKodo/tkodo.kd" "ignore" 
+            # Zapman.kd
+            console_pack ".kodo/zapman.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Zapman/zapman.kd" "ignore" 
             # samp.kd
             console_pack ".kodo/samp.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/samp.kd" "ignore" 
             # pawncc.kd
@@ -819,7 +819,7 @@ function mode_KODO() {
                                 
                             wget -q --show-progress -O "security.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Security/security.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
                             wget -q --show-progress -O "compat.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compat/compat.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
-                            wget -q --show-progress -O "tkodo.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/TKodo/tkodo.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
+                            wget -q --show-progress -O "zapman.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Zapman/zapman.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
                             wget -q --show-progress -O "samp.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/samp.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
                             wget -q --show-progress -O "pawncc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/pawncc.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
                             wget -q --show-progress -O "server.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Server/server.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
@@ -941,14 +941,14 @@ function mode_KODO() {
                 end_console_main ""
             fi
 
-            if [ ! -f "$shell_DIR/.cache/tkodo" ] && [ ! -f "$shell_DIR/.cache/compiler.log" ]; then
+            if [ ! -f "$shell_DIR/.cache/zapman" ] && [ ! -f "$shell_DIR/.cache/compiler.log" ]; then
                 echo "no cache found."
                 end_console_main ""
             fi
 
-            if [ -f "$shell_DIR/.cache/tkodo" ]; then
-                printf_gray ":: Cache Dir: $shell_DIR/.cache/tlitkodogpac"
-                read -r -p ":: Do you want to remove ALL files from $shell_DIR/.cache/tkodo? [y/n] " PERMISSION_NEED_RC
+            if [ -f "$shell_DIR/.cache/zapman" ]; then
+                printf_gray ":: Cache Dir: $shell_DIR/.cache/tlizapmangpac"
+                read -r -p ":: Do you want to remove ALL files from $shell_DIR/.cache/zapman? [y/n] " PERMISSION_NEED_RC
                 echo
                 [[ -z "$PERMISSION_NEED_RC" ]] && PERMISSION_NEED_RC="Y"
 
@@ -956,7 +956,7 @@ function mode_KODO() {
                     case "$PERMISSION_NEED_RC" in
                         [Yy])
                             cd "$shell_DIR" || echo
-                            shred -u ".cache/tkodo" && printf_yellow " successfully"
+                            shred -u ".cache/zapman" && printf_yellow " successfully"
                             sleep 1
                             break
                             ;;
@@ -996,7 +996,7 @@ function mode_KODO() {
         "fetch")
             fetch_now ""
             ;;
-        "tkodo")
+        "zapman")
             mode_KODO "" || {
                 if [ "$console_module_loaded" -eq 1 ]; then
                     printf_red "crit:" "err.. need to kill."
@@ -1035,7 +1035,7 @@ function mode_KODO() {
                 ["remcac"]=":: Remove cache \".cache\" Kodo - Usage: remcac"
                 ["chatbot"]=":: Chatbot Terminal - Usage: chatbot"
                 ["nano"]=":: GNU/Nano Editor - Usage: nano"
-                ["tkodo"]=":: Kodo Mode to TKodo Mode - Usage: tkodo"
+                ["zapman"]=":: Kodo Mode to Zapman Mode - Usage: zapman"
                 ["sync"]=":: Sync Normal - Usage: sync"
                 ["fetch"]=":: Fetch Kodo -> Usage: fetch"
             )
@@ -1099,7 +1099,7 @@ function help_dialog_kd()
     echo " compile, running, irunn (compile-run), debug (debugger)"
     echo " stop (stopped server), restart (restart server)"
     echo " gamemode, pawncc, clear (clear-screen)"
-    echo " checksums, cat, tkodo, kill"
+    echo " checksums, cat, zapman, kill"
     echo " sync (update/upgrade), lang, directory"
 
     if ! command -v nano &> /dev/null; then
@@ -1113,10 +1113,10 @@ function help_dialog_pac()
 {
     echo "Usage: kodo <command> [<args>]"
     echo "Commands:"
-    echo " autoinstall - auto Install from TKodo cache"
+    echo " autoinstall - auto Install from Zapman cache"
     echo " install     - Install/Reinstall Packages"
     echo " remove      - Remove Packages"
-    echo " exit        - Exit TKodo Mode"
+    echo " exit        - Exit Zapman Mode"
 }
 
 function end_console_main() {

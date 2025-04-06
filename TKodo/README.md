@@ -1,6 +1,6 @@
 ## What is this?
 
-These is TKodo, module of Kodo/Workspace.
+These is Zapman, module of Kodo/Workspace.
 
 ## How does it work?
 
