@@ -347,7 +347,7 @@ function struct_console_main() {
             # pawncc.kd
             console_pack ".kodo/pawncc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/pawncc.kd" "ignore" 
             # misc.kd
-            console_pack ".kodo/misc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Misc/misc.kd" "ignore"
+            console_pack ".kodo/misc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Artintel/misc.kd" "ignore"
             # artintel.kd
             console_pack ".kodo/artintel.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Misc/artintel.kd" "ignore" 
             # server.kd
@@ -826,7 +826,7 @@ function mode_KODO() {
                             wget -q --show-progress -O "pawncc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/pawncc.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
                             wget -q --show-progress -O "server.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Server/server.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
                             wget -q --show-progress -O "misc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Misc/misc.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
-                            wget -q --show-progress -O "artintel.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Misc/artintel.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
+                            wget -q --show-progress -O "artintel.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Artintel/artintel.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
                             wget -q --show-progress -O "compiler.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compiler/compiler.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
 
                             ignore_this sleep 1 && cd "$shell_DIR" >/dev/null 2>&1 || echo ""

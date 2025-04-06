@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 function kodo_artintel()
 {
@@ -30,59 +30,82 @@ function kodo_artintel()
             \"stream\": false,
             \"stop\": null
         }")
-                
-__GREEN=$(tput setaf 2)
-__RED=$(tput setaf 1)
-__ORANGE=$(tput setaf 3)
-__RESET=$(tput sgr0)
+         
+    echo "$chatbot_response" | python3 -c "
+import sys, json, re, time
 
-echo "$chatbot_response" |
-python3 -c "
-import sys, json, re
-import time
+# define ANSI color codes #
+GREEN = '\033[32m'
+RED = '\033[31m'
+ORANGE = '\033[33m'
+GRAY = '\033[37m'
+RESET = '\033[0m'
 
-COLORS = {
-    'true': '${__GREEN}', 'false': '${__RED}',
-    'string': '${__GREEN}', 'int': '${__GREEN}', 'float': '${__GREEN}', 'bool': '${__GREEN}', 
-    'double': '${__GREEN}', 'char': '${__GREEN}', 'return': '${__RED}', 'if': '${__GREEN}', 
-    'else': '${__GREEN}', 'while': '${__GREEN}', 'for': '${__GREEN}', 'do': '${__GREEN}', 
-    'try': '${__ORANGE}', 'catch': '${__ORANGE}', 'finally': '${__ORANGE}', 'throw': '${__RED}', 
-    'goto': '${__ORANGE}', 'switch': '${__GREEN}', 'case': '${__GREEN}', 'break': '${__RED}', 
-    'continue': '${__RED}', 'class': '${__GREEN}', 'void': '${__GREEN}', 'inline': '${__GREEN}',
-    'main': '${__ORANGE}', 'foo': '${__RED}', 'include': '${__GREEN}', 'end': '${__GREEN}'
+# define color groups #
+color_groups = {
+    GREEN: [
+        'true', 'string', 'int', 'float', 'bool',
+        'double', 'char', 'if', 'else', 'while', 'for', 'do',
+        'switch', 'case', 'class', 'void', 'inline', 'include', 'end', 'printf', 'print', 'std'
+    ],
+    RED: ['false', 'return', 'throw', 'break', 'continue', 'foo', 'sudo'],
+    ORANGE: ['try', 'catch', 'finally', 'goto', 'main'],
+    GRAY: ['gcc', 'clang', 'sudo'],
 }
 
-def colorize(match):
-    word = match.group(0).lower()
-    return f'{COLORS.get(word, '')}{word}${__RESET}'
+# flatten into a single keyword-to-color dictionary #
+COLORS = {kw: color for color, keywords in color_groups.items() for kw in keywords}
+
+def highlight(match):
+    word = match.group(0)
+    color = COLORS.get(word.lower())
+    return f'{color}{word}{RESET}' if color else word
+
+def process_text(text):
+    # split text into code blocks and non-code blocks #
+    parts = re.split(r'(\`\`\`.*?\n.*?\`\`\`|\`.*?\`)', text, flags=re.DOTALL)
+    
+    result = []
+    for i, part in enumerate(parts):
+        if i % 2 == 1:
+            if part.startswith('\`\`\`'):
+                code_content = part[3:-3]
+                pattern = r'\\b(' + '|'.join(re.escape(k) for k in COLORS.keys()) + r')\\b'
+                highlighted_code = re.sub(pattern, highlight, code_content, flags=re.IGNORECASE)
+                result.append(f'\`\`\`{highlighted_code}\`\`\`')
+            else:
+                code_content = part[1:-1]
+                pattern = r'\\b(' + '|'.join(re.escape(k) for k in COLORS.keys()) + r')\\b'
+                highlighted_code = re.sub(pattern, highlight, code_content, flags=re.IGNORECASE)
+                result.append(f'\`{highlighted_code}\`')
+        else:
+            result.append(part)
+    
+    return ''.join(result)
 
 try:
-    data = json.loads(sys.stdin.read())
+    data = json.load(sys.stdin)
     chatbot_response = data.get('choices', [{}])[0].get('message', {}).get('content')
 
     if not chatbot_response:
         raise ValueError('Error: Response API Failed/not found.')
 
-    chatbot_response = re.sub(r'\b(?:' + '|'.join(COLORS.keys()) + r')\b', colorize, chatbot_response, flags=re.IGNORECASE)
+    processed_response = process_text(chatbot_response)
 
-    for char in chatbot_response:
+    for char in processed_response:
         print(char, end='', flush=True)
         time.sleep(0.03)
-
     print()
 
 except json.JSONDecodeError:
     print('Error: Invalid JSON', flush=True)
-
 except ValueError as e:
     print(e, flush=True)
-
 except KeyboardInterrupt:
     print(' Cancelled', end='', flush=True)
     sys.exit(130)
 "
 
-	end_console_main ""
-	echo
+    end_console_main ""
+    echo
 }
-export kodo_artintel
