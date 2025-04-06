@@ -302,8 +302,6 @@ Keep updated using:
 .. code-block:: bash
 
    sync
-   # or
-   syncc
 
 Resources:
 

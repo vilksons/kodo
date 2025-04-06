@@ -266,7 +266,7 @@ Example `zapman.json`:
 
 FINAL NOTES
 ===========
-Keep your environment updated using `sync` or `syncc`.
+Keep your environment updated using `sync`.
 Refer to the Wiki: https://github.com/vilksons/kodo/wiki
 For issues, visit GitHub Discussions: https://github.com/vilksons/kodo/discussions
 Report bugs via GitHub Issues.

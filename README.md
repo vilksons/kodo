@@ -11,7 +11,7 @@ Essential references to understand and use Kodo:
 - [Kodo](https://github.com/vilksons/kodo/tree/kodo)  
   Kodo is an SA:MP-specific toolchain designed for debugging, compiling, and package management.
 
-## WHAT IS CKODO?
+## WHAT IS cKODO?
 - [cKodo](https://github.com/vilksons/kodo/tree/ckodo)  
   cKodo is a Kodo Toolchain built on the C language without any connection to Shell/Bash.
 
@@ -225,14 +225,9 @@ Zapman uses:
 
 ---
 
-## FINAL NOTES
-- Keep updated using:
-```bash
-sync
-# or
-syncc
-```
+## OTHER PAGE
+
 - [Kodo Wiki](https://github.com/vilksons/kodo/wiki)
 - [GitHub Discussions](https://github.com/vilksons/kodo/discussions)
 - [Report Bugs](https://github.com/vilksons/kodo/issues)
-```
+
