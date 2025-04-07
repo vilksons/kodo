@@ -114,9 +114,6 @@ void printf_crit(const char *format, ...) {
     printf_color(COL_RED, "crit: ");
     printf_color(COL_DEFAULT, "%s\n", format);
 }
-
-char pf_found[MAX_FIND_PATH][MAX_FIND_PATH_LENGTH];
-int pf_count = 0;
     
 int kom_is_windows(void) {
     const char *__win__[] = {

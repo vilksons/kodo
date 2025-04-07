@@ -16,6 +16,13 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include "utils.h"
+#include "kodo.h"
+#include "compiler.h"
+
+char pf_found[MAX_FIND_PATH][MAX_FIND_PATH_LENGTH];
+int pf_count = 0;
+
 int call_find_for_pawncc(const char *__d_path, const char *__t_file) {
     DIR *__dir;
     struct dirent *__entry;
@@ -54,6 +61,3 @@ int call_find_for_pawncc(const char *__d_path, const char *__t_file) {
     closedir(__dir);
     return find_found_rate; 
 }
-
-#include "utils.h"
-#include "compiler.h"

@@ -14,7 +14,7 @@
  */
 
 #ifndef _GNU_SOURCE
-#define _GNU_SOURCE
+    #define _GNU_SOURCE
 #endif 
 
 #include <stdio.h>
@@ -88,8 +88,8 @@ void _kodo_ () {
     /* valid commands. */
         {
             "exit", "clear", "kill", "title", "help",
-            "gamemode", "pawncc", "compile", "running", "debug",
-            "stop", "restart"
+            "gamemode", "pawncc", "compile", "running",
+            "debug", "stop", "restart"
         };
     int num_cmds = 
         sizeof(__vcommands__) / 
@@ -156,13 +156,13 @@ Usage: \"kill\"");
                 println("title: set-title Terminal Kodo. | \
 Usage: \"title\" | [<args>]");
             } else if (strcmp(arg, "compile") == 0) {
-                println("compile: compile your gamemdoe. | \
+                println("compile: compile your project. | \
 Usage: \"compile\" | [<args>]");
             } else if (strcmp(arg, "running") == 0) {
-                println("running: running your gamemdoe. | \
+                println("running: running your project. | \
 Usage: \"running\" | [<args>]");
             } else if (strcmp(arg, "debug") == 0) {
-                println("debug: debugging your gamemdoe. | \
+                println("debug: debugging your project. | \
 Usage: \"debug\" | [<args>]");
             } else if (strcmp(arg, "stop") == 0) {
                 println("stop: stopped server task. | \
@@ -327,9 +327,9 @@ Usage: \"restart\"");
             
                         char kd_gamemode_rate[120];
                         if (*arg == '\0') {
-                            toml_datum_t kodomodes = toml_string_in(kom_compiler, "input");
-                            if (kodomodes.ok) {
-                                kd_gamemode_input = kodomodes.u.s;
+                            toml_datum_t kodo_gmodes = toml_string_in(kom_compiler, "input");
+                            if (kodo_gmodes.ok) {
+                                kd_gamemode_input = kodo_gmodes.u.s;
                             }
                             snprintf(_compiler_, 4096, "%s %s \"%s\" -o\"%s\" \"%s\"", pf_found[0], all_paths, kd_gamemode_input, kd_gamemode_output, kd_compiler_opt);
                         } else {
@@ -338,11 +338,13 @@ Usage: \"restart\"");
                         }
                         printf("\n");
 
-                        free(_compiler_);
+                        if (_compiler_)
+                            free(_compiler_);
                     }
                 }
             
-                kd_sys(_compiler_);
+                if (_compiler_)
+                    kd_sys(_compiler_);
             } else {
                 printf_error("pawncc not found!");
 
