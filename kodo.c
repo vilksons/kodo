@@ -387,8 +387,8 @@ Usage: \"restart\"");
                 char *arg = ptr_cmds + 7;
                 while (*arg == ' ') arg++;
 
-                char *format_prompt = malloc(1000);
-                size_t format_size = 1000;
+                char *format_prompt = malloc(126);
+                size_t format_size = 126;
             
                 const char *ptr_samp = NULL;
                 const char *ptr_openmp = NULL;
@@ -435,16 +435,16 @@ Usage: \"restart\"");
                         printf_color(COL_YELLOW, "running...");
                         usleep(500000);
 
-                        snprintf(format_prompt, 1000, "chmod 777 %s", ptr_samp);
+                        snprintf(format_prompt, 126, "chmod 777 %s", ptr_samp);
                         kd_sys(format_prompt);
-                        snprintf(format_prompt, 1000, "./%s", ptr_samp);
+                        snprintf(format_prompt, 126, "./%s", ptr_samp);
                         kd_sys(format_prompt);
 
                         printf_color(COL_YELLOW, "Press enter to print logs..");
                         getchar();
 
                         if (__samp_log) {
-                            snprintf(format_prompt, 1000, "cat %s", srv_log_samp);
+                            snprintf(format_prompt, 126, "cat %s", srv_log_samp);
                             kd_sys(format_prompt);
                         }
                     } else {
@@ -463,16 +463,16 @@ Usage: \"restart\"");
                         printf_color(COL_YELLOW, "running...");
                         usleep(500000);
 
-                        snprintf(format_prompt, 1000, "chmod 777 %s", ptr_openmp);
+                        snprintf(format_prompt, 126, "chmod 777 %s", ptr_openmp);
                         kd_sys(format_prompt);
-                        snprintf(format_prompt, 1000, "./%s", ptr_openmp);
+                        snprintf(format_prompt, 126, "./%s", ptr_openmp);
                         kd_sys(format_prompt);
 
                         printf_color(COL_YELLOW, "Press enter to print logs..");
                         getchar();
 
                         if (__omp_log) {
-                            snprintf(format_prompt, 1000, "cat %s", srv_log_omp);
+                            snprintf(format_prompt, 126, "cat %s", srv_log_omp);
                             kd_sys(format_prompt);
                         }
                     } else {

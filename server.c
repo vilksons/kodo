@@ -38,25 +38,25 @@ void process_system(const char *_from_, const char *_for_) {
 
 void call_server_stop_tasks(void)
 {
-    char *format_sys = malloc(1000);
-    size_t format_size = 1000;
+    char *format_sys = malloc(126);
+    size_t format_size = 126;
 
-    snprintf(format_sys, 1000, "pkill -9 -f \"%s\"", "samp-server.exe");
+    snprintf(format_sys, 126, "pkill -9 -f \"%s\"", "samp-server.exe");
 
     int ret_deb = system(format_sys);
     if (ret_deb != 0) {}
 
-    snprintf(format_sys, 1000, "pkill -9 -f \"%s\"", "samp03svr");
+    snprintf(format_sys, 126, "pkill -9 -f \"%s\"", "samp03svr");
 
     ret_deb = system(format_sys);
     if (ret_deb != 0) {}
 
-    snprintf(format_sys, 1000, "pkill -9 -f \"%s\"", "omp-server.exe");
+    snprintf(format_sys, 126, "pkill -9 -f \"%s\"", "omp-server.exe");
 
     ret_deb = system(format_sys);
     if (ret_deb != 0) {}
 
-    snprintf(format_sys, 1000, "pkill -9 -f \"%s\"", "omp-server");
+    snprintf(format_sys, 126, "pkill -9 -f \"%s\"", "omp-server");
 
     ret_deb = system(format_sys);
     if (ret_deb != 0) {}
@@ -69,12 +69,12 @@ void call_server_stop_tasks(void)
 void call_server_samp(const char *_args_,
                       const char *ptr_server)
 {
-    char *format_sys = malloc(1000);
-    size_t format_size = 1000;
+    char *format_sys = malloc(256);
+    size_t format_size = 256;
 
     const char *config_file = "server.cfg";
 
-    snprintf(format_sys, 1000, "cp %s .%s.bak", config_file, config_file);
+    snprintf(format_sys, 256, "cp %s .%s.bak", config_file, config_file);
     process_system(format_sys, format_sys);
 
     char bak_fname[256];
@@ -110,31 +110,36 @@ void call_server_samp(const char *_args_,
     fclose(in);
     fclose(out);
 
-    snprintf(format_sys, 1000, "chmod 777 %s", ptr_server);
+    snprintf(format_sys, 256, "chmod 777 %s", ptr_server);
     process_system(format_sys, format_sys);
 
-    snprintf(format_sys, 1000, "./%s", ptr_server);
+    snprintf(format_sys, 256, "./%s", ptr_server);
     process_system(format_sys, format_sys);
     
     const char *srv_log_samp = "server_log.txt";
-    FILE *file = fopen(srv_log_samp, "r");
+    FILE *__samp_log = fopen(srv_log_samp, "r");
 
-    snprintf(format_sys, 1000, "cat %s", srv_log_samp);
+    if (__samp_log) {
+        snprintf(format_sys, 256, "cat %s", srv_log_samp);
+        process_system(format_sys, format_sys);
+    }
+
+    snprintf(format_sys, 256, "cat %s", srv_log_samp);
     process_system(format_sys, format_sys);
 
     remove(config_file);
-    snprintf(format_sys, 1000, "mv .%s.bak %s", config_file, config_file);
+    snprintf(format_sys, 256, "mv .%s.bak %s", config_file, config_file);
     process_system(format_sys, format_sys);
 
     if (strcmp(server_or_debug, "debug") == 0) {
         server_or_debug = NULL;
         
-        snprintf(format_sys, 1000, "pkill -9 -f \"%s\"", "samp-server.exe");
+        snprintf(format_sys, 256, "pkill -9 -f \"%s\"", "samp-server.exe");
 
         int ret_deb = system(format_sys);
         if (ret_deb != 0) {}
 
-        snprintf(format_sys, 1000, "pkill -9 -f \"%s\"", "samp03svr");
+        snprintf(format_sys, 256, "pkill -9 -f \"%s\"", "samp03svr");
 
         ret_deb = system(format_sys);
         if (ret_deb != 0) {}
@@ -155,7 +160,7 @@ void call_server_openmp(const char *_args_) {
         *backup_file
             =".config.json.bak";
 
-    char cmd_s[512];
+    char cmd_s[126];
     snprintf(cmd_s, sizeof(cmd_s), "cp %s %s", config_file, backup_file);
     process_system(cmd_s, cmd_s);
 
@@ -222,18 +227,17 @@ void call_server_openmp(const char *_args_) {
     fclose(__fp);
     cJSON_Delete(root);
 
-    const char *srv_log_samp = "log.txt";
-    FILE *__omp_log = fopen(srv_log_samp, "r");
+    const char *svr_log_omp = "log.txt";
+    FILE *__omp_log = fopen(svr_log_omp, "r");
 
-    char *format_sys = malloc(1000);
-    size_t format_size = 1000;
-
+    char *format_sys = malloc(126);
+    size_t format_size = 126;
 
     printf_color(COL_YELLOW, "Press enter to print logs..");
     getchar();
 
     if (__omp_log) {
-        snprintf(format_sys, 1000, "cat %s", srv_log_samp);
+        snprintf(format_sys, 126, "cat %s", svr_log_omp);
         process_system(format_sys, format_sys);
     }
 
@@ -244,12 +248,12 @@ void call_server_openmp(const char *_args_) {
     if (strcmp(server_or_debug, "debug") == 0) {
         server_or_debug = NULL;
         
-        snprintf(format_sys, 1000, "pkill -9 -f \"%s\"", "omp-server.exe");
+        snprintf(format_sys, 126, "pkill -9 -f \"%s\"", "omp-server.exe");
 
         int ret_deb = system(format_sys);
         if (ret_deb != 0) {}
 
-        snprintf(format_sys, 1000, "pkill -9 -f \"%s\"", "omp-server");
+        snprintf(format_sys, 126, "pkill -9 -f \"%s\"", "omp-server");
 
         ret_deb = system(format_sys);
         if (ret_deb != 0) {}
