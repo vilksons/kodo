@@ -11,7 +11,6 @@ Essential references to understand and use Kodo:
 
 WHAT IS KODO?
 ===============
- - Kodo https://github.com/vilksons/kodo/tree/kodo
    Kodo is an SA:MP-specific toolchain designed for debugging, compiling, and package management.
 ---------------
 WHAT IS CKODO?

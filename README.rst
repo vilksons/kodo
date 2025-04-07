@@ -14,14 +14,12 @@ Essential references to understand and use Kodo:
 What is Kodo?
 -------------
 
-- `Kodo <https://github.com/vilksons/kodo/tree/kodo>`_  
   Kodo is an SA:MP-specific toolchain designed for debugging, compiling, and package management.
 
 What is cKodo?
 --------------
 
-- `cKodo <https://github.com/vilksons/kodo/tree/ckodo>`_  
-  cKodo is a Kodo Toolchain built on the C language without any connection to Shell/Bash.
+  `cKodo <https://github.com/vilksons/kodo/tree/ckodo>`_ is a Kodo Toolchain built on the C language without any connection to Shell/Bash.
 
 Keeping Up-to-Date
 ------------------
