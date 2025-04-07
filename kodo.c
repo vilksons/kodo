@@ -170,9 +170,6 @@ Usage: \"stop\"");
             } else if (strcmp(arg, "restart") == 0) {
                 println("restart: restart server task. | \
 Usage: \"restart\"");
-            } else if (strcmp(arg, "debug") == 0) {
-                println("debug: debugging your gamemdoe. | \
-Usage: \"debug\" | [<args>]");
             } else {
                 println("help not found for: '%s'", arg);
             }
