@@ -390,7 +390,7 @@ Usage: \"restart\"");
                 char *format_prompt = malloc(1000);
                 size_t format_size = 1000;
             
-                const char *ptr_server = NULL;
+                const char *ptr_samp = NULL;
                 const char *ptr_openmp = NULL;
 
                 int find_for_samp =
@@ -401,60 +401,62 @@ Usage: \"restart\"");
                 int __kodo_os__ = system_os();
                 if (__kodo_os__ == 1) {
                     /* windows */
-                    ptr_server="samp-server.exe";
+                    ptr_samp="samp-server.exe";
                     ptr_openmp="omp-server.exe";
                 }
                 else if (__kodo_os__ == 0) {
                     /* linux */
-                    ptr_server="samp03svr";
+                    ptr_samp="samp03svr";
                     ptr_openmp="omp-server";
                 }
 
                 FILE
                     *file_s =
-                        fopen(ptr_server, "r");
+                        fopen(ptr_samp, "r");
                 FILE
                     *file_m =
                         fopen(ptr_openmp, "r");
                 if (file_s)
+                    /* if "ptr_samp" is found */
                     find_for_samp=1;
                 if (file_m)
+                    /* if "ptr_openmp" is found */
                     find_for_omp=1;
 
                 if (find_for_samp == 1) {
                     if (*arg == '\0') {
                         const char *srv_log_samp = "server_log.txt";
-                        FILE *file = fopen(srv_log_samp, "r");
+                        FILE *__samp_log = fopen(srv_log_samp, "r");
 
-                        if (file) {
+                        if (__samp_log) {
                             remove(srv_log_samp);
                         }
 
                         printf_color(COL_YELLOW, "running...");
                         usleep(500000);
 
-                        snprintf(format_prompt, 1000, "chmod 777 %s", ptr_server);
+                        snprintf(format_prompt, 1000, "chmod 777 %s", ptr_samp);
                         kd_sys(format_prompt);
-                        snprintf(format_prompt, 1000, "./%s", ptr_server);
+                        snprintf(format_prompt, 1000, "./%s", ptr_samp);
                         kd_sys(format_prompt);
 
                         printf_color(COL_YELLOW, "Press enter to print logs..");
                         getchar();
 
-                        if (file) {
+                        if (__samp_log) {
                             snprintf(format_prompt, 1000, "cat %s", srv_log_samp);
                             kd_sys(format_prompt);
                         }
                     } else {
                         char *arg1 = strtok(arg, " ");
-                        call_server_samp(arg1, ptr_server);
+                        call_server_samp(arg1, ptr_samp);
                     }
                 } else if (find_for_omp == 1) {
                     if (*arg == '\0') {
                         const char *srv_log_omp = "log.txt";
-                        FILE *file = fopen(srv_log_omp, "r");
+                        FILE *__omp_log = fopen(srv_log_omp, "r");
 
-                        if (file) {
+                        if (__omp_log) {
                             remove(srv_log_omp);
                         }
 
@@ -469,7 +471,7 @@ Usage: \"restart\"");
                         printf_color(COL_YELLOW, "Press enter to print logs..");
                         getchar();
 
-                        if (file) {
+                        if (__omp_log) {
                             snprintf(format_prompt, 1000, "cat %s", srv_log_omp);
                             kd_sys(format_prompt);
                         }
@@ -518,6 +520,8 @@ Usage: \"restart\"");
 
             goto _running_
                 ;
+        } else if (strcmp(ptr_cmds, "kodo") == 0) {
+            printf("Hello there!\n");
         } else if (strcmp(ptr_cmds, c_command) != 0 && c_distance <= 1) {
             kodo_title("Kodo Toolchain | @ undefined");
             println("Did you mean: '%s'?", c_command);

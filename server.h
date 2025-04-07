@@ -12,7 +12,7 @@
 #define SERVER_H
 
 void call_server_stop_tasks(void);
-void call_server_samp(const char *arg1, const char *ptr_server);
-void call_server_openmp(const char *arg1);
+void call_server_samp(const char *_args_, const char *ptr_server);
+void call_server_openmp(const char *_args_);
 
 #endif

@@ -42,19 +42,25 @@
 #include "server.h"
 
 const char
-    *kodo_os;
+    /* variable (gvar) for kodo os checking */
+    *kodo_os
+    = NULL;
 const char
+    /* variable (gvar) for compiler option checking */
     *kd_compiler_opt
-    =NULL;
+    = NULL;
 const char
+    /* variable (gvar) for compiler gamemode input */
     *kd_gamemode_input
-    =NULL;
+    = NULL;
 const char
+    /* variable (gvar) for compiler gamemode output */
     *kd_gamemode_output
-    =NULL;
+    = NULL;
 const char
+    /* variable (gvar) for server or debug checking */
     *server_or_debug
-    =NULL;
+    = NULL;
 
 void printf_color(
                   const char *color, const char *format, ...)
@@ -127,6 +133,7 @@ int kom_is_windows(void) {
     }
 
     if (getenv("WSL_INTEROP") != NULL) {
+        /* only WSL and disable docker , docker using linux system */
         return 1;
     }
 
