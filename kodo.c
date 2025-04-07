@@ -337,14 +337,19 @@ Usage: \"restart\"");
                             snprintf(_compiler_, 4096, "%s %s \"%s\" -o\"%s\" \"%s\"", pf_found[0], all_paths, arg1, kd_gamemode_output, kd_compiler_opt);
                         }
                         printf("\n");
-
-                        if (_compiler_)
-                            free(_compiler_);
-                    }
-                }
             
-                if (_compiler_)
-                    kd_sys(_compiler_);
+                        if (_compiler_) {
+                            int ret = kd_sys(_compiler_);
+
+                            if (ret != 0) {
+                                printf_error("Err detected from compiler..");
+                            }
+                        }
+                    }
+
+                    if (_compiler_)
+                        free(_compiler_);
+                }
             } else {
                 printf_error("pawncc not found!");
 
