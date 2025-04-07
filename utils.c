@@ -44,11 +44,17 @@
 const char
     *kodo_os;
 const char
-    *kd_compiler_opt=NULL;
+    *kd_compiler_opt
+    =NULL;
 const char
-    *kd_gamemode_input=NULL;
+    *kd_gamemode_input
+    =NULL;
 const char
-    *kd_gamemode_output=NULL;
+    *kd_gamemode_output
+    =NULL;
+const char
+    *server_or_debug
+    =NULL;
 
 void printf_color(
                   const char *color, const char *format, ...)

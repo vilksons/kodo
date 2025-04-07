@@ -88,7 +88,8 @@ void _kodo_ () {
     /* valid commands. */
         {
             "exit", "clear", "kill", "title", "help",
-            "gamemode", "pawncc", "compile", "running"
+            "gamemode", "pawncc", "compile", "running", "debug",
+            "stop", "restart"
         };
     int num_cmds = 
         sizeof(__vcommands__) / 
@@ -140,7 +141,8 @@ void _kodo_ () {
                 println("cmds:");
                 println(" clear, exit, kill, title");
                 println(" gamemode, pawncc");
-                println(" compile, running");
+                println(" compile, running, debug");
+                println(" stop, restart");
             } else if (strcmp(arg, "exit") == 0) {
                 println("exit: exit from Kodo. | \
 Usage: \"exit\"");
@@ -159,6 +161,18 @@ Usage: \"compile\" | [<args>]");
             } else if (strcmp(arg, "running") == 0) {
                 println("running: running your gamemdoe. | \
 Usage: \"running\" | [<args>]");
+            } else if (strcmp(arg, "debug") == 0) {
+                println("debug: debugging your gamemdoe. | \
+Usage: \"debug\" | [<args>]");
+            } else if (strcmp(arg, "stop") == 0) {
+                println("stop: stopped server task. | \
+Usage: \"stop\"");
+            } else if (strcmp(arg, "restart") == 0) {
+                println("restart: restart server task. | \
+Usage: \"restart\"");
+            } else if (strcmp(arg, "debug") == 0) {
+                println("debug: debugging your gamemdoe. | \
+Usage: \"debug\" | [<args>]");
             } else {
                 println("help not found for: '%s'", arg);
             }
@@ -357,128 +371,149 @@ Usage: \"running\" | [<args>]");
 
                 free(ptr_sigA);
             }
-        } else if (strncmp(ptr_cmds, "running", 7) == 0) {
-            kodo_title("Kodo Toolchain | @ running");
+        } else if (strncmp(ptr_cmds, "running", 7) == 0 || strncmp(ptr_cmds, "debug", 7) == 0) {
+            _running_:
+                if (strcmp(ptr_cmds, "debug") == 0) {
+                    server_or_debug="debug";
+                    kodo_title("Kodo Toolchain | @ debug");    
+                } else {
+                    kodo_title("Kodo Toolchain | @ running");
+                }
+
+                char *arg = ptr_cmds + 7;
+                while (*arg == ' ') arg++;
+
+                char *format_prompt = malloc(1000);
+                size_t format_size = 1000;
             
-            char *arg = ptr_cmds + 7;
-            while (*arg == ' ') arg++;
+                const char *ptr_server = NULL;
+                const char *ptr_openmp = NULL;
 
-            char *format_prompt = malloc(1000);
-            size_t format_size = 1000;
-        
-            const char *ptr_server = NULL;
-            const char *ptr_openmp = NULL;
+                int find_for_samp =
+                    0;
+                int find_for_omp =
+                    0;
 
-            int find_samp = 0;
-            int find_omp = 0;
-
-            int __kodo_os__ = system_os();
-            if (__kodo_os__ == 1) {
-                /* windows */
-                ptr_server="samp-server.exe";
-                ptr_openmp="omp-server.exe";
-            }
-            else if (__kodo_os__ == 0) {
-                /* linux */
-                ptr_server="samp03svr";
-                ptr_openmp="omp-server";
-            }
-
-            FILE *file_s = fopen(ptr_server, "r");
-            FILE *file_m = fopen(ptr_openmp, "r");
-
-            if (file_s) {
-                find_samp=1;
-            }
-            if (file_m) {
-                find_omp=1;
-            }
-
-            if (find_samp == 1) {
-                if (*arg == '\0') {
-                    const char *srv_log_samp = "server_log.txt";
-                    FILE *file = fopen(srv_log_samp, "r");
-
-                    if (file) {
-                        remove(srv_log_samp);
-                    }
-
-                    printf_color(COL_YELLOW, "running...");
-                    usleep(500000);
-
-                    snprintf(format_prompt, 1000, "chmod 777 %s", ptr_server);
-                    kd_sys(format_prompt);
-                    snprintf(format_prompt, 1000, "./%s", ptr_server);
-                    kd_sys(format_prompt);
-
-                    printf_color(COL_YELLOW, "Press enter to print logs..");
-                    getchar();
-
-                    if (file) {
-                        snprintf(format_prompt, 1000, "cat %s", srv_log_samp);
-                        kd_sys(format_prompt);
-                    }
-                } else {
-                    char *arg1 = strtok(arg, " ");
-                    call_server_samp(arg1, ptr_server);
+                int __kodo_os__ = system_os();
+                if (__kodo_os__ == 1) {
+                    /* windows */
+                    ptr_server="samp-server.exe";
+                    ptr_openmp="omp-server.exe";
                 }
-            } else if (find_omp == 1) {
-                if (*arg == '\0') {
-                    const char *srv_log_omp = "log.txt";
-                    FILE *file = fopen(srv_log_omp, "r");
-
-                    if (file) {
-                        remove(srv_log_omp);
-                    }
-
-                    printf_color(COL_YELLOW, "running...");
-                    usleep(500000);
-
-                    snprintf(format_prompt, 1000, "chmod 777 %s", ptr_openmp);
-                    kd_sys(format_prompt);
-                    snprintf(format_prompt, 1000, "./%s", ptr_openmp);
-                    kd_sys(format_prompt);
-
-                    printf_color(COL_YELLOW, "Press enter to print logs..");
-                    getchar();
-
-                    if (file) {
-                        snprintf(format_prompt, 1000, "cat %s", srv_log_omp);
-                        kd_sys(format_prompt);
-                    }
-                } else {
-                    char *arg1 = strtok(arg, " ");
-                    call_server_openmp(arg1);
+                else if (__kodo_os__ == 0) {
+                    /* linux */
+                    ptr_server="samp03svr";
+                    ptr_openmp="omp-server";
                 }
-            } else if (!find_omp || !find_samp) {
-                printf_error("samp-server/open.mp server not found!");
 
-                char *ptr_sigA;
-                ptr_sigA = readline("install now? [Y/n]: ");
+                FILE
+                    *file_s =
+                        fopen(ptr_server, "r");
+                FILE
+                    *file_m =
+                        fopen(ptr_openmp, "r");
+                if (file_s)
+                    find_for_samp=1;
+                if (file_m)
+                    find_for_omp=1;
 
-                while (1) {
-                    if (strcmp(ptr_sigA, "Y") == 0 || strcmp(ptr_sigA, "y") == 0) {
-                        if (__kodo_os__ == 1) {
-                            call_download_samp("windows");
-                        } else if (__kodo_os__ == 0) {
-                            call_download_samp("linux");
+                if (find_for_samp == 1) {
+                    if (*arg == '\0') {
+                        const char *srv_log_samp = "server_log.txt";
+                        FILE *file = fopen(srv_log_samp, "r");
+
+                        if (file) {
+                            remove(srv_log_samp);
                         }
-                        break;
-                    } else if (strcmp(ptr_sigA, "N") == 0 || strcmp(ptr_sigA, "n") == 0) {
-                        break;
+
+                        printf_color(COL_YELLOW, "running...");
+                        usleep(500000);
+
+                        snprintf(format_prompt, 1000, "chmod 777 %s", ptr_server);
+                        kd_sys(format_prompt);
+                        snprintf(format_prompt, 1000, "./%s", ptr_server);
+                        kd_sys(format_prompt);
+
+                        printf_color(COL_YELLOW, "Press enter to print logs..");
+                        getchar();
+
+                        if (file) {
+                            snprintf(format_prompt, 1000, "cat %s", srv_log_samp);
+                            kd_sys(format_prompt);
+                        }
                     } else {
-                        printf("Invalid input. Please type Y/y to install or N/n to cancel.\n");
-                        free(ptr_sigA);
-                        ptr_sigA = readline("install now? [Y/n]: ");
+                        char *arg1 = strtok(arg, " ");
+                        call_server_samp(arg1, ptr_server);
                     }
+                } else if (find_for_omp == 1) {
+                    if (*arg == '\0') {
+                        const char *srv_log_omp = "log.txt";
+                        FILE *file = fopen(srv_log_omp, "r");
+
+                        if (file) {
+                            remove(srv_log_omp);
+                        }
+
+                        printf_color(COL_YELLOW, "running...");
+                        usleep(500000);
+
+                        snprintf(format_prompt, 1000, "chmod 777 %s", ptr_openmp);
+                        kd_sys(format_prompt);
+                        snprintf(format_prompt, 1000, "./%s", ptr_openmp);
+                        kd_sys(format_prompt);
+
+                        printf_color(COL_YELLOW, "Press enter to print logs..");
+                        getchar();
+
+                        if (file) {
+                            snprintf(format_prompt, 1000, "cat %s", srv_log_omp);
+                            kd_sys(format_prompt);
+                        }
+                    } else {
+                        char *arg1 = strtok(arg, " ");
+                        call_server_openmp(arg1);
+                    }
+                } else if (!find_for_omp || !find_for_samp) {
+                    printf_error("samp-server/open.mp server not found!");
+
+                    char *ptr_sigA;
+                    ptr_sigA = readline("install now? [Y/n]: ");
+
+                    while (1) {
+                        if (strcmp(ptr_sigA, "Y") == 0 || strcmp(ptr_sigA, "y") == 0) {
+                            if (__kodo_os__ == 1) {
+                                call_download_samp("windows");
+                            } else if (__kodo_os__ == 0) {
+                                call_download_samp("linux");
+                            }
+                            break;
+                        } else if (strcmp(ptr_sigA, "N") == 0 || strcmp(ptr_sigA, "n") == 0) {
+                            break;
+                        } else {
+                            printf("Invalid input. Please type Y/y to install or N/n to cancel.\n");
+                            free(ptr_sigA);
+                            ptr_sigA = readline("install now? [Y/n]: ");
+                        }
+                    }
+
+                    free(ptr_sigA);
                 }
 
-                free(ptr_sigA);
-            }
+                if (format_prompt) {
+                    free(format_prompt);
+                }
+        } else if (strcmp(ptr_cmds, "stop") == 0) {
+            kodo_title("Kodo Toolchain | @ stop");
 
-            if (format_prompt) {
-                free(format_prompt);
-            }
+            call_server_stop_tasks();
+            continue;
+        } else if (strcmp(ptr_cmds, "restart") == 0) {
+            call_server_stop_tasks();
+
+            usleep(500000);
+
+            goto _running_
+                ;
         } else if (strcmp(ptr_cmds, c_command) != 0 && c_distance <= 1) {
             kodo_title("Kodo Toolchain | @ undefined");
             println("Did you mean: '%s'?", c_command);

@@ -23,6 +23,36 @@
 #include "utils.h"
 #include "server.h"
 
+void call_server_stop_tasks(void)
+{
+    char *format_sys = malloc(1000);
+    size_t format_size = 1000;
+
+    snprintf(format_sys, 1000, "pkill -9 -f \"%s\"", "samp-server.exe");
+
+    int ret_deb = system(format_sys);
+    if (ret_deb != 0) {}
+
+    snprintf(format_sys, 1000, "pkill -9 -f \"%s\"", "samp03svr");
+
+    ret_deb = system(format_sys);
+    if (ret_deb != 0) {}
+
+    snprintf(format_sys, 1000, "pkill -9 -f \"%s\"", "omp-server.exe");
+
+    ret_deb = system(format_sys);
+    if (ret_deb != 0) {}
+
+    snprintf(format_sys, 1000, "pkill -9 -f \"%s\"", "omp-server");
+
+    ret_deb = system(format_sys);
+    if (ret_deb != 0) {}
+
+    if (format_sys) {
+        free(format_sys);
+    }
+}
+
 void call_server_samp(const char *arg1, const char *ptr_server) {
     char *format_sys = malloc(1000);
     size_t format_size = 1000;
@@ -95,9 +125,25 @@ void call_server_samp(const char *arg1, const char *ptr_server) {
         perror("system failed");
     }
 
+    if (strcmp(server_or_debug, "debug") == 0) {
+        server_or_debug=NULL;
+        
+        snprintf(format_sys, 1000, "pkill -9 -f \"%s\"", "samp-server.exe");
+
+        int ret_deb = system(format_sys);
+        if (ret_deb != 0) {}
+
+        snprintf(format_sys, 1000, "pkill -9 -f \"%s\"", "samp03svr");
+
+        ret_deb = system(format_sys);
+        if (ret_deb != 0) {}
+    }
+
     if (format_sys) {
         free(format_sys);
     }
+
+    _kodo_();
 }
 
 void call_server_openmp(const char *arg1) {
@@ -191,12 +237,29 @@ void call_server_openmp(const char *arg1) {
         }
     }
 
-    if (format_sys) {
-        free(format_sys);
-    }
     remove(config_file);
     snprintf(cmd, sizeof(cmd), "mv %s %s", backup_file, config_file);
     if (system(cmd) == -1) {
         printf_error("Failed to restore original config");
     }
+
+    if (strcmp(server_or_debug, "debug") == 0) {
+        server_or_debug=NULL;
+        
+        snprintf(format_sys, 1000, "pkill -9 -f \"%s\"", "omp-server.exe");
+
+        int ret_deb = system(format_sys);
+        if (ret_deb != 0) {}
+
+        snprintf(format_sys, 1000, "pkill -9 -f \"%s\"", "omp-server");
+
+        ret_deb = system(format_sys);
+        if (ret_deb != 0) {}
+    }
+
+    if (format_sys) {
+        free(format_sys);
+    }
+
+    _kodo_();
 }
