@@ -8,8 +8,8 @@
  *
  * Compile with GCC or CLANG
  * Required Library: build-essential, clang. libcurl4-openssl-dev, libncurses-dev, libarchive-dev
- * gcc -D_GNU_SOURCE -g -Os -s kodo.c utils.c package.c compiler.c tomlc99/toml.c -o kodo -lm -lcurl -lncurses -lreadline -larchive
- * clang -D_GNU_SOURCE -g -Os -s kodo.c utils.c package.c compiler.c tomlc99/toml.c -o kodo -lm -lcurl -lncurses -lreadline -larchive
+ * gcc -D_GNU_SOURCE -g -Os -s kodo.c utils.c package.c compiler.c server.c tomlc99/toml.c cJson/cJSON.c -o kodo -lm -lcurl -lncurses -lreadline -larchive
+ * clang -D_GNU_SOURCE -g -Os -s kodo.c utils.c package.c compiler.c server.c tomlc99/toml.c cJson/cJSON.c -o kodo -lm -lcurl -lncurses -lreadline -larchive
  *
  */
 
@@ -39,7 +39,9 @@
 #include <readline/history.h>
 #include <archive.h>
 #include <archive_entry.h>
+
 #include "tomlc99/toml.h"
+#include "cJson/cJSON.h"
 
 static inline int kd_sys(const char *cmd) {
     return system(cmd);
@@ -50,6 +52,7 @@ static inline int kd_sys(const char *cmd) {
 #include "package.h"
 #include "compiler.h"
 #include "kodo.h"
+#include "server.h"
 
 int kodo_title(
     const char *custom_title)
@@ -167,14 +170,16 @@ Usage: \"running\" | [<args>]");
             char platform;
 
             ret_pcc:
-                printf("Select platform:\n");
-                printf("[L/l] Linux\n");
-                printf("[W/w] Windows\n");
+                println("Select platform:");
+                println("[L/l] Linux");
+                println("[W/w] Windows");
                 printf(">> ");
 
             if (scanf(" %c", &platform) != 1) {
                 return;
             }
+
+            signal(SIGINT, _kodo_);
 
             if (platform == 'L' || platform == 'l') {
                 call_download_pawncc("linux");
@@ -192,14 +197,16 @@ Usage: \"running\" | [<args>]");
             char platform;
 
             ret_gm:
-                printf("Select platform:\n");
-                printf("[L/l] Linux\n");
-                printf("[W/w] Windows\n");
+                println("Select platform:");
+                println("[L/l] Linux");
+                println("[W/w] Windows");
                 printf(">> ");
 
             if (scanf(" %c", &platform) != 1) {
                 return;
             }
+
+            signal(SIGINT, _kodo_);
 
             if (platform == 'L' || platform == 'l') {
                 call_download_samp("linux");
@@ -210,7 +217,7 @@ Usage: \"running\" | [<args>]");
                 goto ret_gm;
             }
 
-            continue;
+            break;
         } else if (strcmp(ptr_cmds, "clear") == 0) {
             kodo_title("Kodo Toolchain | @ clear");
 
@@ -270,7 +277,6 @@ Usage: \"running\" | [<args>]");
                 FILE *__fp = fopen(fname, "r");
                 if (!__fp) {
                     printf_error("Can't read file %s\n", fname);
-                    _kodo_();
                 }
             
                 char errbuf[256];
@@ -279,7 +285,6 @@ Usage: \"running\" | [<args>]");
             
                 if (!config) {
                     printf_error("parsing TOML: %s\n", errbuf);
-                    _kodo_();
                 }
             
                 toml_table_t *kom_compiler = toml_table_in(config, "compiler");
@@ -357,86 +362,96 @@ Usage: \"running\" | [<args>]");
             
             char *arg = ptr_cmds + 7;
             while (*arg == ' ') arg++;
-                
-            char *format_sys = malloc(1000);
+
+            char *format_prompt = malloc(1000);
             size_t format_size = 1000;
         
-            const char *ptr_server;
+            const char *ptr_server = NULL;
+            const char *ptr_openmp = NULL;
+
+            int find_samp = 0;
+            int find_omp = 0;
+
             int __kodo_os__ = system_os();
-            if (__kodo_os__ == 1) 
+            if (__kodo_os__ == 1) {
+                /* windows */
                 ptr_server="samp-server.exe";
-            else if (__kodo_os__ == 0)
+                ptr_openmp="omp-server.exe";
+            }
+            else if (__kodo_os__ == 0) {
+                /* linux */
                 ptr_server="samp03svr";
-        
-            int find_server = call_kodo_find_file(".", ptr_server);
-            if (find_server == 1) {
+                ptr_openmp="omp-server";
+            }
+
+            FILE *file_s = fopen(ptr_server, "r");
+            FILE *file_m = fopen(ptr_openmp, "r");
+
+            if (file_s) {
+                find_samp=1;
+            }
+            if (file_m) {
+                find_omp=1;
+            }
+
+            if (find_samp == 1) {
                 if (*arg == '\0') {
-                    snprintf(format_sys, 1000, "chmod 777 %s", ptr_server);
-                    kd_sys(format_sys);
-                    snprintf(format_sys, 1000, "./%s", ptr_server);
-                    kd_sys(format_sys);
+                    const char *srv_log_samp = "server_log.txt";
+                    FILE *file = fopen(srv_log_samp, "r");
+
+                    if (file) {
+                        remove(srv_log_samp);
+                    }
+
+                    printf_color(COL_YELLOW, "running...");
+                    usleep(500000);
+
+                    snprintf(format_prompt, 1000, "chmod 777 %s", ptr_server);
+                    kd_sys(format_prompt);
+                    snprintf(format_prompt, 1000, "./%s", ptr_server);
+                    kd_sys(format_prompt);
+
+                    printf_color(COL_YELLOW, "Press enter to print logs..");
+                    getchar();
+
+                    if (file) {
+                        snprintf(format_prompt, 1000, "cat %s", srv_log_samp);
+                        kd_sys(format_prompt);
+                    }
                 } else {
                     char *arg1 = strtok(arg, " ");
-            
-                    const char *config_file = "server.cfg";
-
-                    snprintf(format_sys, 1000, "cp %s .%s.bak", config_file, config_file);
-                    kd_sys(format_sys);
-
-                    char bak_filename[256];
-                    snprintf(bak_filename, sizeof(bak_filename), ".%s.bak", config_file);
-
-                    FILE *in = fopen(bak_filename, "r");
-                    if (!in) {
-                        printf_error("opening input file");
-                        _kodo_();
-                    }
-
-                    FILE *out = fopen(config_file, "w");
-                    if (!out) {
-                        printf_error("opening output file");
-                        fclose(in);
-                        _kodo_();
-                    }
-            
-                    int found_rate = 0;
-                    char line[512];
-            
-                    while (fgets(line, sizeof(line), in)) {
-                        if (strncmp(line, "gamemode0 ", 10) == 0) {
-                            fprintf(out, "gamemode0 %s\n", arg1);
-                            found_rate = 1;
-                        } else {
-                            fputs(line, out);
-                        }
-                    }
-            
-                    if (!found_rate) {
-                        fprintf(out, "gamemode0 %s\n", arg1);
-                    }
-            
-                    fclose(in);
-                    fclose(out);
-
-                    snprintf(format_sys, 1000, "chmod 777 %s", ptr_server);
-                    kd_sys(format_sys);
-                    snprintf(format_sys, 1000, "./%s", ptr_server);
-                    kd_sys(format_sys);
-
-                    sleep(1);
-
-                    remove(config_file);
-                    snprintf(format_sys, 1000, "mv .%s.bak %s", config_file, config_file);
-                    kd_sys(format_sys);
+                    call_server_samp(arg1, ptr_server);
                 }
+            } else if (find_omp == 1) {
+                if (*arg == '\0') {
+                    const char *srv_log_omp = "log.txt";
+                    FILE *file = fopen(srv_log_omp, "r");
 
-                if (format_sys) {
-                    free(format_sys);
+                    if (file) {
+                        remove(srv_log_omp);
+                    }
+
+                    printf_color(COL_YELLOW, "running...");
+                    usleep(500000);
+
+                    snprintf(format_prompt, 1000, "chmod 777 %s", ptr_openmp);
+                    kd_sys(format_prompt);
+                    snprintf(format_prompt, 1000, "./%s", ptr_openmp);
+                    kd_sys(format_prompt);
+
+                    printf_color(COL_YELLOW, "Press enter to print logs..");
+                    getchar();
+
+                    if (file) {
+                        snprintf(format_prompt, 1000, "cat %s", srv_log_omp);
+                        kd_sys(format_prompt);
+                    }
+                } else {
+                    char *arg1 = strtok(arg, " ");
+                    call_server_openmp(arg1);
                 }
-            }
-            else
-            {
-                printf_error("samp-server not found!");
+            } else if (!find_omp || !find_samp) {
+                printf_error("samp-server/open.mp server not found!");
 
                 char *ptr_sigA;
                 ptr_sigA = readline("install now? [Y/n]: ");
@@ -459,6 +474,10 @@ Usage: \"running\" | [<args>]");
                 }
 
                 free(ptr_sigA);
+            }
+
+            if (format_prompt) {
+                free(format_prompt);
             }
         } else if (strcmp(ptr_cmds, c_command) != 0 && c_distance <= 1) {
             kodo_title("Kodo Toolchain | @ undefined");

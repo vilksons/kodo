@@ -82,7 +82,7 @@ void call_download_samp(const char *platform) {
         void _kodo_();
         return;
     }
-
+    
     VersionInfo versions[] = {
         { 'A', "SA-MP 0.3.DL R1", 
             "https://github.com/vilksons/files.sa-mp.com-Archive/raw/refs/heads/master/samp03DLsvr_R1.tar.gz",
@@ -107,6 +107,30 @@ void call_download_samp(const char *platform) {
             "samp037svr_R2-1.tar.gz",
             "https://github.com/vilksons/files.sa-mp.com-Archive/raw/refs/heads/master/samp037_svr_R2-1-1_win32.zip",
             "samp037_svr_R2-1-1_win32.zip"
+        },
+        { 'E', "OPEN.MP v1.4.0.2779",
+            "https://github.com/openmultiplayer/open.mp/releases/download/v1.4.0.2779/open.mp-linux-x86.tar.gz",
+            "open.mp-linux-x86.tar.gz",
+            "https://github.com/openmultiplayer/open.mp/releases/download/v1.4.0.2779/open.mp-win-x86.zip",
+            "open.mp-win-x86.zip"
+        },
+        { 'F', "OPEN.MP v1.3.1.2748",
+            "https://github.com/openmultiplayer/open.mp/releases/download/v1.3.1.2748/open.mp-linux-x86.tar.gz",
+            "open.mp-linux-x86.tar.gz",
+            "https://github.com/openmultiplayer/open.mp/releases/download/v1.3.1.2748/open.mp-win-x86.zip",
+            "open.mp-win-x86.zip"
+        },
+        { 'G', "OPEN.MP v1.2.0.2670",
+            "https://github.com/openmultiplayer/open.mp/releases/download/v1.2.0.2670/open.mp-linux-x86.tar.gz",
+            "open.mp-linux-x86.tar.gz",
+            "https://github.com/openmultiplayer/open.mp/releases/download/v1.2.0.2670/open.mp-win-x86.zip",
+            "open.mp-win-x86.zip"
+        },
+        { 'H', "OPEN.MP v1.1.0.2612",
+            "https://github.com/openmultiplayer/open.mp/releases/download/v1.1.0.2612/open.mp-linux-x86.tar.gz",
+            "open.mp-linux-x86.tar.gz",
+            "https://github.com/openmultiplayer/open.mp/releases/download/v1.1.0.2612/open.mp-win-x86.zip",
+            "open.mp-win-x86.zip"
         }
     };
 

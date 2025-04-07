@@ -34,10 +34,12 @@
 #include <archive_entry.h>
 
 #include "tomlc99/toml.h"
+#include "cJson/cJSON.h"
 
 #include "color.h"
 #include "utils.h"
 #include "kodo.h"
+#include "server.h"
 
 const char
     *kodo_os;
@@ -182,7 +184,6 @@ int kom_toml_data(void)
     FILE *__fp = fopen(fname, "r");
     if (!__fp) {
         printf_error("Can't __read file %ss\n", fname);
-        _kodo_();
     }
 
     /* Parse the TOML file */
@@ -193,7 +194,6 @@ int kom_toml_data(void)
     /* Check for parse errors */
     if (!config) {
         printf_error("parsing TOML: %s\n", errbuf);
-        _kodo_();
     }
 
     /* Read the 'general' table from the parsed TOML data */
@@ -380,8 +380,6 @@ int call_extract_zip(
                     if (!has_error) { // Only print once
                         printf_error("reading block from archive: %s\n", archive_error_string(__arch));
                         has_error = 1;
-
-                        _kodo_();
                     }
                 }
                 __read = archive_write_data_block(__ext, __buff, size, offset);
@@ -389,8 +387,6 @@ int call_extract_zip(
                     if (!has_error) { // Only print once
                         printf_error("writing block to destination: %s\n", archive_error_string(__ext));
                         has_error = 1;
-
-                        _kodo_();
                     }
                 }
             }
