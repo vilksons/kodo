@@ -280,7 +280,7 @@ Usage: \"restart\"");
             else if (__kodo_os__ == 0)
                 ptr_pawncc="pawncc";
         
-            int find_pawncc = call_kodo_find_file(".", ptr_pawncc);
+            int find_pawncc = call_find_for_pawncc(".", ptr_pawncc);
             if (find_pawncc == 1) {
                 char * _compiler_ = malloc(4096);
                 

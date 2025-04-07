@@ -11,4 +11,11 @@
 #ifndef COMPILER_H
 #define COMPILER_H
 
+#define MAX_FIND_PATH 100
+#define MAX_FIND_PATH_LENGTH 1024
+
+extern char pf_found[MAX_FIND_PATH][MAX_FIND_PATH_LENGTH];
+extern int pf_count;
+int call_find_for_pawncc(const char *__d_path, const char *__t_file);
+
 #endif
