@@ -62,10 +62,9 @@ const char
     *server_or_debug
     = NULL;
 
-
 int kodo_title(
     const char *custom_title)
-    {
+{
     const char *title = custom_title ? custom_title : "Kodo Toolchain";
     printf("\033]0;%s\007", title);
     return 0;
@@ -112,26 +111,31 @@ void println(const char* fmt, ...) {
 }
 
 void printf_succes(const char *format, ...) {
+    /* printf with newline for succes msg */
     printf_color(COL_YELLOW, "succes: ");
     printf_color(COL_DEFAULT, "%s\n", format);
 }
 
 void printf_info(const char *format, ...) {
+    /* printf with newline for info msg */
     printf_color(COL_YELLOW, "info: ");
     printf_color(COL_DEFAULT, "%s\n", format);
 }
 
 void printf_warning(const char *format, ...) {
+    /* printf with newline for warning msg */
     printf_color(COL_GREEN, "warning: ");
     printf_color(COL_DEFAULT, "%s\n", format);
 }
 
 void printf_error(const char *format, ...) {
+    /* printf with newline for error msg */
     printf_color(COL_RED, "error: ");
     printf_color(COL_DEFAULT, "%s\n", format);
 }
 
 void printf_crit(const char *format, ...) {
+    /* printf with newline for crit msg */
     printf_color(COL_RED, "crit: ");
     printf_color(COL_DEFAULT, "%s\n", format);
 }
@@ -324,9 +328,10 @@ int call_extract_tar_gz(const char *fname) {
     archive_read_support_filter_gzip(__arch);
 
     __read = archive_read_open_filename(__arch, fname, 10240);
-    if (__read != ARCHIVE_OK)
-        /* error */
+    if (__read != ARCHIVE_OK) {
+        printf_crit("Can't resume. i can't write/open the %s", fname);
         _kodo_();
+    }
 
     /* Loop through each __entry in the archive */
     while (archive_read_next_header(__arch, &__entry) == ARCHIVE_OK) {
@@ -363,7 +368,7 @@ int call_extract_zip(
 
     /* Open the archive file */
     if ((__read = archive_read_open_filename(__arch, zip_path, 10240))) {
-        fprintf(stderr, "Can't open: %s\n", archive_error_string(__arch));
+        printf_crit("Can't resume. i can't write/open the %s", archive_error_string(__arch));
         _kodo_();
     }
 
@@ -468,7 +473,7 @@ void call_download_file(const char *url,
     /* Open file for writing in binary mode */
     __fp = fopen(fname, "wb");
     if (__fp == NULL) {
-        perror("[err]: failed to open file for writing");
+        printf_crit("failed to open file for writing in 'call_download_file'");
         _kodo_();
     }
 
@@ -497,7 +502,7 @@ void call_download_file(const char *url,
 
         if (__res != CURLE_OK) {
             /* Print error message on failure */
-            fprintf(stderr, "[err]: failed to download the file: %s\n", curl_easy_strerror(__res));
+            printf_crit("failed to download the file: %s\n", curl_easy_strerror(__res));
             fclose(__fp);
             curl_easy_cleanup(__curl);
             curl_global_cleanup();
