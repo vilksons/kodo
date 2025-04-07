@@ -62,6 +62,21 @@ const char
     *server_or_debug
     = NULL;
 
+
+int kodo_title(
+    const char *custom_title)
+    {
+    const char *title = custom_title ? custom_title : "Kodo Toolchain";
+    printf("\033]0;%s\007", title);
+    return 0;
+}
+    
+struct struct_of init_kodo(void) {
+    struct struct_of kodo;
+    kodo.title = kodo_title;
+    return kodo;
+}
+
 void printf_color(
                   const char *color, const char *format, ...)
 {
@@ -155,7 +170,7 @@ const char* kom_detect_os(void) {
     return "unknown";
 }
 
-int system_os(void) {
+int signal_system_os(void) {
     if (strcmp(kodo_os, "windows") == 0)
         return 1;
     else if (strcmp(kodo_os, "linux") == 0)

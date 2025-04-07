@@ -22,8 +22,16 @@ extern
 extern
     const char *server_or_debug;
 
+    struct struct_of {
+        int (*title)(const char *);
+    };
+    
+    // Deklarasi fungsi
+    struct struct_of init_kodo(void);
+    
+
 int kom_toml_data(void);
-int system_os(void);
+int signal_system_os(void);
 int call_kom_undefined_rate(const char *str1, const char *str2);
 void printf_color(const char *color, const char *format, ...);
 void println(const char* fmt, ...);

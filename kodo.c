@@ -54,24 +54,6 @@ static inline int kd_sys(const char *cmd) {
 #include "kodo.h"
 #include "server.h"
 
-int kodo_title(
-    const char *custom_title)
- {
-    const char *title = custom_title ? custom_title : "Kodo Toolchain";
-    printf("\033]0;%s\007", title);
-    return 0;
-}
-
-struct struct_of {
-    int (*title)(const char *);
-};
-
-struct struct_of init_kodo(void) {
-    struct struct_of kodo;
-    kodo.title = kodo_title;
-    return kodo;
-}
-
 void _kodo_ () {
     struct struct_of kodo = init_kodo();
     kodo.title(NULL);
@@ -274,7 +256,7 @@ Usage: \"restart\"");
             while (*arg == ' ') arg++;
         
             const char *ptr_pawncc;
-            int __kodo_os__ = system_os();
+            int __kodo_os__ = signal_system_os();
             if (__kodo_os__ == 1) 
                 ptr_pawncc="pawncc.exe";
             else if (__kodo_os__ == 0)
@@ -398,7 +380,7 @@ Usage: \"restart\"");
                 int find_for_omp =
                     0;
 
-                int __kodo_os__ = system_os();
+                int __kodo_os__ = signal_system_os();
                 if (__kodo_os__ == 1) {
                     /* windows */
                     ptr_samp="samp-server.exe";
