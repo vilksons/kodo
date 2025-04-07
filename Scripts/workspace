@@ -26,7 +26,7 @@ __SAMP_SERVER=""
 export __SAMP_SERVER
 
 # Zapman
-PAC_encrypted_data=""
+ZAPMAN_encrypted_data=""
 
 save_autoinstall=0
 export save_autoinstall

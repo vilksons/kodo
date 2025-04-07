@@ -63,8 +63,8 @@ print_export("json_EXCLUDE", exclude_flags)
 
 # Export the include paths and other values from the JSON data
 print_export("json_INCLUDE", data.get('include_paths', ''))
-print_export("json_PAC_INCLUDE", data.get('include_dir', ''))
-print_export("json_PAC_PLUGINS", data.get('plugins_dir', ''))
+print_export("json_ZAPMAN_INCLUDE", data.get('include_dir', ''))
+print_export("json_ZAPMAN_PLUGINS", data.get('plugins_dir', ''))
 print_export("json_LOG_SERV", data.get('samp_log', ''))
 print_export("json_SERVER_CONFIG", data.get('samp_config', ''))
 print_export("json_FILE_SERV", data.get('samp_init', ''))
