@@ -247,9 +247,10 @@ SIGNAL_KILL ""
 else
     ignore_this @ENCRYPTION_TOKEN ""  || {
         if [ "$console_module_loaded" -eq 1 ]; then
-                print_red "crit:" "err.. need to kill."
-                sleep 1.0
-                mode_KODO ""
+                print_green "warn:" "err.. need to kill after installing \"succes\".."
+                print_green " killing.."
+                sleep 0.999
+                SIGNAL_KILL ""
             fi
         }
     fi
@@ -333,6 +334,7 @@ function struct_console_main() {
 
                     if [ "$3" = "end" ]; then
                         clear && cd "$(dirname "$(realpath "$0")")" || echo
+                        print_yellow "install succes!"
                         typeof ""
                     fi
                 fi
@@ -356,7 +358,7 @@ function struct_console_main() {
 
             console_pack ".kodo/misc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Misc/misc.kd" "ignore"
 
-            console_pack ".kodo/artintel.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/ArtIntel/artintel.kd" "ignore" 
+            console_pack ".kodo/KChat.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/KChat/kchat.kd" "ignore" 
 
             console_pack ".kodo/server.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Server/server.kd" "end"
             
@@ -382,7 +384,7 @@ function struct_console_main() {
         __SAMP_SERVER="samp"
     fi
 
-    ignore_this @ENCRYPTION_CREATE "" &&
+    ignore_this @ENCRYPTION_CREATE ""
     if [ ! -f "$HOME/.enkodo" ] && [ -n "$RHASH_256" ]; then
         echo "Generate Pass for encryption.."
     fi
@@ -451,9 +453,10 @@ function mode_KODO() {
                 compiler_MODE="true"
                 kodo_compilers "" || {
                     if [ "$console_module_loaded" -eq 1 ]; then
-                        print_red "crit:" "err.. need to kill."
-                        sleep 1.0
-                        mode_KODO ""
+                        print_green "warn:" "err.. need to kill after installing \"succes\".."
+                        print_green " killing.."
+                        sleep 0.999
+                        SIGNAL_KILL ""
                     fi
                 }
             else
@@ -462,9 +465,10 @@ function mode_KODO() {
                         compiler_MODE="true"
                         kodo_compilers "" || {
                             if [ "$console_module_loaded" -eq 1 ]; then
-                                print_red "crit:" "err.. need to kill."
-                                sleep 1.0
-                                mode_KODO ""
+                                print_green "warn:" "err.. need to kill after installing \"succes\".."
+                                print_green " killing.."
+                                sleep 0.999
+                                SIGNAL_KILL ""
                             fi
                         }
                     else
@@ -507,27 +511,30 @@ function mode_KODO() {
                             [Yy])
                                 struct_choice_pawncc "" || {
                                     if [ "$console_module_loaded" -eq 1 ]; then
-                                        print_red "crit:" "err.. need to kill."
-                                        sleep 1.0
-                                        mode_KODO ""
+                                        print_green "warn:" "err.. need to kill after installing \"succes\".."
+                                        print_green " killing.."
+                                        sleep 0.999
+                                        SIGNAL_KILL ""
                                     fi
                                 }
                                 ;;
                             [Nn])
                                 struct_console_main "" || {
                                     if [ "$console_module_loaded" -eq 1 ]; then
-                                        print_red "crit:" "err.. need to kill."
-                                        sleep 1.0
-                                        mode_KODO ""
+                                        print_green "warn:" "err.. need to kill after installing \"succes\".."
+                                        print_green " killing.."
+                                        sleep 0.999
+                                        SIGNAL_KILL ""
                                     fi
                                 }
                                 ;;
                             *)
                                 struct_choice_pawncc "" || {
                                     if [ "$console_module_loaded" -eq 1 ]; then
-                                        print_red "crit:" "err.. need to kill."
-                                        sleep 1.0
-                                        mode_KODO ""
+                                        print_green "warn:" "err.. need to kill after installing \"succes\".."
+                                        print_green " killing.."
+                                        sleep 0.999
+                                        SIGNAL_KILL ""
                                     fi
                                 }
                                 ;;
@@ -580,9 +587,10 @@ function mode_KODO() {
                         
                         bash_cache_compiler "" || {
                             if [ "$console_module_loaded" -eq 1 ]; then
-                                print_red "crit:" "err.. need to kill."
-                                sleep 1.0
-                                mode_KODO ""
+                                print_green "warn:" "err.. need to kill after installing \"succes\".."
+                                print_green " killing.."
+                                sleep 0.999
+                                SIGNAL_KILL ""
                             fi
                         }
                         ignore_this sleep 0.1
@@ -635,17 +643,19 @@ function mode_KODO() {
             if [[ "$commands_INPUT" == "." ]]; then
                 space_servers "" || {
                     if [ "$console_module_loaded" -eq 1 ]; then
-                        print_red "crit:" "err.. need to kill."
-                        sleep 1.0
-                        mode_KODO ""
+                        print_green "warn:" "err.. need to kill after installing \"succes\".."
+                        print_green " killing.."
+                        sleep 0.999
+                        SIGNAL_KILL ""
                     fi
                 }
             else
                 space_wargs_servers "$commands_INPUT" || {
                     if [ "$console_module_loaded" -eq 1 ]; then
-                        print_red "crit:" "err.. need to kill."
-                        sleep 1.0
-                        mode_KODO ""
+                        print_green "warn:" "err.. need to kill after installing \"succes\".."
+                        print_green " killing.."
+                        sleep 0.999
+                        SIGNAL_KILL ""
                     fi
                 }
             fi
@@ -657,9 +667,10 @@ function mode_KODO() {
             compiler_MODE="false"
             kodo_compilers "" || {
                 if [ "$console_module_loaded" -eq 1 ]; then
-                    print_red "crit:" "err.. need to kill."
-                    sleep 1.0
-                    mode_KODO ""
+                    print_green "warn:" "err.. need to kill after installing \"succes\".."
+                    print_green " killing.."
+                    sleep 0.999
+                    SIGNAL_KILL ""
                 fi
             }
             ;;
@@ -683,17 +694,19 @@ function mode_KODO() {
             if [[ "$commands_INPUT" == "." ]]; then
                 space_servers "" || {
                     if [ "$console_module_loaded" -eq 1 ]; then
-                        print_red "crit:" "err.. need to kill."
-                        sleep 1.0
-                        mode_KODO ""
+                        print_green "warn:" "err.. need to kill after installing \"succes\".."
+                        print_green " killing.."
+                        sleep 0.999
+                        SIGNAL_KILL ""
                     fi
                 }
             else
                 space_wargs_servers "$commands_INPUT" || {
                     if [ "$console_module_loaded" -eq 1 ]; then
-                        print_red "crit:" "err.. need to kill."
-                        sleep 1.0
-                        mode_KODO ""
+                        print_green "warn:" "err.. need to kill after installing \"succes\".."
+                        print_green " killing.."
+                        sleep 0.999
+                        SIGNAL_KILL ""
                     fi
                 }
             fi
@@ -721,9 +734,10 @@ function mode_KODO() {
 
             end_console_main "" || {
                 if [ "$console_module_loaded" -eq 1 ]; then
-                    print_red "crit:" "err.. need to kill."
-                    sleep 1.0
-                    mode_KODO ""
+                    print_green "warn:" "err.. need to kill after installing \"succes\".."
+                    print_green " killing.."
+                    sleep 0.999
+                    SIGNAL_KILL ""
                 fi
             }
             ;;
@@ -734,9 +748,10 @@ function mode_KODO() {
 
             end_console_main "" || {
                 if [ "$console_module_loaded" -eq 1 ]; then
-                    print_red "crit:" "err.. need to kill."
-                    sleep 1.0
-                    mode_KODO ""
+                    print_green "warn:" "err.. need to kill after installing \"succes\".."
+                    print_green " killing.."
+                    sleep 0.999
+                    SIGNAL_KILL ""
                 fi
             }
             ;;
@@ -832,7 +847,7 @@ function mode_KODO() {
                             wget -q --show-progress -O "pawncc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/pawncc.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
                             wget -q --show-progress -O "server.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Server/server.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
                             wget -q --show-progress -O "misc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Misc/misc.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
-                            wget -q --show-progress -O "artintel.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/ArtIntel/artintel.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
+                            wget -q --show-progress -O ".kodo/KChat.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/KChat/kchat.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
                             wget -q --show-progress -O "compiler.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compiler/compiler.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
 
                             ignore_this sleep 1 && cd "$shell_DIR" >/dev/null 2>&1 || echo ""
@@ -917,7 +932,7 @@ function mode_KODO() {
                 done
             fi
             
-            kodo_artintel "$commands_INPUT"
+            kodo_kchat "$commands_INPUT"
             ;;
         "nano"*)
             if ! command -v nano &> /dev/null; then
@@ -1008,9 +1023,10 @@ function mode_KODO() {
         "zapman")
             mode_KODO "" || {
                 if [ "$console_module_loaded" -eq 1 ]; then
-                    print_red "crit:" "err.. need to kill."
-                    sleep 1.0
-                    mode_KODO ""
+                    print_green "warn:" "err.. need to kill after installing \"succes\".."
+                    print_green " killing.."
+                    sleep 0.999
+                    SIGNAL_KILL ""
                 fi
             }
             ;;
@@ -1090,10 +1106,13 @@ function not_found_kd()
 {
     echo "error: $kd_table: command not found"
     if [ "$console_module_loaded" -eq 1 ]; then
-        print_green "warn:" "need to kill."
-        sleep 1.0
+        print_green "warn:" "err.. need to kill after installing \"succes\".."
+        print_green " killing.."
+        sleep 0.999
+        SIGNAL_KILL ""
+    else
+        struct_console_main ""
     fi
-    struct_console_main ""
 }
 
 function help_dialog_kd()

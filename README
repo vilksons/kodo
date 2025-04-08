@@ -12,7 +12,7 @@ Essential references to understand and use Kodo:
 WHAT IS KODO?
 ===============
    Kodo is an SA:MP-specific toolchain designed for debugging, compiling, and package management.
----------------
+
 WHAT IS CKODO?
 ===============
   - cKodo https://github.com/vilksons/kodo/tree/ckodo
@@ -45,7 +45,7 @@ Supported Platforms:
 INSTALL `kodo/workspace` SCRIPT
 ---------------------------------
   - Download via GNU/Wget:
-      * wget -q --show-progress -O workspace https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace
+      * wget -q -O workspace https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace
   - Download via cURL:
       * curl -L -o workspace https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace
 
@@ -171,21 +171,22 @@ Almost all are equipped with Hashing, Hashing SHA256 Double. including Bot Token
 
 CONFIGURATION DETAILS
 ------------------------------
-| Key                | Description                                                                 |
-|--------------------|-----------------------------------------------------------------------------|
+
+| Key                | Description                                                                      |
+|--------------------|----------------------------------------------------------------------------------|
 | `amx_flags`        | Compiler option flags. See https://github.com/vilksons/kodo/wiki/Compiler-Option |
-| `include_paths`    | Directory path for additional includes used in compilation.                 |
-| `exclude_paths`    | Paths to exclude from compilation.                                          |
-| `samp_log`         | SA-MP server log file path.                                                 |
-| `samp_config`      | SA-MP configuration file (for Zapman).                                      |
-| `samp_init`        | SA-MP main server file (for Zapman).                                        |
-| `samp_executable`  | Path to the SA-MP server executable.                                        |
-| `include_dir`      | Directory for includes managed by the package manager (Zapman).             |
-| `plugins_dir`      | Directory where `.dll` and `.so` plugin files are stored (Zapman).          |
-| `bot_token`        | API key from [Groq Console - https://console.groq.com/keys.                 |
-| `bot_model`        | AI model from Groq Console - https://console.groq.com/.                     |
-| `bot_profile`      | Additional chatbot configuration info.                                      |
-| `remcache_auto`    | Automatically remove `.cache`, table history, etc. (`true`/`false`).        |
+| `include_paths`    | Directory path for additional includes used in compilation.                      |
+| `exclude_paths`    | Paths to exclude from compilation.                                               |
+| `samp_log`         | SA-MP server log file path.                                                      |
+| `samp_config`      | SA-MP configuration file (for Zapman).                                           |
+| `samp_init`        | SA-MP main server file (for Zapman).                                             |
+| `samp_executable`  | Path to the SA-MP server executable.                                             |
+| `include_dir`      | Directory for includes managed by the package manager (Zapman).                  |
+| `plugins_dir`      | Directory where `.dll` and `.so` plugin files are stored (Zapman).               |
+| `bot_token`        | API key from [Groq Console - https://console.groq.com/keys.                      |
+| `bot_model`        | AI model from Groq Console - https://console.groq.com/.                          |
+| `bot_profile`      | Additional chatbot configuration info.                                           |
+| `remcache_auto`    | Automatically remove `.cache`, table history, etc. (`true`/`false`).             |
 
 EXAMPLE: `include_paths` USAGE
 ------------------------------

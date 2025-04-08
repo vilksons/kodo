@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function kodo_artintel()
+function kodo_kchat()
 {
     local commands_INPUT=$1
 

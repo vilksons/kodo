@@ -1,6 +1,6 @@
 ## What is this?
 
-These is ArtIntel (Artificial Intelligence), module of Kodo/Workspace.
+These is KChat (Kodo Chat A.I), module of Kodo/Workspace.
 
 ## How does it work?
 
