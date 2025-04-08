@@ -148,7 +148,7 @@ function console_TITLE()
 # ' console_TITLE "title" '
     local title=$1
     shell_TITLE="$title"
-    bash_title "user:~/ $shell_TITLE"
+    bash_title "$shell_TITLE"
 }
 export console_TITLE
 
@@ -263,16 +263,22 @@ function struct_console_main() {
     local console_missing_save_cmds
 
     for console_missing_save_cmds in python3 wget curl grep awk sed tr jq aria2c openssl; do
-        command -v "$console_missing_save_cmds" &>/dev/null || console_missing_cmds+=("$console_missing_save_cmds")
+        if ! command -v "$console_missing_save_cmds" &>/dev/null; then
+            if [ "$console_missing_save_cmds" = "aria2c" ]; then
+                console_missing_cmds+=("aria2")
+            else
+                console_missing_cmds+=("$console_missing_save_cmds")
+            fi
+        fi
     done
 
     if ((${#console_missing_cmds[@]} > 0)); then
-        if [ "$console_save_notice" -ne 1 ]; then		
+        if [ "$console_save_notice" -ne 1 ]; then
             printf_red "Can't load Workspace Module."
             printf_red " Missing packages:" "${console_missing_cmds[*]}"
             ignore_this sleep 1.0
             console_save_notice=1
-        fi
+    fi
     else
         if [ "$console_save_notice" -ne 1 ]; then
             # Recheck Sync
@@ -375,11 +381,10 @@ function struct_console_main() {
         __SAMP_SERVER="samp"
     fi
 
+    ignore_this @ENCRYPTION_CREATE "" &&
     if [ ! -f "$HOME/.enkodo" ] && [ -n "$RHASH_256" ]; then
         echo "Generate Pass for encryption.."
     fi
-
-    @ENCRYPTION_CREATE ""
     @LANG_CREATE ""
 	
     rest_var ""
@@ -765,7 +770,7 @@ function mode_KODO() {
                 end_console_main ""
             fi
 
-            ignore_this cd "$commands_INPUT" && ls -a && shell_TITLE="directory - $shell_DIR" && bash_title "user:~/ $shell_TITLE" || echo
+            ignore_this cd "$commands_INPUT" && ls -a && shell_TITLE="directory - $shell_DIR" && bash_title "$shell_TITLE" || echo
             struct_console_main ""
             ;;
         "ls")
