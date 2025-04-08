@@ -332,6 +332,7 @@ function struct_console_main() {
                     if [ "$3" = "end" ]; then
                         clear && cd "$(dirname "$(realpath "$0")")" || echo
                         print_yellow "install succes!"
+                        console_TITLE "Kodo Mode | Usage \`kill\` to refresh"
                         typeof ""
                     fi
                 fi
@@ -398,7 +399,9 @@ function typeof() {
         echo
     fi
     
-    console_TITLE "Kodo Mode | Usage \`kill\` to refresh"
+    if [ "$console_module_loaded" != 1 ]; then
+        console_TITLE "Kodo Mode"
+    fi
 
     HISTFILE="$HOME/.kodo.txt"
     touch "$HISTFILE"
@@ -619,7 +622,7 @@ function mode_KODO() {
             
             ignore_this clear
             ignore_this sleep 0.10
-            cd "$(dirname "$(realpath "$0")")" || echo
+            cd "$shell_DIR" || echo
             chmod +x "$shell_NAME"
             exec bash ./"$shell_NAME"
             ;;
