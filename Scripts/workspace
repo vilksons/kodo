@@ -18,8 +18,6 @@ export SERVERS_NEXT
 # Compat
 __PAWNCC_NAME__="nul"
 export __PAWNCC_NAME__
-SAMP_WARGS_STATUS=0
-export SAMP_WARGS_STATUS
 __SAMP_SERVER=""
 export __SAMP_SERVER
 
@@ -177,13 +175,11 @@ function rest_var() {
     [ -n "${COMPILER_PAWNCC+x}" ] && unset COMPILER_PAWNCC
     [ -n "${COMPILER_NEXT+x}" ] && unset COMPILER_NEXT
     [ -n "${SERVERS_NEXT+x}" ] && unset SERVERS_NEXT
-    [ -n "${SAMP_WARGS_STATUS+x}" ] && unset SAMP_WARGS_STATUS
 
     compiler_MODE="nul"
     COMPILER_PAWNCC=""
     COMPILER_NEXT=0
     SERVERS_NEXT=0
-    SAMP_WARGS_STATUS=0
     zapman_ainstall_SIZEOF=0
 }
 

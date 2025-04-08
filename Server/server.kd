@@ -81,8 +81,6 @@ function space_servers() {
 export space_servers
 
 function space_wargs_servers() {
-    SAMP_WARGS_STATUS=1
-
     if [ -f "$shell_DIR/$json_LOG_SERV" ]; then
         rm -rf "$json_LOG_SERV"
     fi
@@ -102,12 +100,12 @@ function space_wargs_servers() {
         cp ".$json_SERVER_CONFIG.bak" "$json_SERVER_CONFIG"
         python -c "
 import json
-config_file = 'config.json'
-with open(config_file) as file:
-    data = json.load(file)
-data['main_scripts'] = ['$commands_INPUT']
-with open(config_file, 'w') as file:
-    json.dump(data, file, indent=2)
+kodo_conf_json = 'config.json'
+with open(kodo_conf_json) as file:
+    wargs_data = json.load(file)
+wargs_data['main_scripts'] = ['$commands_INPUT']
+with open(kodo_conf_json, 'w') as file:
+    json.dump(wargs_data, file, indent=2)
     "
     elif [[ "$json_SERVER_CONFIG" == "server.cfg" ]]; then
         if grep -q "^gamemode0 " ".$json_SERVER_CONFIG.bak"; then
@@ -149,6 +147,11 @@ with open(config_file, 'w') as file:
         
         if ! kill -0 $pid 2>/dev/null; then
             pid_status=1
+        fi
+
+        if [ -f "$json_SERVER_CONFIG" ]; then
+            rm -rf "$json_SERVER_CONFIG"
+            mv .$json_SERVER_CONFIG.bak $json_SERVER_CONFIG
         fi
 
         if [ "$pid_status" -ne 0 ]; then
@@ -237,14 +240,6 @@ function start_true3() {
     echo -e "$(collor_red "~")"
     echo "    ; \"invalid\" .. Yes .. True"
     invalid_cache ""
-
-if [ "$SAMP_WARGS_STATUS" -eq 1 ]; then
-    if [ -f "$json_SERVER_CONFIG" ]; then
-        rm $json_SERVER_CONFIG
-        mv .$json_SERVER_CONFIG.bak $json_SERVER_CONFIG
-        echo "Original $json_SERVER_CONFIG has been restored."
-    fi
-fi
 }
 export start_true3
 
@@ -255,14 +250,6 @@ function start_false3() {
     echo -e "$(collor_yellow "~")"
     echo "    ; \"invalid\" .. No .. False"
     echo
-
-if [ "$SAMP_WARGS_STATUS" -eq 1 ]; then
-    if [ -f "$json_SERVER_CONFIG" ]; then
-        rm $json_SERVER_CONFIG
-        mv .$json_SERVER_CONFIG.bak $json_SERVER_CONFIG
-        echo "Original $json_SERVER_CONFIG has been restored."
-    fi
-fi
 }
 export start_false3
 
