@@ -70,7 +70,7 @@ Parallel installation is supported.
 ### Build From Source
 
 If you are interested in contributing or just using a specific version, check
-out [this page][https://github.com/pawn-lang/compiler/wiki/Building-From-Source] for instructions for compiling for your platform.
+out [this page](https://github.com/pawn-lang/compiler/wiki/Building-From-Source) for instructions for compiling for your platform.
 
 ## Background
 
