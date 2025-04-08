@@ -171,32 +171,21 @@ Almost all are equipped with Hashing, Hashing SHA256 Double. including Bot Token
 
 CONFIGURATION DETAILS
 ------------------------------
-  o "amx_flags"
-    option Flags: https://github.com/vilksons/kodo/wiki/Compiler-Option
-  o "include_paths"
-    Default compiler include directory.
-  o "exclude_paths"
-    Directories excluded from compilation.                      
-  o "samp_log"
-    SA-MP server log file.                                      
-  o "samp_config"
-    SA-MP server configuration file. (Zapman)
-  o "samp_init"
-    SA-MP main server file. (Zapman)           
-  o "samp_executable"
-    SA-MP server executable.                                    
-  o "include_dir"
-    Package manager include directory. (Zapman).               
-  o "plugins_dir"
-    Directory for `.dll` and `.so` plugins. (Zapman).          
-  o "bot_token"
-    API key from https://console.groq.com/keys
-  o "bot_model"
-    AI model from https://console.groq.com/                     
-  o "bot_profile"
-    Additional chatbot configuration.                           
-  o "remcache_auto"
-    Auto-remove `/.cache` & Table history and others. (true/false).
+| Key                | Description                                                                 |
+|--------------------|-----------------------------------------------------------------------------|
+| `amx_flags`        | Compiler option flags. See https://github.com/vilksons/kodo/wiki/Compiler-Option |
+| `include_paths`    | Directory path for additional includes used in compilation.                |
+| `exclude_paths`    | Paths to exclude from compilation.                                          |
+| `samp_log`         | SA-MP server log file path.                                                 |
+| `samp_config`      | SA-MP configuration file (for Zapman).                                      |
+| `samp_init`        | SA-MP main server file (for Zapman).                                        |
+| `samp_executable`  | Path to the SA-MP server executable.                                       |
+| `include_dir`      | Directory for includes managed by the package manager (Zapman).             |
+| `plugins_dir`      | Directory where `.dll` and `.so` plugin files are stored (Zapman).          |
+| `bot_token`        | API key from [Groq Console - https://console.groq.com/keys.                |
+| `bot_model`        | AI model from Groq Console - https://console.groq.com/.                   |
+| `bot_profile`      | Additional chatbot configuration info.                                     |
+| `remcache_auto`    | Automatically remove `.cache`, table history, etc. (`true`/`false`).       |
 
 EXAMPLE: `include_paths` USAGE
 ------------------------------
