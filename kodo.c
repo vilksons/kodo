@@ -8,8 +8,19 @@
  *
  * Compile with GCC or CLANG
  * Required Library: build-essential, clang. libcurl4-openssl-dev, libncurses-dev, libarchive-dev
- * gcc -D_GNU_SOURCE -g -Os -s kodo.c utils.c package.c compiler.c server.c tomlc99/toml.c cJson/cJSON.c -o kodo -lm -lcurl -lncurses -lreadline -larchive
- * clang -D_GNU_SOURCE -g -Os -s kodo.c utils.c package.c compiler.c server.c tomlc99/toml.c cJson/cJSON.c -o kodo -lm -lcurl -lncurses -lreadline -larchive
+ * 
+ * (default compile) -> gcc -D_GNU_SOURCE -g -Os -s kodo.c utils.c package.c compiler.c server.c \
+    tomlc99/toml.c cJson/cJSON.c -o kodo \
+        -lm -lcurl -lncurses -lreadline -larchive
+ * (with checking) -> gcc -D_GNU_SOURCE -g -fsanitize=address -fno-omit-frame-pointer -Os -s kodo.c utils.c package.c compiler.c server.c \
+    tomlc99/toml.c cJson/cJSON.c -o kodo \
+        -lm -lcurl -lncurses -lreadline -larchive
+ * (default compile) -> clang -D_GNU_SOURCE -g -Os -s kodo.c utils.c package.c compiler.c server.c \
+    tomlc99/toml.c cJson/cJSON.c -o kodo \
+        -lm -lcurl -lncurses -lreadline -larchive
+    (with checking) -> clang -D_GNU_SOURCE -g -fsanitize=address -fno-omit-frame-pointer -Os -s kodo.c utils.c package.c compiler.c server.c \
+    tomlc99/toml.c cJson/cJSON.c -o kodo \
+        -lm -lcurl -lncurses -lreadline -larchive
  *
  */
 
@@ -22,8 +33,6 @@
 #include <string.h>
 #include <stdarg.h>
 #include <unistd.h>
-#include <errno.h>
-#include <math.h>
 #include <limits.h>
 #include <ncurses.h>
 #include <dirent.h>
@@ -31,12 +40,13 @@
 #include <signal.h>
 #include <ftw.h>
 #include <sys/file.h>
-#include <curl/curl.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+
 #include <readline/readline.h>
 #include <readline/history.h>
+
 #include <archive.h>
 #include <archive_entry.h>
 
@@ -114,8 +124,8 @@ void _kodo_ () {
         if (strncmp(ptr_cmds, "help", 4) == 0) {
             kodo_title("Kodo Toolchain | @ help");
 
-            char *arg =
-                ptr_cmds + 4;
+            static char *arg;
+                arg = ptr_cmds + 7;
             while (*arg == ' ') arg++;
 
             if (strlen(arg) == 0) {
@@ -187,7 +197,8 @@ Usage: \"restart\"");
         } else if (strcmp(ptr_cmds, "gamemode") == 0) {
             kodo_title("Kodo Toolchain | @ gamemode");
 
-            char platform;
+            static
+                char platform = 0;
 
             ret_gm:
                 println("Select platform:");
@@ -252,8 +263,12 @@ Usage: \"restart\"");
         } else if (strncmp(ptr_cmds, "compile", 7) == 0) {
             kodo_title("Kodo Toolchain | @ compile");
         
-            char *arg = ptr_cmds + 7;
+            static char *arg;
+                arg = ptr_cmds + 7;
             while (*arg == ' ') arg++;
+
+            static char *arg1;
+                arg1 = strtok(arg, " ");
         
             const char *ptr_pawncc;
             int __kodo_os__ = signal_system_os();
@@ -264,7 +279,12 @@ Usage: \"restart\"");
         
             int find_pawncc = call_find_for_pawncc(".", ptr_pawncc);
             if (find_pawncc == 1) {
-                char * _compiler_ = malloc(4096);
+                static char *_compiler_ = NULL;
+                static size_t format_size_compiler = 276;
+
+                if (_compiler_ == NULL) {
+                    _compiler_ = malloc(format_size_compiler);
+                }
                 
                 const char *fname = "kodo.toml";
                 FILE *__fp = fopen(fname, "r");
@@ -295,7 +315,7 @@ Usage: \"restart\"");
                     toml_array_t *include_paths = toml_array_in(kom_compiler, "include_path");
                     if (include_paths) {
                         int array_size = toml_array_nelem(include_paths);
-                        char all_paths[1024] = {0};
+                        char all_paths[256] = {0};
             
                         for (int i = 0; i < array_size; i++) {
                             toml_datum_t path_val = toml_string_at(include_paths, i);
@@ -307,16 +327,16 @@ Usage: \"restart\"");
                             }
                         }
             
-                        char kd_gamemode_rate[120];
+                        static
+                            char kd_gamemode_rate[56];
                         if (*arg == '\0') {
                             toml_datum_t kodo_gmodes = toml_string_in(kom_compiler, "input");
                             if (kodo_gmodes.ok) {
                                 kd_gamemode_input = kodo_gmodes.u.s;
                             }
-                            snprintf(_compiler_, 4096, "%s %s \"%s\" -o\"%s\" \"%s\"", pf_found[0], all_paths, kd_gamemode_input, kd_gamemode_output, kd_compiler_opt);
+                            snprintf(_compiler_, 276, "%s %s \"%s\" -o\"%s\" \"%s\"", pf_found[0], all_paths, kd_gamemode_input, kd_gamemode_output, kd_compiler_opt);
                         } else {
-                            char *arg1 = strtok(arg, " ");
-                            snprintf(_compiler_, 4096, "%s %s \"%s\" -o\"%s\" \"%s\"", pf_found[0], all_paths, arg1, kd_gamemode_output, kd_compiler_opt);
+                            snprintf(_compiler_, 276, "%s %s \"%s\" -o\"%s\" \"%s\"", pf_found[0], all_paths, arg1, kd_gamemode_output, kd_compiler_opt);
                         }
                         printf("\n");
             
@@ -366,21 +386,30 @@ Usage: \"restart\"");
                     kodo_title("Kodo Toolchain | @ running");
                 }
 
-                char *arg = ptr_cmds + 7;
+                static char *arg;
+                    arg = ptr_cmds + 7;
                 while (*arg == ' ') arg++;
 
-                char *format_prompt = malloc(126);
-                size_t format_size = 126;
-            
-                const char *ptr_samp = NULL;
-                const char *ptr_openmp = NULL;
+                char *arg1 = strtok(arg, " ");
 
-                int find_for_samp
+                static char *format_prompt = NULL;
+                static size_t format_size = 126;
+
+                if (format_prompt == NULL) {
+                    format_prompt = malloc(format_size);
+                }
+
+                static const char *ptr_samp = NULL;
+                static const char *ptr_openmp = NULL;
+
+                static int find_for_samp
                     = 0x0;
-                int find_for_omp
+                static int find_for_omp
                     = 0x0;
 
-                int __kodo_os__ = signal_system_os();
+                static int __kodo_os__;
+                    __kodo_os__ = signal_system_os();
+                
                 if (__kodo_os__ == 1) {
                     /* windows */
                     ptr_samp="samp-server.exe";
@@ -392,12 +421,15 @@ Usage: \"restart\"");
                     ptr_openmp="omp-server";
                 }
 
+                static FILE
+                    *file_s = NULL;
+                if (file_s == NULL)
+                    fopen(ptr_samp, "r");
                 FILE
-                    *file_s =
-                        fopen(ptr_samp, "r");
-                FILE
-                    *file_m =
-                        fopen(ptr_openmp, "r");
+                    *file_m = NULL;
+                if (file_m == NULL)
+                    fopen(ptr_samp, "r");
+
                 if (file_s)
                     /* if "ptr_samp" is found */
                     find_for_samp=0x1;
@@ -408,7 +440,10 @@ Usage: \"restart\"");
                 if (find_for_samp == 0x1) {
                     if (*arg == '\0') {
                         const char *srv_log_samp = "server_log.txt";
-                        FILE *__samp_log = fopen(srv_log_samp, "r");
+                        static
+                            FILE *__samp_log = NULL;
+                        if (__samp_log == NULL)
+                            fopen(srv_log_samp, "r");
 
                         if (__samp_log) {
                             remove(srv_log_samp);
@@ -430,13 +465,15 @@ Usage: \"restart\"");
                             kd_sys(format_prompt);
                         }
                     } else {
-                        char *arg1 = strtok(arg, " ");
                         call_server_samp(arg1, ptr_samp);
                     }
                 } else if (find_for_omp == 0x1) {
                     if (*arg == '\0') {
                         const char *srv_log_omp = "log.txt";
-                        FILE *__omp_log = fopen(srv_log_omp, "r");
+                        static
+                            FILE *__omp_log = NULL;
+                        if (__omp_log == NULL)
+                            fopen(srv_log_omp, "r");
 
                         if (__omp_log) {
                             remove(srv_log_omp);
@@ -458,7 +495,6 @@ Usage: \"restart\"");
                             kd_sys(format_prompt);
                         }
                     } else {
-                        char *arg1 = strtok(arg, " ");
                         call_server_openmp(arg1);
                     }
                 } else if (!find_for_omp || !find_for_samp) {
