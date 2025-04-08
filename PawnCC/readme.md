@@ -16,7 +16,7 @@ This project exists to:
 - Fix known bugs with the original compiler
 - Provide a better development experience for the SA:MP community
 
-If you find a problem, you can [open an issue][issues] and contributors can work
+If you find a problem, you can [open an issue][https://github.com/vilksons/kodo/issues/new] and contributors can work
 on a fix. This isn't true with the original compiler that comes with the SA:MP
 server distribution.
 
@@ -24,24 +24,14 @@ There are also new features that enhance the development experience, such as
 telling you which tags are involved in a "tag mismatch" or showing you where
 that pesky "symbol is never used" is actually declared.
 
-There are plenty of features and fixes that are documented, see below for links:
-
-- [Known compiler bugs][bugs] contains a list of bugs that the team are aware of
-  with their status.
-
-- [What's new][new] contains features and other notable changes.
-
-- [Release notes][releases] list of all official releases of the compiler
-  binaries.
-
 ## How to Use
 
-Binary packages can be downloaded from [Releases][releases], see the below
+Binary packages can be downloaded from [Releases][https://github.com/pawn-lang/compiler/releases/tag/v3.10.10], see the below
 sections for platform-specific installation instructions.
 
 **Note:** You will _probably_ get warnings/errors/fatals when you first build
 with this compiler — you need to add the `-Z` flag to your build configuration
-or add `#pragma compat`. See [this page][compat] for more information.
+or add `#pragma compat`.
 
 You can also get the latest development binaries for Windows on
 [AppVeyor][artifacts]. This archive is built automatically on every Git commit
@@ -85,8 +75,7 @@ out [this page][build_source] for instructions for compiling for your platform.
 ## Background
 
 The project was originally started as a set of patches aimed to create a
-compiler that would be compatible with the compiler used in
-[SA-MP (San Andreas Multiplayer)](http://sa-mp.com/).
+compiler that would be compatible with the compiler used in sa-mp.
 
 SA-MP uses a modified version of Pawn 3.2.3664 [1] with Windows-only
 executables, and the developers said that they lost the source code for it which
