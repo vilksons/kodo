@@ -11,7 +11,7 @@ export COMPILER_AMX_FLAGS
 function kodo_init_compilers()
 {
     commands_INPUT=$1
-    
+
     local amx_valid=false
 
     if [[ "$kd_table" == "compile" ]]; then
@@ -64,10 +64,10 @@ function kodo_init_compilers()
                 COMPILER_PAWNCC="$pawncc"
                 break
             fi
-        done < <(find "$shell_DIR" -type f -iname "$__PAWNCC__" -print0)
+        done < <(find "$shell_DIR" -type f -iname "$__PAWNCC_NAME__" -print0)
 
         if [ -z "$COMPILER_PAWNCC" ]; then
-            print_red "crit:" "$__PAWNCC__ not found!. You can get this in \`pawncc\`"
+            print_red "crit:" "$__PAWNCC_NAME__ not found!. You can get this in \`pawncc\`"
             echo
             read -r -p "install now? [y/n] " INSTALL_NOW
 
@@ -199,10 +199,10 @@ function kodo_compilers() {
             COMPILER_PAWNCC="$pawncc"
             break
         fi
-    done < <(find "$shell_DIR" -type f -iname "$__PAWNCC__" -print0)
+    done < <(find "$shell_DIR" -type f -iname "$__PAWNCC_NAME__" -print0)
 
     if [ -z "$COMPILER_PAWNCC" ]; then
-        print_red "crit:" "$__PAWNCC__ not found!. You can get this in \`pawncc\`"
+        print_red "crit:" "$__PAWNCC_NAME__ not found!. You can get this in \`pawncc\`"
         echo
         read -r -p "install now? [y/n] " INSTALL_NOW
 

@@ -52,10 +52,10 @@ function struct_ZAPMAN()
             local tb_zapman1_url_cache
 
             # Read the encrypted data from the cache
-            ZAPMAN_encrypted_data=$(tail -n 1 "$shell_DIR/.cache/zapman")
+            ZAPMAN_ainstall_Encrypt=$(tail -n 1 "$shell_DIR/.cache/zapman")
 
             # Decrypt the URL
-            tb_zapman1_url_cache=$(echo "$ZAPMAN_encrypted_data" | openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:$ZAPMAN_DECRYPT -base64 -in "$shell_DIR/.cache/zapman")
+            tb_zapman1_url_cache=$(echo "$ZAPMAN_ainstall_Encrypt" | openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:$ZAPMAN_DECRYPT -base64 -in "$shell_DIR/.cache/zapman")
 
             # Check if decryption was successful and if the URL is valid
             if [[ -z "$tb_zapman1_url_cache" || ! "$tb_zapman1_url_cache" =~ ^https:// ]]; then
@@ -293,11 +293,11 @@ EOF
                 
                 if [ "$SAVE_QUICK" -eq 1 ]; then
                     # Encryption
-                    ZAPMAN_encrypted_data=$(echo "$tb_zapman2_input_args" | openssl enc -aes-256-cbc -salt -pbkdf2 -pass pass:$ZAPMAN_DECRYPT -base64)
+                    ZAPMAN_ainstall_Encrypt=$(echo "$tb_zapman2_input_args" | openssl enc -aes-256-cbc -salt -pbkdf2 -pass pass:$ZAPMAN_DECRYPT -base64)
 
                     # Save Encryption to Cache/Zapman
                     if [ "$zapman_ainstall_SIZEOF" -ne 1 ]; then
-                        echo "$ZAPMAN_encrypted_data" > "$shell_DIR/.cache/zapman"
+                        echo "$ZAPMAN_ainstall_Encrypt" > "$shell_DIR/.cache/zapman"
                     fi
                 fi
 

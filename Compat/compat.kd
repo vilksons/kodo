@@ -8,12 +8,12 @@ compat_now() {
         if [[ "$OS_TYPE" == "Linux" ]] || { [ -d "$HOME/bin" ] && [ -d "$PREFIX" ]; }; then
             cat /etc/os-release &>/dev/null
             __OS__="linux"
-            __PAWNCC__="pawncc"
+            __PAWNCC_NAME__="pawncc"
             __OS_NOTICE__=1
         elif (! [ -f "/.dockerenv" ] && ! grep -q docker /proc/1/cgroup); then
             if [ -d "/c/windows/System32" ] || [ -d "/mnt/c/windows/System32" ] || [ -d "/windows/System32" ]; then
                 __OS__="windows"
-                __PAWNCC__="pawncc.exe"
+                __PAWNCC_NAME__="pawncc.exe"
                 __OS_NOTICE__=1
             fi
         fi
@@ -25,13 +25,13 @@ compat_now() {
             while true; do
                 case "$PERMISSION_NEED_OS" in
                     [Yy]) 
-                        __PAWNCC__="pawncc.exe"
+                        __PAWNCC_NAME__="pawncc.exe"
                         __OS__="windows"
                         __OS_NOTICE__=1
                         break 
                         ;;
                     [Bb]) 
-                        __PAWNCC__="pawncc"
+                        __PAWNCC_NAME__="pawncc"
                         __OS__="linux"
                         __OS_NOTICE__=1
                         break 

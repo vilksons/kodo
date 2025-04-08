@@ -16,21 +16,21 @@ SERVERS_NEXT=0
 export SERVERS_NEXT
 
 # Compat
-__PAWNCC__="nul"
-export __PAWNCC__
+__PAWNCC_NAME__="nul"
+export __PAWNCC_NAME__
 SAMP_WARGS_STATUS=0
 export SAMP_WARGS_STATUS
 __SAMP_SERVER=""
 export __SAMP_SERVER
 
 # Zapman
-ZAPMAN_encrypted_data=""
+ZAPMAN_ainstall_Encrypt=""
 zapman_ainstall_SIZEOF=0
 export zapman_ainstall_SIZEOF
 
 # Chatbot
-CHATBOT_encrypted_data=""
-export CHATBOT_encrypted_data
+CHATBOT_token_Encrypt=""
+export CHATBOT_token_Encrypt
 DECRYPT_TOKEN=""
 export DECRYPT_TOKEN
 
