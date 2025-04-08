@@ -26,7 +26,7 @@
 void process_system(const char *_from_, const char *_for_) {
     if (_from_) {
         int ret = system(_from_);
-        if (ret == -1) {
+        if (ret == -1 || ret != 0) {
             printf_error("system failed for %s",
                 _for_
             );

@@ -12,15 +12,17 @@
  * (default compile) -> gcc -D_GNU_SOURCE -g -Os -s kodo.c utils.c package.c compiler.c server.c \
     tomlc99/toml.c cJson/cJSON.c -o kodo \
         -lm -lcurl -lncurses -lreadline -larchive
- * (with checking) -> gcc -D_GNU_SOURCE -g -fsanitize=address -fno-omit-frame-pointer -Os -s kodo.c utils.c package.c compiler.c server.c \
-    tomlc99/toml.c cJson/cJSON.c -o kodo \
-        -lm -lcurl -lncurses -lreadline -larchive
+ * (with checking) -> gcc -D_GNU_SOURCE -g -fsanitize=address -fno-omit-frame-pointer -Os \
+    -s kodo.c utils.c package.c compiler.c server.c \
+        tomlc99/toml.c cJson/cJSON.c -o kodo \
+            -lm -lcurl -lncurses -lreadline -larchive
  * (default compile) -> clang -D_GNU_SOURCE -g -Os -s kodo.c utils.c package.c compiler.c server.c \
     tomlc99/toml.c cJson/cJSON.c -o kodo \
         -lm -lcurl -lncurses -lreadline -larchive
-    (with checking) -> clang -D_GNU_SOURCE -g -fsanitize=address -fno-omit-frame-pointer -Os -s kodo.c utils.c package.c compiler.c server.c \
-    tomlc99/toml.c cJson/cJSON.c -o kodo \
-        -lm -lcurl -lncurses -lreadline -larchive
+    (with checking) -> clang -D_GNU_SOURCE -g -fsanitize=address -fno-omit-frame-pointer -Os \
+    -s kodo.c utils.c package.c compiler.c server.c \
+        tomlc99/toml.c cJson/cJSON.c -o kodo \
+            -lm -lcurl -lncurses -lreadline -larchive
  *
  */
 
