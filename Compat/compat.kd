@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 compat_now() {
     if [ "$__OS_NOTICE__" -ne 1 ]; then

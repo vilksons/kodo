@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 function struct_samp_linux()
 {

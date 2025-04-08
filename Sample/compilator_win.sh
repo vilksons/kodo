@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 shell_DIR="$(dirname "$0")"
 shell_ALLOW_SDIR="/pawno/include"
