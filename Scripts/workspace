@@ -5,11 +5,9 @@ clear && cd "$(dirname "$(realpath "$0")")" || echo
 __OS_NOTICE__=0
 export __OS_NOTICE__
 
-##################
-###  "nul"     ###
-###  "linux"   ###
-###  "windows" ###
-##################
+#  "nul"     
+#  "linux"   
+#  "windows" 
 __OS__="nul"
 export __OS__
 
@@ -264,7 +262,7 @@ function struct_console_main() {
     local console_missing_cmds=()
     local console_missing_save_cmds
 
-    for console_missing_save_cmds in python3 wget curl grep awk sed tr jq aria2c openssl catimage; do
+    for console_missing_save_cmds in python3 wget curl grep awk sed tr jq aria2c openssl; do
         if ! command -v "$console_missing_save_cmds" &>/dev/null; then
             if [ "$console_missing_save_cmds" = "aria2c" ]; then
                 console_missing_cmds+=("aria2")
@@ -323,7 +321,7 @@ function struct_console_main() {
 
                     ignore_this mkdir -p "$shell_DIR"
 
-                    if [ "$3" != "ignore" ]; then
+                    if [ "$3" != "silent" ]; then
                         wget -q -O "$shell_DIR/$1" "$2" &>/dev/null
                     else
                         wget -q -O "$shell_DIR/$1" "$2" &>/dev/null &
@@ -341,21 +339,21 @@ function struct_console_main() {
 
             cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
             
-            console_pack ".kodo/security.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Security/security.kd" "ignore" 
+            console_pack ".kodo/security.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Security/security.kd" "silent" 
 
             console_pack ".kodo/compat.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compat/compat.kd" "compat" 
 
-            console_pack ".kodo/compiler.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compiler/compiler.kd" "ignore" 
+            console_pack ".kodo/compiler.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compiler/compiler.kd" "silent" 
 
-            console_pack ".kodo/zapman.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Zapman/zapman.kd" "ignore" 
+            console_pack ".kodo/zapman.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Zapman/zapman.kd" "silent" 
 
-            console_pack ".kodo/samp.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/samp.kd" "ignore" 
+            console_pack ".kodo/samp.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/samp.kd" "silent" 
 
-            console_pack ".kodo/pawncc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/pawncc.kd" "ignore" 
+            console_pack ".kodo/pawncc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/pawncc.kd" "silent" 
 
-            console_pack ".kodo/misc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Misc/misc.kd" "ignore"
+            console_pack ".kodo/misc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Misc/misc.kd" "silent"
 
-            console_pack ".kodo/kchat.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/KChat/kchat.kd" "ignore" 
+            console_pack ".kodo/kchat.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/KChat/kchat.kd" "silent" 
 
             console_pack ".kodo/server.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Server/server.kd" "end"
             
@@ -805,64 +803,63 @@ function mode_KODO() {
                 console_TITLE "Sync"
             fi
 
-            local latest
+            local latest current
             latest=$(curl -s "https://api.github.com/repos/vilksons/kodo/commits/kodo" | grep -o '"sha": "[^"]*' | awk -F': "' '{print $2}')
-
-            local current
             current=$(cat "$shell_DIR/.itskodo" 2>/dev/null)
 
             if [[ "$latest" == "$current" ]]; then
                 echo "warning: $shell_NAME is up to date, Nothing to do."
                 end_console_main ""
             else
-                print_gray ":: New Commits is Found..: Commits: (SHA1): "
+                print_gray ":: New Commits Found..: Commits (SHA1): "
                 echo "$latest"
-                
-                read -r -n1 -p ":: Do you want to continue Sync Kodo? [y/n] " PERMISSION_NEED_S
 
+                read -r -n1 -p ":: Do you want to continue Sync Kodo? [y/n] " PERMISSION_NEED_S
                 echo
                 [[ -z "$PERMISSION_NEED_S" ]] && PERMISSION_NEED_S="Y"
 
-                while true; do
-                    case "$PERMISSION_NEED_S" in
-                        [Yy])
-                            if [ -d "$shell_DIR/.kodo" ]; then
-                                rm -rf ".kodo" && ignore_this sleep 0.1 && mkdir ".kodo" && chmod +x ".kodo"
-                            fi
+                case "$PERMISSION_NEED_S" in
+                    [Yy])
+                        if [[ -d "$shell_DIR/.kodo" ]]; then
+                            rm -rf "$shell_DIR/.kodo"
+                        fi
+                        mkdir -p "$shell_DIR/.kodo"
+                        chmod +x "$shell_DIR/.kodo"
 
-                            echo "Updating.."
-                            
-                            echo "$latest" > "$shell_DIR/.itskodo"
-                            
-                            cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
-                                
-                            wget -q --show-progress -O "security.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Security/security.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
-                            wget -q --show-progress -O "compat.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compat/compat.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
-                            wget -q --show-progress -O "zapman.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Zapman/zapman.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
-                            wget -q --show-progress -O "samp.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/samp.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
-                            wget -q --show-progress -O "pawncc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/pawncc.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
-                            wget -q --show-progress -O "server.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Server/server.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
-                            wget -q --show-progress -O "misc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Misc/misc.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
-                            wget -q --show-progress -O "kchat.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/KChat/kchat.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
-                            wget -q --show-progress -O "compiler.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compiler/compiler.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
+                        echo "Updating.."
+                        echo "$latest" > "$shell_DIR/.itskodo"
 
-                            ignore_this sleep 1 && cd "$shell_DIR" >/dev/null 2>&1 || echo ""
+                        local kodo_modular=(
+                            "Security/security.kd"
+                            "Compat/compat.kd"
+                            "Zapman/zapman.kd"
+                            "Package/samp.kd"
+                            "Package/pawncc.kd"
+                            "Server/server.kd"
+                            "Misc/misc.kd"
+                            "KChat/kchat.kd"
+                            "Compiler/compiler.kd"
+                        )
 
-                            wget -q --show-progress -O ".wpython" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/wpython"
-                            wget -q --show-progress -O "workspace" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace"
+                        for file in "${kodo_modular[@]}"; do
+                            wget -q --show-progress -O "$shell_DIR/.kodo/$(basename "$file")" \
+                                "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/$file" \
+                                || { touch "$shell_DIR/.sync"; }
+                        done
 
-                            echo "$latest" > "$shell_DIR/.itskodo"
+                        wget -q --show-progress -O "$shell_DIR/.wpython" \
+                            "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/wpython"
+                        wget -q --show-progress -O "$shell_DIR/workspace" \
+                            "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace"
 
-                            cd "$shell_DIR" >/dev/null 2>&1 || echo ""
-
-                            ignore_this sleep 1 && bash ./workspace
-                            ;;
-                        *)
-                            end_console_main ""
-                            break
-                            ;;
-                    esac
-                done
+                        chmod +x "$shell_DIR/workspace"
+                        ignore_this sleep 1
+                        bash "$shell_DIR/workspace"
+                        ;;
+                    *)
+                        end_console_main ""
+                        ;;
+                esac
             fi
             ;;
         "lang")
