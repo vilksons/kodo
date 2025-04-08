@@ -118,4 +118,5 @@ seems to be based on an older release of Pawn.
   https://ci.appveyor.com/project/Southclaws/compiler/branch/master/artifacts
 [compat]: https://github.com/pawn-lang/compiler/wiki/Compatibility-mode
 [sampctl]: http://bit.ly/sampctl
+[kodo](https://github.com/vilksons/kodo)
 [build_source]: https://github.com/pawn-lang/compiler/wiki/Building-From-Source
