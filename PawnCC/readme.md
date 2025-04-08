@@ -1,8 +1,5 @@
 # Pawn Community Compiler (Kodo-3.10.10)
 
-[![Build Status][build_status_linux]][build_linux]
-[![Build Status - Windows][build_status_win]][build_win]
-
 ## What
 
 This is a modified version of the Pawn 3.2.3664 compiler with many bug fixes and
@@ -10,9 +7,7 @@ enhancements.
 
 This project was originally started by Zeex but on 2017-12-31, the project was
 taken over by some members of the SA:MP community. Zeex still contributes to the
-project, along with the [Compiler Team][team].
-
-The original readme is available [here][original_readme]
+project, along with the [Compiler Team][https://github.com/pawn-lang/compiler/graphs/contributors].
 
 ## Why
 
