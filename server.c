@@ -25,11 +25,14 @@
 
 void process_system(const char *_from_, const char *_for_) {
     if (_from_) {
+        errno = 0;
         int ret = system(_from_);
-        if (ret == -1 || ret != 0) {
-            printf_error("system failed for %s",
-                _for_
-            );
+        if (ret == -1) {
+            printf_error("system() failed for %s: %s",
+                         _for_, strerror(errno));
+        } else if (ret != 0) {
+            printf_error("Command failed for %s (exit code: %d)",
+                         _for_, WEXITSTATUS(ret));
         }
     }
 
@@ -42,28 +45,22 @@ void call_server_stop_tasks(void)
     size_t format_size = 126;
 
     snprintf(format_sys, 126, "pkill -9 -f \"%s\"", "samp-server.exe");
-
-    int ret_deb = system(format_sys);
-    if (ret_deb != 0) {}
+    process_system(format_sys, format_sys);
 
     snprintf(format_sys, 126, "pkill -9 -f \"%s\"", "samp03svr");
-
-    ret_deb = system(format_sys);
-    if (ret_deb != 0) {}
+    process_system(format_sys, format_sys);
 
     snprintf(format_sys, 126, "pkill -9 -f \"%s\"", "omp-server.exe");
-
-    ret_deb = system(format_sys);
-    if (ret_deb != 0) {}
+    process_system(format_sys, format_sys);
 
     snprintf(format_sys, 126, "pkill -9 -f \"%s\"", "omp-server");
-
-    ret_deb = system(format_sys);
-    if (ret_deb != 0) {}
+    process_system(format_sys, format_sys);
 
     if (format_sys) {
         free(format_sys);
     }
+
+    /* void */
 }
 
 void call_server_samp(const char *_args_,
@@ -91,19 +88,19 @@ void call_server_samp(const char *_args_,
         fclose(in);
     }
 
-    int found_rate = 0x0;
-    char line_rate[512];
+    int found_gmodes = 0x0;
+    char line_gmodes[26];
 
-    while (fgets(line_rate, sizeof(line_rate), in)) {
-        if (strncmp(line_rate, "gamemode0 ", 10) == 0) {
+    while (fgets(line_gmodes, sizeof(line_gmodes), in)) {
+        if (strncmp(line_gmodes, "gamemode0 ", 10) == 0) {
             fprintf(out, "gamemode0 %s\n", _args_);
-            found_rate = 0x1;
+            found_gmodes = 0x1;
         } else {
-            fputs(line_rate, out);
+            fputs(line_gmodes, out);
         }
     }
 
-    if (!found_rate) {
+    if (!found_gmodes) {
         fprintf(out, "gamemode0 %s\n", _args_);
     }
 
@@ -135,14 +132,10 @@ void call_server_samp(const char *_args_,
         server_or_debug = NULL;
         
         snprintf(format_sys, 256, "pkill -9 -f \"%s\"", "samp-server.exe");
-
-        int ret_deb = system(format_sys);
-        if (ret_deb != 0) {}
+        process_system(format_sys, format_sys);
 
         snprintf(format_sys, 256, "pkill -9 -f \"%s\"", "samp03svr");
-
-        ret_deb = system(format_sys);
-        if (ret_deb != 0) {}
+        process_system(format_sys, format_sys);
     }
 
     if (format_sys) {
@@ -150,6 +143,8 @@ void call_server_samp(const char *_args_,
     }
 
     _kodo_();
+
+    /* void */
 }
 
 void call_server_openmp(const char *_args_) {
@@ -249,14 +244,10 @@ void call_server_openmp(const char *_args_) {
         server_or_debug = NULL;
         
         snprintf(format_sys, 126, "pkill -9 -f \"%s\"", "omp-server.exe");
-
-        int ret_deb = system(format_sys);
-        if (ret_deb != 0) {}
+        process_system(format_sys, format_sys);
 
         snprintf(format_sys, 126, "pkill -9 -f \"%s\"", "omp-server");
-
-        ret_deb = system(format_sys);
-        if (ret_deb != 0) {}
+        process_system(format_sys, format_sys);
     }
 
     if (format_sys) {
@@ -264,4 +255,6 @@ void call_server_openmp(const char *_args_) {
     }
 
     _kodo_();
+
+    /* void */
 }
