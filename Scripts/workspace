@@ -264,7 +264,7 @@ function struct_console_main() {
     local console_missing_cmds=()
     local console_missing_save_cmds
 
-    for console_missing_save_cmds in python3 wget curl grep awk sed tr jq aria2c openssl; do
+    for console_missing_save_cmds in python3 wget curl grep awk sed tr jq aria2c openssl catimage; do
         if ! command -v "$console_missing_save_cmds" &>/dev/null; then
             if [ "$console_missing_save_cmds" = "aria2c" ]; then
                 console_missing_cmds+=("aria2")
@@ -310,14 +310,11 @@ function struct_console_main() {
                         source "$shell_DIR/$1" || sleep 1.0
                     fi
 
-                    if [[ "$3" == "compat" ]]; then 
-                        ignore_this compat_now  || {
-                            if [ "$console_module_loaded" -eq 1 ]; then
-                                print_red "crit:" "err.. need to kill."
-                                sleep 1.0
-                                mode_KODO ""
-                            fi
-                        }
+                    if [ "$console_module_loaded" -eq 1 ]; then
+                        print_green "warn:" "err.. need to kill after installing \"succes\".."
+                        print_green " killing.."
+                        sleep 0.999
+                        SIGNAL_KILL ""
                     fi
                 else
                     console_module_loaded=1
@@ -358,7 +355,7 @@ function struct_console_main() {
 
             console_pack ".kodo/misc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Misc/misc.kd" "ignore"
 
-            console_pack ".kodo/KChat.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/KChat/kchat.kd" "ignore" 
+            console_pack ".kodo/kchat.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/KChat/kchat.kd" "ignore" 
 
             console_pack ".kodo/server.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Server/server.kd" "end"
             
@@ -385,9 +382,7 @@ function struct_console_main() {
     fi
 
     ignore_this @ENCRYPTION_CREATE ""
-    if [ ! -f "$HOME/.enkodo" ] && [ -n "$RHASH_256" ]; then
-        echo "Generate Pass for encryption.."
-    fi
+    
     @LANG_CREATE ""
 	
     rest_var ""
@@ -801,6 +796,7 @@ function mode_KODO() {
             
             ignore_this clear
             ignore_this sleep 0.10
+            cd "$(dirname "$(realpath "$0")")" || echo
             chmod +x "$shell_NAME"
             exec bash ./"$shell_NAME"
             ;;
@@ -847,7 +843,7 @@ function mode_KODO() {
                             wget -q --show-progress -O "pawncc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/pawncc.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
                             wget -q --show-progress -O "server.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Server/server.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
                             wget -q --show-progress -O "misc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Misc/misc.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
-                            wget -q --show-progress -O ".kodo/KChat.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/KChat/kchat.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
+                            wget -q --show-progress -O "kchat.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/KChat/kchat.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
                             wget -q --show-progress -O "compiler.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compiler/compiler.kd" || { cd "$shell_DIR" >/dev/null && touch ".sync"; } && cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
 
                             ignore_this sleep 1 && cd "$shell_DIR" >/dev/null 2>&1 || echo ""

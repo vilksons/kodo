@@ -1,16 +1,10 @@
 #!/usr/bin/env python3
 
-# Module for operating system interactions, such as reading files and generating random bytes
 import os
-# Module for hashing, used to create SHA256 hashes
 import hashlib
-# Module for working with JSON data, such as reading configuration files
 import json
-# Module for interacting with the system, such as reading command-line arguments and exiting the script
 import sys
-# Module for working with regular expressions (regex), used for json_CHATBOT_TOKEN security validation
 import re
-# Module for random text
 import base64
 
 def random_string(length=16):
