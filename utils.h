@@ -22,13 +22,11 @@ extern
 extern
     const char *server_or_debug;
 
-    struct struct_of {
-        int (*title)(const char *);
-    };
+struct struct_of {
+    int (*title)(const char *);
+};
     
-    // Deklarasi fungsi
-    struct struct_of init_kodo(void);
-    
+struct struct_of init_kodo(void);
 
 int kom_toml_data(void);
 int signal_system_os(void);

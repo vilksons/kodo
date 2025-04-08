@@ -375,10 +375,10 @@ Usage: \"restart\"");
                 const char *ptr_samp = NULL;
                 const char *ptr_openmp = NULL;
 
-                int find_for_samp =
-                    0;
-                int find_for_omp =
-                    0;
+                int find_for_samp
+                    = 0x0L;
+                int find_for_omp
+                    = 0x0L;
 
                 int __kodo_os__ = signal_system_os();
                 if (__kodo_os__ == 1) {
@@ -400,12 +400,12 @@ Usage: \"restart\"");
                         fopen(ptr_openmp, "r");
                 if (file_s)
                     /* if "ptr_samp" is found */
-                    find_for_samp=1;
+                    find_for_samp=0x1L;
                 if (file_m)
                     /* if "ptr_openmp" is found */
-                    find_for_omp=1;
+                    find_for_omp=0x1L;
 
-                if (find_for_samp == 1) {
+                if (find_for_samp == 0x1L) {
                     if (*arg == '\0') {
                         const char *srv_log_samp = "server_log.txt";
                         FILE *__samp_log = fopen(srv_log_samp, "r");

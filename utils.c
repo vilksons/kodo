@@ -378,7 +378,7 @@ int call_extract_zip(
     archive_write_disk_set_standard_lookup(__ext);
 
     /* Flag to ensure error messages are only printed once */
-    int has_error = 0;
+    int has_error = 0x0L;
 
     /* Extract each __entry */
     while (archive_read_next_header(__arch, &__entry) == ARCHIVE_OK) {
@@ -394,7 +394,7 @@ int call_extract_zip(
         if (__read != ARCHIVE_OK) {
             if (!has_error) { // Only print once
                 printf_error("during extraction: %s\n", archive_error_string(__ext));
-                has_error = 1; // Set flag to true after first error
+                has_error = 0x1L; // Set flag to true after first error
             }
         } else {
             /* Read and write file content block by block */
@@ -409,14 +409,14 @@ int call_extract_zip(
                 if (__read < ARCHIVE_OK) {
                     if (!has_error) { // Only print once
                         printf_error("reading block from archive: %s\n", archive_error_string(__arch));
-                        has_error = 1;
+                        has_error = 0x1L;
                     }
                 }
                 __read = archive_write_data_block(__ext, __buff, size, offset);
                 if (__read < ARCHIVE_OK) {
                     if (!has_error) { // Only print once
                         printf_error("writing block to destination: %s\n", archive_error_string(__ext));
-                        has_error = 1;
+                        has_error = 0x1L;
                     }
                 }
             }
