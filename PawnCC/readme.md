@@ -102,21 +102,18 @@ that were previously made by the devs as well as fix all known compiler bugs.
 [1] It's worth noting that the version of the AMX embedded into the SA-MP server
 seems to be based on an older release of Pawn.
 
-[build_linux]: https://travis-ci.org/pawn-lang/compiler
-[build_status_linux]: https://travis-ci.org/pawn-lang/compiler.svg?branch=master
-[build_win]: https://ci.appveyor.com/project/Southclaws/compiler/branch/master
-[build_status_win]:
-  https://ci.appveyor.com/api/projects/status/k112tbr1afrkif0n?svg=true
-[team]: https://github.com/pawn-lang/compiler/graphs/contributors
-[original_readme]:
-  https://github.com/pawn-lang/compiler/tree/master/readme_compuphase.txt
-[issues]: https://github.com/pawn-lang/compiler/issues
-[bugs]: https://github.com/pawn-lang/compiler/wiki/Known-compiler-bugs
-[new]: https://github.com/pawn-lang/compiler/wiki/What's-new
-[releases]: https://github.com/pawn-lang/compiler/releases
-[artifacts]:
-  https://ci.appveyor.com/project/Southclaws/compiler/branch/master/artifacts
-[compat]: https://github.com/pawn-lang/compiler/wiki/Compatibility-mode
-[sampctl]: http://bit.ly/sampctl
-[kodo](https://github.com/vilksons/kodo)
-[build_source]: https://github.com/pawn-lang/compiler/wiki/Building-From-Source
+[Build (Linux)](https://travis-ci.org/pawn-lang/compiler)  
+[Build Status (Linux)](https://travis-ci.org/pawn-lang/compiler.svg?branch=master)  
+[Build (Windows)](https://ci.appveyor.com/project/Southclaws/compiler/branch/master)  
+[Build Status (Windows)](https://ci.appveyor.com/api/projects/status/k112tbr1afrkif0n?svg=true)  
+[Team of PawnCC](https://github.com/pawn-lang/compiler/graphs/contributors)  
+[Original Readme](https://github.com/pawn-lang/compiler/tree/master/readme_compuphase.txt)  
+[Issues](https://github.com/pawn-lang/compiler/issues)  
+[Known Bugs](https://github.com/pawn-lang/compiler/wiki/Known-compiler-bugs)  
+[What's New](https://github.com/pawn-lang/compiler/wiki/What's-new)  
+[Releases](https://github.com/pawn-lang/compiler/releases)  
+[Artifacts](https://ci.appveyor.com/project/Southclaws/compiler/branch/master/artifacts)  
+[Compatibility Mode](https://github.com/pawn-lang/compiler/wiki/Compatibility-mode)  
+[sampctl](http://bit.ly/sampctl)  
+[Kodo](https://github.com/vilksons/kodo)  
+[Build From Source](https://github.com/pawn-lang/compiler/wiki/Building-From-Source)
