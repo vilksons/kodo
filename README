@@ -16,7 +16,7 @@ WHAT IS KODO?
 WHAT IS CKODO?
 ===============
   - cKodo https://github.com/vilksons/kodo/tree/ckodo
-    Kodo is a Kido Toolchain built on C without any connection to Shell/Bash. and also simpler because it prioritizes stability and feature coverage.
+    Kodo is a Kodo Toolchain built on C without any connection to Shell/Bash. and also simpler because it prioritizes stability and feature coverage.
 
 KEEPING UP-TO-DATE
 ==================
