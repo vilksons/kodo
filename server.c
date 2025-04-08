@@ -91,13 +91,13 @@ void call_server_samp(const char *_args_,
         fclose(in);
     }
 
-    int found_rate = 0x0L;
+    int found_rate = 0x0;
     char line_rate[512];
 
     while (fgets(line_rate, sizeof(line_rate), in)) {
         if (strncmp(line_rate, "gamemode0 ", 10) == 0) {
             fprintf(out, "gamemode0 %s\n", _args_);
-            found_rate = 0x1L;
+            found_rate = 0x1;
         } else {
             fputs(line_rate, out);
         }
