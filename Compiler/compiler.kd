@@ -8,6 +8,190 @@ COMPILER_AMX_FLAGS=(
 )
 export COMPILER_AMX_FLAGS
 
+function kodo_init_compilers()
+{
+    commands_INPUT=$1
+    
+    local amx_valid=false
+
+    if [[ "$kd_table" == "compile" ]]; then
+        compiler_MODE="true"
+        kodo_compilers "" || {
+            if [ "$console_module_loaded" -eq 1 ]; then
+                print_green "warn:" "err.. need to kill after installing \"succes\".."
+                print_green " killing.."
+                sleep 0.999
+                SIGNAL_KILL ""
+            fi
+        }
+    else
+        if [[ -n "$commands_INPUT" ]]; then
+            if [[ "$commands_INPUT" == "." ]]; then
+                compiler_MODE="true"
+                kodo_compilers "" || {
+                    if [ "$console_module_loaded" -eq 1 ]; then
+                        print_green "warn:" "err.. need to kill after installing \"succes\".."
+                        print_green " killing.."
+                        sleep 0.999
+                        SIGNAL_KILL ""
+                    fi
+                }
+            else
+                if [[ "${#commands_OPAMX[@]}" -eq 0 ]]; then
+                    COMPILER_NEXT=1
+                else
+                    local amx_valid=true
+
+                    for option in "${commands_OPAMX[@]}"; do
+                        # option checking
+                        if [[ " ${COMPILER_AMX_FLAGS[*]} " != *" $option "* ]]; then
+                            # not valid
+                            print_red "crit:" "compiler option \`$option\` not found!"
+                            amx_valid=false
+                            end_console_main ""
+                        fi
+                    done
+
+                    if $amx_valid; then
+                        COMPILER_NEXT=2
+                    fi
+                fi
+            fi
+        fi
+
+        while IFS= read -r -d '' pawncc; do
+            if [ -f "$pawncc" ]; then
+                COMPILER_PAWNCC="$pawncc"
+                break
+            fi
+        done < <(find "$shell_DIR" -type f -iname "$__PAWNCC__" -print0)
+
+        if [ -z "$COMPILER_PAWNCC" ]; then
+            print_red "crit:" "$__PAWNCC__ not found!. You can get this in \`pawncc\`"
+            echo
+            read -r -p "install now? [y/n] " INSTALL_NOW
+
+            while true; do
+                case "$INSTALL_NOW" in
+                    [Yy])
+                        struct_choice_pawncc "" || {
+                            if [ "$console_module_loaded" -eq 1 ]; then
+                                print_green "warn:" "err.. need to kill after installing \"succes\".."
+                                print_green " killing.."
+                                sleep 0.999
+                                SIGNAL_KILL ""
+                            fi
+                        }
+                        ;;
+                    [Nn])
+                        struct_console_main "" || {
+                            if [ "$console_module_loaded" -eq 1 ]; then
+                                print_green "warn:" "err.. need to kill after installing \"succes\".."
+                                print_green " killing.."
+                                sleep 0.999
+                                SIGNAL_KILL ""
+                            fi
+                        }
+                        ;;
+                    *)
+                        struct_choice_pawncc "" || {
+                            if [ "$console_module_loaded" -eq 1 ]; then
+                                print_green "warn:" "err.. need to kill after installing \"succes\".."
+                                print_green " killing.."
+                                sleep 0.999
+                                SIGNAL_KILL ""
+                            fi
+                        }
+                        ;;
+                esac
+            done
+        fi
+
+        if ! find "$shell_DIR" -type f -name "$commands_INPUT" | grep -q .; then
+            print_red "crit:" "$commands_INPUT not found!."
+            struct_console_main ""
+        fi
+
+        : '
+            @Map
+        '
+        while IFS= read -r -d '' __LOOP_COMPILES_FILE; do
+            __files+=("$__LOOP_COMPILES_FILE")
+        done < <(find "$shell_DIR" -name "$commands_INPUT" -type f -print0)
+
+        for __LOOP_COMPILES_FILE in "${__files[@]}"; do
+            if [ -f "$__LOOP_COMPILES_FILE" ] && [[ "$__LOOP_COMPILES_FILE" != *.amx ]]; then
+                bash_title "$__LOOP_COMPILES_FILE"
+
+                local AMX_O
+                AMX_O="$(dirname "$__LOOP_COMPILES_FILE")/$(basename "${__LOOP_COMPILES_FILE%.*}.amx")"
+
+                echo
+                echo -e "$(collor_green " Compiling: $commands_INPUT")"
+                echo
+
+                : '
+                    @PawnCC.Compile
+                '
+                
+                local start_time
+                start_time=$(date +%s%3N)
+
+                    for _ in {1..10}; do
+                        if [ "$COMPILER_NEXT" -eq 1 ]; then
+                            "$COMPILER_PAWNCC" -i"$json_INCLUDE" "$json_EXCLUDE" "$__LOOP_COMPILES_FILE" -o"$AMX_O" "$json_AMX_OPT_F" > "$__cache_save_compile" 2>&1
+                        elif [ "$COMPILER_NEXT" -eq 2 ]; then
+                            "$COMPILER_PAWNCC" -i"$json_INCLUDE" "$json_EXCLUDE" "$__LOOP_COMPILES_FILE" -o"$AMX_O" "$json_AMX_OPT_F" "${commands_OPAMX[@]}" > "$__cache_save_compile" 2>&1
+                        fi
+                    done
+                
+                local end_time
+                end_time=$(date +%s%3N)
+
+                local elapsed=$((end_time - start_time))
+                
+                bash_cache_compiler "" || {
+                    if [ "$console_module_loaded" -eq 1 ]; then
+                        print_green "warn:" "err.. need to kill after installing \"succes\".."
+                        print_green " killing.."
+                        sleep 0.999
+                        SIGNAL_KILL ""
+                    fi
+                }
+                ignore_this sleep 0.1
+                cat "$__cache_save_compile"
+                ignore_this sleep 0.1
+
+                if [[ "$json_RM_CACHE" == "true" ]]; then
+                    cache_compiler=".cache/compiler.log"
+                    if [ -f "$cache_compiler" ]; then
+                        shred -u "$cache_compiler"
+                    fi
+                fi
+
+                if [ -s "$AMX_O" ]; then
+                    echo
+                    echo -e "$(collor_green " Finished: $AMX_O")"
+                    
+                    if [[ "$compiler_MODE" == "true" ]]; then
+                        console_TITLE "compilers"
+                    elif [[ "$compiler_MODE" == "false" ]]; then
+                        console_TITLE "compiler - running"
+                    fi
+                    echo
+                    echo "total size: $(stat -c%s "$AMX_O") bytes"
+                    if [ "$COMPILER_NEXT" == 2 ]; then
+                        echo -n "with +option compiler: "
+                        echo "${commands_OPAMX[@]}"
+                    fi
+                    echo "Total execution time: ${elapsed} ms"
+                fi
+            fi
+        done
+    fi
+}
+export kodo_init_compilers
+
 function kodo_compilers() {
     local SHFILE="false"
     while IFS= read -r -d '' pawncc; do
