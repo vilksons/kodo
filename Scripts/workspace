@@ -653,44 +653,77 @@ function mode_KODO() {
                         chmod +x "$shell_DIR/.kodo"
 
                         echo "$latest" > "$shell_DIR/.itskodo"
+                        
+                        if  [ "$kd_table" = "sync" ]; then
+                            console_TITLE "Sync | Upgrade"
 
-                        if [ -n "$commands_ARGS" ]; then
-                            if [ "$commands_ARGS" = "update" ]; then
-                                console_TITLE "Sync | Update"
-
-                                echo "Updating.."
+                            echo "Upgrading.."
                             
-                                wget -q --show-progress -O "$shell_DIR/workspace" \
-                                    "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace"
-                            elif [ "$commands_ARGS" == "upgrade" ]; then
-                                console_TITLE "Sync | Upgrade"
+                            local kodo_modular=(
+                                "Security/security.kd"
+                                "Compat/compat.kd"
+                                "Zapman/zapman.kd"
+                                "Package/samp.kd"
+                                "Package/pawncc.kd"
+                                "Server/server.kd"
+                                "Misc/misc.kd"
+                                "KChat/kchat.kd"
+                                "Compiler/compiler.kd"
+                            )
 
-                                echo "Upgrading.."
-                                
-                                local kodo_modular=(
-                                    "Security/security.kd"
-                                    "Compat/compat.kd"
-                                    "Zapman/zapman.kd"
-                                    "Package/samp.kd"
-                                    "Package/pawncc.kd"
-                                    "Server/server.kd"
-                                    "Misc/misc.kd"
-                                    "KChat/kchat.kd"
-                                    "Compiler/compiler.kd"
-                                )
+                            cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
 
-                                for file in "${kodo_modular[@]}"; do
-                                    wget -q --show-progress -O "$shell_DIR/.kodo/$(basename "$file")" \
-                                        "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/$file" \
-                                        || { touch "$shell_DIR/.sync"; }
-                                done
+                            for __file__ in "${kodo_modular[@]}"; do
+                                wget -q --show-progress -O "$(basename "$__file__")" \
+                                    "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/$__file__" \
+                                    || { touch "$shell_DIR/.sync"; }
+                            done
 
-                                wget -q --show-progress -O "$shell_DIR/.wpython" \
-                                    "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/wpython"
-                                wget -q --show-progress -O "$shell_DIR/workspace" \
-                                    "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace"
-                            fi
+                            cd "$shell_DIR" || echo ""
+                            wget -q --show-progress -O "$shell_DIR/.wpython" \
+                                "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/wpython"
+                            wget -q --show-progress -O "$shell_DIR/workspace" \
+                                "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace"
+                        elif [ "$commands_ARGS" = "update" ]; then
+                            console_TITLE "Sync | Update"
+
+                            echo "Updating.."
+
+                            cd "$shell_DIR" || echo ""
+                            wget -q --show-progress -O "workspace" \
+                                "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace"
+                        else
+                            console_TITLE "Sync | Upgrade"
+
+                            echo "Upgrading.."
+                            
+                            local kodo_modular=(
+                                "Security/security.kd"
+                                "Compat/compat.kd"
+                                "Zapman/zapman.kd"
+                                "Package/samp.kd"
+                                "Package/pawncc.kd"
+                                "Server/server.kd"
+                                "Misc/misc.kd"
+                                "KChat/kchat.kd"
+                                "Compiler/compiler.kd"
+                            )
+
+                            cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
+
+                            for __file__ in "${kodo_modular[@]}"; do
+                                wget -q --show-progress -O "$(basename "$__file__")" \
+                                    "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/$__file__" \
+                                    || { touch "$shell_DIR/.sync"; }
+                            done
+
+                            cd "$shell_DIR" || echo ""
+                            wget -q --show-progress -O "$shell_DIR/.wpython" \
+                                "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/wpython"
+                            wget -q --show-progress -O "$shell_DIR/workspace" \
+                                "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace"
                         fi
+                        
                         chmod +x "$shell_DIR/workspace"
                         ignore_this sleep 1
                         bash "$shell_DIR/workspace"
@@ -892,7 +925,7 @@ function mode_KODO() {
                 ["chatbot"]=":: Chatbot Terminal - Usage: chatbot"
                 ["nano"]=":: GNU/Nano Editor - Usage: nano"
                 ["zapman"]=":: Kodo Mode to Zapman Mode - Usage: zapman"
-                ["sync"]=":: Sync Normal - Usage: sync | (+) [<args>] [update - only workspace] [upgrade - full updating]"
+                ["sync"]=":: Sync (Upgrade) - Usage: sync | (+) [<args>] [update - only workspace]"
                 ["fetch"]=":: Fetch Kodo -> Usage: fetch"
             )
             
