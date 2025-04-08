@@ -4,11 +4,6 @@ function kodo_artintel()
 {
     local commands_INPUT=$1
 
-    local SIZEOF_TOKEN
-    SIZEOF_TOKEN=$(jq -r '.bot_token' kodo.json)
-    local DECRYPT_TOKEN
-    DECRYPT_TOKEN=$(echo "$SIZEOF_TOKEN" | openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:$ZAPMAN_DECRYPT -base64)
-
     chatbot_response=$(curl -s -X POST https://api.groq.com/openai/v1/chat/completions \
         -H "Authorization: Bearer $DECRYPT_TOKEN" \
         -H "Content-Type: application/json" \

@@ -18,7 +18,7 @@ function kodo_compilers() {
     done < <(find "$shell_DIR" -type f -iname "$__PAWNCC__" -print0)
 
     if [ -z "$COMPILER_PAWNCC" ]; then
-        printf_red "crit:" "$__PAWNCC__ not found!. You can get this in \`pawncc\`"
+        print_red "crit:" "$__PAWNCC__ not found!. You can get this in \`pawncc\`"
         echo
         read -r -p "install now? [y/n] " INSTALL_NOW
 
@@ -64,7 +64,7 @@ function kodo_compilers() {
                 # option checking
                 if [[ " ${COMPILER_AMX_FLAGS[*]} " != *" $option "* ]]; then
                     # not valid
-                    printf_red "crit:" "compiler option \`$option\` not found!"
+                    print_red "crit:" "compiler option \`$option\` not found!"
                     continue
                 fi
             done

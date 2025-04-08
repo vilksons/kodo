@@ -27,13 +27,14 @@ export __SAMP_SERVER
 
 # Zapman
 ZAPMAN_encrypted_data=""
-
-save_autoinstall=0
-export save_autoinstall
+zapman_ainstall_SIZEOF=0
+export zapman_ainstall_SIZEOF
 
 # Chatbot
 CHATBOT_encrypted_data=""
 export CHATBOT_encrypted_data
+DECRYPT_TOKEN=""
+export DECRYPT_TOKEN
 
 # Notice Var
 console_save_messages=0
@@ -43,7 +44,7 @@ export console_save_notice
 console_module_loaded=0
 export console_module_loaded
 
-# Static
+# General
 shell_TITLE=""
 export shell_TITLE
 shell_DIR="$(dirname "$(realpath "$0")")"
@@ -76,7 +77,7 @@ COLOR_Y="\e[33m"
 }
 export collor_yellow
 
-function printf_yellow() {
+function print_yellow() {
     if [ -n "$2" ]; then
         echo -e "$(collor_yellow "$1") $2"
     elif [ -z "$2" ]; then
@@ -94,7 +95,7 @@ COLOR_G="\e[32m"
 }
 export collor_green
 
-function printf_green() {
+function print_green() {
     if [ -n "$2" ]; then
         echo -e "$(collor_green "$1") $2"
     elif [ -z "$2" ]; then
@@ -112,7 +113,7 @@ COLOR_R="\e[91m"
 }
 export collor_red
 
-function printf_red() {
+function print_red() {
     if [ -n "$2" ]; then
         echo -e "$(collor_red "$1") $2"
     elif [ -z "$2" ]; then
@@ -130,7 +131,7 @@ COLOR_A="\e[97m"
 }
 export collor_gray
 
-function printf_gray() {
+function print_gray() {
     if [ -n "$2" ]; then
         echo -e "$(collor_gray "$1") $2"
     elif [ -z "$2" ]; then
@@ -183,7 +184,7 @@ function rest_var() {
     COMPILER_NEXT=0
     SERVERS_NEXT=0
     SAMP_WARGS_STATUS=0
-    save_autoinstall=0
+    zapman_ainstall_SIZEOF=0
 }
 
 function @LANG_CREATE()
@@ -246,7 +247,7 @@ SIGNAL_KILL ""
 else
     ignore_this @ENCRYPTION_TOKEN ""  || {
         if [ "$console_module_loaded" -eq 1 ]; then
-                printf_red "crit:" "err.. need to kill."
+                print_red "crit:" "err.. need to kill."
                 sleep 1.0
                 mode_KODO ""
             fi
@@ -274,8 +275,10 @@ function struct_console_main() {
 
     if ((${#console_missing_cmds[@]} > 0)); then
         if [ "$console_save_notice" -ne 1 ]; then
-            printf_red "Can't load Workspace Module."
-            printf_red " Missing packages:" "${console_missing_cmds[*]}"
+            print_red "Can't load Workspace Module."
+            print_red " Missing packages:" "${console_missing_cmds[*]}"
+            printf "\e]8;;https://github.com/vilksons/kodo/wiki/Required-Packages\e\\ Please see here for more.\e]8;;\e\\"
+            echo
             ignore_this sleep 1.0
             console_save_notice=1
     fi
@@ -309,7 +312,7 @@ function struct_console_main() {
                     if [[ "$3" == "compat" ]]; then 
                         ignore_this compat_now  || {
                             if [ "$console_module_loaded" -eq 1 ]; then
-                                printf_red "crit:" "err.. need to kill."
+                                print_red "crit:" "err.. need to kill."
                                 sleep 1.0
                                 mode_KODO ""
                             fi
@@ -335,28 +338,26 @@ function struct_console_main() {
                 fi
             }
 
-            # wpython
             console_pack ".wpython" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/wpython" ""
 
             cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
             
-            # security.kd
             console_pack ".kodo/security.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Security/security.kd" "ignore" 
-            # compat.kd
+
             console_pack ".kodo/compat.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compat/compat.kd" "compat" 
-            # compiler.kd
+
             console_pack ".kodo/compiler.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compiler/compiler.kd" "ignore" 
-            # Zapman.kd
+
             console_pack ".kodo/zapman.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Zapman/zapman.kd" "ignore" 
-            # samp.kd
+
             console_pack ".kodo/samp.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/samp.kd" "ignore" 
-            # pawncc.kd
+
             console_pack ".kodo/pawncc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/pawncc.kd" "ignore" 
-            # misc.kd
+
             console_pack ".kodo/misc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Misc/misc.kd" "ignore"
-            # artintel.kd
+
             console_pack ".kodo/artintel.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/ArtIntel/artintel.kd" "ignore" 
-            # server.kd
+
             console_pack ".kodo/server.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Server/server.kd" "end"
             
             console_save_notice=1
@@ -450,7 +451,7 @@ function mode_KODO() {
                 compiler_MODE="true"
                 kodo_compilers "" || {
                     if [ "$console_module_loaded" -eq 1 ]; then
-                        printf_red "crit:" "err.. need to kill."
+                        print_red "crit:" "err.. need to kill."
                         sleep 1.0
                         mode_KODO ""
                     fi
@@ -461,7 +462,7 @@ function mode_KODO() {
                         compiler_MODE="true"
                         kodo_compilers "" || {
                             if [ "$console_module_loaded" -eq 1 ]; then
-                                printf_red "crit:" "err.. need to kill."
+                                print_red "crit:" "err.. need to kill."
                                 sleep 1.0
                                 mode_KODO ""
                             fi
@@ -476,7 +477,7 @@ function mode_KODO() {
                                 # option checking
                                 if [[ " ${COMPILER_AMX_FLAGS[*]} " != *" $option "* ]]; then
                                     # not valid
-                                    printf_red "crit:" "compiler option \`$option\` not found!"
+                                    print_red "crit:" "compiler option \`$option\` not found!"
                                     amx_valid=false
                                     end_console_main ""
                                 fi
@@ -497,7 +498,7 @@ function mode_KODO() {
                 done < <(find "$shell_DIR" -type f -iname "$__PAWNCC__" -print0)
 
                 if [ -z "$COMPILER_PAWNCC" ]; then
-                    printf_red "crit:" "$__PAWNCC__ not found!. You can get this in \`pawncc\`"
+                    print_red "crit:" "$__PAWNCC__ not found!. You can get this in \`pawncc\`"
                     echo
                     read -r -p "install now? [y/n] " INSTALL_NOW
 
@@ -506,7 +507,7 @@ function mode_KODO() {
                             [Yy])
                                 struct_choice_pawncc "" || {
                                     if [ "$console_module_loaded" -eq 1 ]; then
-                                        printf_red "crit:" "err.. need to kill."
+                                        print_red "crit:" "err.. need to kill."
                                         sleep 1.0
                                         mode_KODO ""
                                     fi
@@ -515,7 +516,7 @@ function mode_KODO() {
                             [Nn])
                                 struct_console_main "" || {
                                     if [ "$console_module_loaded" -eq 1 ]; then
-                                        printf_red "crit:" "err.. need to kill."
+                                        print_red "crit:" "err.. need to kill."
                                         sleep 1.0
                                         mode_KODO ""
                                     fi
@@ -524,7 +525,7 @@ function mode_KODO() {
                             *)
                                 struct_choice_pawncc "" || {
                                     if [ "$console_module_loaded" -eq 1 ]; then
-                                        printf_red "crit:" "err.. need to kill."
+                                        print_red "crit:" "err.. need to kill."
                                         sleep 1.0
                                         mode_KODO ""
                                     fi
@@ -535,7 +536,7 @@ function mode_KODO() {
                 fi
 
                 if ! find "$shell_DIR" -type f -name "$commands_INPUT" | grep -q .; then
-                    printf_red "crit:" "$commands_INPUT not found!."
+                    print_red "crit:" "$commands_INPUT not found!."
                     struct_console_main ""
                 fi
 
@@ -579,7 +580,7 @@ function mode_KODO() {
                         
                         bash_cache_compiler "" || {
                             if [ "$console_module_loaded" -eq 1 ]; then
-                                printf_red "crit:" "err.. need to kill."
+                                print_red "crit:" "err.. need to kill."
                                 sleep 1.0
                                 mode_KODO ""
                             fi
@@ -634,7 +635,7 @@ function mode_KODO() {
             if [[ "$commands_INPUT" == "." ]]; then
                 space_servers "" || {
                     if [ "$console_module_loaded" -eq 1 ]; then
-                        printf_red "crit:" "err.. need to kill."
+                        print_red "crit:" "err.. need to kill."
                         sleep 1.0
                         mode_KODO ""
                     fi
@@ -642,7 +643,7 @@ function mode_KODO() {
             else
                 space_wargs_servers "$commands_INPUT" || {
                     if [ "$console_module_loaded" -eq 1 ]; then
-                        printf_red "crit:" "err.. need to kill."
+                        print_red "crit:" "err.. need to kill."
                         sleep 1.0
                         mode_KODO ""
                     fi
@@ -656,7 +657,7 @@ function mode_KODO() {
             compiler_MODE="false"
             kodo_compilers "" || {
                 if [ "$console_module_loaded" -eq 1 ]; then
-                    printf_red "crit:" "err.. need to kill."
+                    print_red "crit:" "err.. need to kill."
                     sleep 1.0
                     mode_KODO ""
                 fi
@@ -670,7 +671,7 @@ function mode_KODO() {
             if [[ -n "$commands_ARGS" && "$commands_ARGS" != "$kd_table" ]]; then
                 commands_INPUT="$commands_ARGS"
             else
-                printf_gray ":: Enter GM Name:"
+                print_gray ":: Enter GM Name:"
                 while true; do
                     read -r -p ">>> " commands_INPUT
                     [[ -n "$commands_INPUT" ]] && break
@@ -682,7 +683,7 @@ function mode_KODO() {
             if [[ "$commands_INPUT" == "." ]]; then
                 space_servers "" || {
                     if [ "$console_module_loaded" -eq 1 ]; then
-                        printf_red "crit:" "err.. need to kill."
+                        print_red "crit:" "err.. need to kill."
                         sleep 1.0
                         mode_KODO ""
                     fi
@@ -690,7 +691,7 @@ function mode_KODO() {
             else
                 space_wargs_servers "$commands_INPUT" || {
                     if [ "$console_module_loaded" -eq 1 ]; then
-                        printf_red "crit:" "err.. need to kill."
+                        print_red "crit:" "err.. need to kill."
                         sleep 1.0
                         mode_KODO ""
                     fi
@@ -720,7 +721,7 @@ function mode_KODO() {
 
             end_console_main "" || {
                 if [ "$console_module_loaded" -eq 1 ]; then
-                    printf_red "crit:" "err.. need to kill."
+                    print_red "crit:" "err.. need to kill."
                     sleep 1.0
                     mode_KODO ""
                 fi
@@ -733,7 +734,7 @@ function mode_KODO() {
 
             end_console_main "" || {
                 if [ "$console_module_loaded" -eq 1 ]; then
-                    printf_red "crit:" "err.. need to kill."
+                    print_red "crit:" "err.. need to kill."
                     sleep 1.0
                     mode_KODO ""
                 fi
@@ -747,7 +748,7 @@ function mode_KODO() {
             if [[ -n "$commands_ARGS" && "$commands_ARGS" != "$kd_table" ]]; then
                 commands_INPUT="$commands_ARGS"
             else
-                printf_gray ":: Enter File Name:"
+                print_gray ":: Enter File Name:"
                 while true; do
                     read -r -p ">>> " commands_INPUT
                     [[ -n "$commands_INPUT" ]] && break
@@ -803,7 +804,7 @@ function mode_KODO() {
                 echo "warning: $shell_NAME is up to date, Nothing to do."
                 end_console_main ""
             else
-                printf_gray ":: New Commits is Found..: Commits: (SHA1): "
+                print_gray ":: New Commits is Found..: Commits: (SHA1): "
                 echo "$latest"
                 
                 read -r -n1 -p ":: Do you want to continue Sync Kodo? [y/n] " PERMISSION_NEED_S
@@ -909,7 +910,7 @@ function mode_KODO() {
             if [[ -n "$commands_ARGS" && "$commands_ARGS" != "$kd_table" ]]; then
                 commands_INPUT="$commands_ARGS"
             else
-                printf_gray ":: Enter Question:"
+                print_gray ":: Enter Question:"
                 while true; do
                     read -r -p ">>> " commands_INPUT
                     [[ -n "$commands_INPUT" ]] && break
@@ -920,7 +921,7 @@ function mode_KODO() {
             ;;
         "nano"*)
             if ! command -v nano &> /dev/null; then
-                printf_red "crit:" "nano not found!, install first."
+                print_red "crit:" "nano not found!, install first."
                 end_console_main ""
             fi
             
@@ -931,7 +932,7 @@ function mode_KODO() {
             if [[ -n "$commands_ARGS" && "$commands_ARGS" != "$kd_table" ]]; then
                 commands_INPUT="$commands_ARGS"
             else
-                printf_gray ":: Enter Names:"
+                print_gray ":: Enter Names:"
                 while true; do
                     read -r -p ">>> " commands_INPUT
                     [[ -n "$commands_INPUT" ]] && break
@@ -945,7 +946,7 @@ function mode_KODO() {
             console_TITLE "Remove Cache"
 
             if [ "$compiler_MODE" != "nul" ]; then
-                printf_red "crit:" "can't remove cache!."
+                print_red "crit:" "can't remove cache!."
                 end_console_main ""
             fi
 
@@ -955,7 +956,7 @@ function mode_KODO() {
             fi
 
             if [ -f "$shell_DIR/.cache/zapman" ]; then
-                printf_gray ":: Cache Dir: $shell_DIR/.cache/tlizapmangpac"
+                print_gray ":: Cache Dir: $shell_DIR/.cache/tlizapmangpac"
                 read -r -p ":: Do you want to remove ALL files from $shell_DIR/.cache/zapman? [y/n] " PERMISSION_NEED_RC
                 echo
                 [[ -z "$PERMISSION_NEED_RC" ]] && PERMISSION_NEED_RC="Y"
@@ -964,7 +965,7 @@ function mode_KODO() {
                     case "$PERMISSION_NEED_RC" in
                         [Yy])
                             cd "$shell_DIR" || echo
-                            shred -u ".cache/zapman" && printf_yellow " successfully"
+                            shred -u ".cache/zapman" && print_yellow " successfully"
                             sleep 1
                             break
                             ;;
@@ -977,7 +978,7 @@ function mode_KODO() {
             fi
 
             if [ -f "$shell_DIR/.cache/compiler.log" ]; then
-                printf_gray ":: Cache Dir: $shell_DIR/.cache/compiler.log"
+                print_gray ":: Cache Dir: $shell_DIR/.cache/compiler.log"
                 read -r -p ":: Do you want to remove ALL files from $shell_DIR/.cache/compiler.log? [y/n] " PERMISSION_NEED_RC
                 echo
                 [[ -z "$PERMISSION_NEED_RC" ]] && PERMISSION_NEED_RC="Y"
@@ -986,7 +987,7 @@ function mode_KODO() {
                     case "$PERMISSION_NEED_RC" in
                         [Yy])
                             cd "$shell_DIR" || echo
-                            shred -u ".cache/compiler.log" && printf_yellow " successfully"
+                            shred -u ".cache/compiler.log" && print_yellow " successfully"
                             sleep 1
                             end_console_main ""
                             ;;
@@ -1007,7 +1008,7 @@ function mode_KODO() {
         "zapman")
             mode_KODO "" || {
                 if [ "$console_module_loaded" -eq 1 ]; then
-                    printf_red "crit:" "err.. need to kill."
+                    print_red "crit:" "err.. need to kill."
                     sleep 1.0
                     mode_KODO ""
                 fi
@@ -1089,7 +1090,7 @@ function not_found_kd()
 {
     echo "error: $kd_table: command not found"
     if [ "$console_module_loaded" -eq 1 ]; then
-        printf_green "warn:" "need to kill."
+        print_green "warn:" "need to kill."
         sleep 1.0
     fi
     struct_console_main ""

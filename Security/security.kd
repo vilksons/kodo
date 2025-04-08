@@ -32,6 +32,10 @@ function @ENCRYPTION_CREATE()
             
         ZAPMAN_DECRYPT=$(grep -oP '(?<=RHASH_256=).*' "$HOME/.enkodo" || head -n 1 "$HOME/.enkodo")        
         ZAPMAN_DECRYPT=$(grep -oP '(?<=RHASH_256=).*' "$HOME/.enkodo" || head -n 1 "$HOME/.enkodo")
+
+        local SIZEOF_TOKEN
+        SIZEOF_TOKEN=$(jq -r '.bot_token' kodo.json)
+        DECRYPT_TOKEN=$(echo "$SIZEOF_TOKEN" | openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:$ZAPMAN_DECRYPT -base64)
     fi
 }
 
@@ -50,7 +54,7 @@ function @ENCRYPTION_TOKEN()
             jq --arg token "$CHATBOT_encrypted_data" '.bot_token = $token' kodo.json > ._ignoreme.json && mv ._ignoreme.json kodo.json
         fi
     else
-        printf_red "crit:" "can't create encryption - openssl not found!"
+        print_red "crit:" "can't create encryption - openssl not found!"
     fi
 }
 

@@ -45,7 +45,7 @@ function struct_ZAPMAN()
     case "$zapman_table" in
         "$tb_zapman1")
             if [ ! -f "$shell_DIR/.cache/zapman" ]; then
-                printf_red "crit:" "No download history found in cache!"
+                print_red "crit:" "No download history found in cache!"
                 mode_ZAPMAN ""
             fi
 
@@ -59,15 +59,15 @@ function struct_ZAPMAN()
 
             # Check if decryption was successful and if the URL is valid
             if [[ -z "$tb_zapman1_url_cache" || ! "$tb_zapman1_url_cache" =~ ^https:// ]]; then
-                printf_red "crit:" "No valid URL found in cache!"
+                print_red "crit:" "No valid URL found in cache!"
                 mode_ZAPMAN ""
             fi
 
             # Debug output: Show the decrypted URL
-            printf_yellow "dbg:" "Using last history: $tb_zapman1_url_cache"
+            print_yellow "dbg:" "Using last history: $tb_zapman1_url_cache"
 
             # Prevent rewriting the cache, which could corrupt it
-            save_autoinstall=1
+            zapman_ainstall_SIZEOF=1
 
             zapman_table="install $tb_zapman1_url_cache"
             struct_ZAPMAN "$zapman_table"
@@ -92,13 +92,13 @@ function struct_ZAPMAN()
                 SAVE_QUICK=0
                 # Check if zapman.json file exists
                 if [ -f "zapman.json" ] && [ -f "zapman.toml" ]; then
-                    printf_red "crit:" "zapman.json and zapman.toml Cannot be merged!. choose zapman.json.."
+                    print_red "crit:" "zapman.json and zapman.toml Cannot be merged!. choose zapman.json.."
                 elif [ -f "zapman.json" ]; then
                     mapfile -t tb_zapman2_url_args < <(python3 -c 'import json, sys; data = json.load(sys.stdin); print("\n".join(data["package"]))' < zapman.json)
                 elif [ -f "zapman.toml" ]; then
                     mapfile -t tb_zapman2_url_args < <(tomlq -r '.package.urls[]' zapman.toml)
                 else
-                    printf_red "crit:" "zapman.json or zapman.toml not found!"
+                    print_red "crit:" "zapman.json or zapman.toml not found!"
                     sleep 2.2
                     cat > zapman.json <<EOF
 {
@@ -296,7 +296,7 @@ EOF
                     ZAPMAN_encrypted_data=$(echo "$tb_zapman2_input_args" | openssl enc -aes-256-cbc -salt -pbkdf2 -pass pass:$ZAPMAN_DECRYPT -base64)
 
                     # Save Encryption to Cache/Zapman
-                    if [ "$save_autoinstall" -ne 1 ]; then
+                    if [ "$zapman_ainstall_SIZEOF" -ne 1 ]; then
                         echo "$ZAPMAN_encrypted_data" > "$shell_DIR/.cache/zapman"
                     fi
                 fi
@@ -316,16 +316,16 @@ EOF
                         tar -xzf "$arch_files" -C "$zapman_extract_dirs" --strip-components=1
                     else
                         # If the downloaded file is neither a ZIP nor a TAR.GZ, report an error and clean up
-                        printf_red "crit:" "Downloaded file is not a valid ZIP or TAR.GZ.."
+                        print_red "crit:" "Downloaded file is not a valid ZIP or TAR.GZ.."
                         
                         # Verify before removing
                         if [ -f "$arch_files" ]; then
-                            printf_yellow "[OK]" "Removing invalid archive: $arch_files"
+                            print_yellow "[OK]" "Removing invalid archive: $arch_files"
                             shred -u "$arch_files"
                         fi
                         
                         if [ -d "$zapman_extract_dirs" ]; then
-                            printf_yellow "[OK]" "Removing extracted directory: $zapman_extract_dirs"
+                            print_yellow "[OK]" "Removing extracted directory: $zapman_extract_dirs"
                             rm -rf "$zapman_extract_dirs"
                         fi
                         
@@ -333,7 +333,7 @@ EOF
                     fi
                 else
                     # If not exist
-                    printf_red "crit:" "Download failed!. Check the installer"
+                    print_red "crit:" "Download failed!. Check the installer"
                     mode_ZAPMAN ""
                 fi
 
@@ -395,7 +395,7 @@ EOF
                     # Cleanup: Remove the extracted archive and its directory
                     if [[ -f "$arch_files" && -d "$zapman_extract_dirs" ]]; then
                         shred -u "$arch_files" && rm -rf "$zapman_extract_dirs"
-                        printf_yellow "[OK]" "Removed: $arch_files and $zapman_extract_dirs"
+                        print_yellow "[OK]" "Removed: $arch_files and $zapman_extract_dirs"
                     fi
 
                     # Print completion message with package and repo version info
@@ -411,7 +411,7 @@ EOF
                     # Check if a_samp or open.mp includes are present
                     if grep -Eq "^a_samp|a_samp.inc|open\.mp" "$shell_DIR/gamemodes/$json_FILE_SERV"; then
                         # Debug message
-                        printf_yellow "dbg:" "Adding #include <$1> after #include <a_samp> or #include <open.mp>"
+                        print_yellow "dbg:" "Adding #include <$1> after #include <a_samp> or #include <open.mp>"
                         # Insert the include after a_samp or open.mp
                         awk -v inc="#include <$1>" '
                             /^#include (<|")?(a_samp|a_samp.inc|open\.mp)(>|")?/ { print; print inc; next }
@@ -419,17 +419,17 @@ EOF
                         ' "$shell_DIR/gamemodes/$json_FILE_SERV" > "$shell_DIR/gamemodes/$json_FILE_SERV.tmp" && mv "$shell_DIR/gamemodes/$json_FILE_SERV.tmp" "$shell_DIR/gamemodes/$json_FILE_SERV"
                     else
                         # Debug message if no a_samp or open.mp found
-                        printf_yellow "dbg:" "No #include <a_samp> | \"a_samp\" or #include <open.mp> | \"open.mp\" found, adding at the beginning"
+                        print_yellow "dbg:" "No #include <a_samp> | \"a_samp\" or #include <open.mp> | \"open.mp\" found, adding at the beginning"
                         # Add the include at the beginning of the file
                         sed -i "1i#include <$1>" "$shell_DIR/gamemodes/$json_FILE_SERV"
                     fi
                 else
                     # Debug message if the include already exists
-                    printf_yellow "dbg:" "#include <$1> already exists in $shell_DIR/gamemodes/$json_FILE_SERV"
+                    print_yellow "dbg:" "#include <$1> already exists in $shell_DIR/gamemodes/$json_FILE_SERV"
                 fi
             else
                 # Debug message if the file is not found
-                printf_yellow "dbg:" "$shell_DIR/gamemodes/$json_FILE_SERV not found."
+                print_yellow "dbg:" "$shell_DIR/gamemodes/$json_FILE_SERV not found."
             fi
         }
 
@@ -448,26 +448,26 @@ EOF
                     if ! grep -qE "^plugins.*\b$1\b" "$json_SERVER_CONFIG"; then
                         # If both .so and .dll files exist
                         if [[ -f "$json_ZAPMAN_PLUGINS/$1.so" && -f "$json_ZAPMAN_PLUGINS/$1.dll" ]]; then
-                            printf_yellow "dbg:" "Adding $1.so and $1.dll to the plugins"
+                            print_yellow "dbg:" "Adding $1.so and $1.dll to the plugins"
                             sed -i -E "s/^(plugins.*)/\1 $1.dll $1.so/" "$json_SERVER_CONFIG"
                         # If only .so exists
                         elif [[ -f "$json_ZAPMAN_PLUGINS/$1.so" ]]; then
-                            printf_yellow "dbg:" "Adding $1.so to the plugins"
+                            print_yellow "dbg:" "Adding $1.so to the plugins"
                             sed -i -E "s/^(plugins.*)/\1 $1.so/" "$json_SERVER_CONFIG"
                         # If only .dll exists
                         elif [[ -f "$json_ZAPMAN_PLUGINS/$1.dll" ]]; then
-                            printf_yellow "dbg:" "Adding $1.dll to the plugins"
+                            print_yellow "dbg:" "Adding $1.dll to the plugins"
                             sed -i -E "s/^(plugins.*)/\1 $1.dll/" "$json_SERVER_CONFIG"
                         fi
                     else
-                        printf_yellow "dbg:" "Plugin $1 already exists, not added."
+                        print_yellow "dbg:" "Plugin $1 already exists, not added."
                     fi
                 }
 
                 # Check if the "plugins" line exists in server.cfg
                 if ! grep -q "^plugins" "$json_SERVER_CONFIG"; then
                     echo "plugins" >> "$json_SERVER_CONFIG"
-                    printf_yellow "dbg:" "The 'plugins' line has been added to server.cfg."
+                    print_yellow "dbg:" "The 'plugins' line has been added to server.cfg."
                 fi
 
                 # Loop to ensure all plugins are properly added
@@ -480,19 +480,19 @@ EOF
                 if ! grep -q -E "$1\.(so|dll)" "$json_SERVER_CONFIG"; then
                     # If both .so and .dll exist
                     if [[ -f "$json_ZAPMAN_PLUGINS/$1.so" && -f "$json_ZAPMAN_PLUGINS/$1.dll" ]]; then
-                        printf_yellow "dbg:" "Adding $1.so and $1.dll to pawn.legacy_plugins"
+                        print_yellow "dbg:" "Adding $1.so and $1.dll to pawn.legacy_plugins"
                         jq ".pawn.legacy_plugins += [\"$1.dll\", \"$1.so\"]" "$json_SERVER_CONFIG" 2>/dev/null > .__ignored,json && mv .__ignored,json "$json_SERVER_CONFIG"
                     # If only .so exists
                     elif [[ -f "$json_ZAPMAN_PLUGINS/$1.so" ]]; then
-                        printf_yellow "dbg:" "Adding $1.so to pawn.legacy_plugins"
+                        print_yellow "dbg:" "Adding $1.so to pawn.legacy_plugins"
                         jq ".pawn.legacy_plugins += [\"$1.so\"]" "$json_SERVER_CONFIG" 2>/dev/null > .__ignored,json && mv .__ignored,json "$json_SERVER_CONFIG"
                     # If only .dll exists
                     elif [[ -f "$json_ZAPMAN_PLUGINS/$1.dll" ]]; then
-                        printf_yellow "dbg:" "Adding $1.dll to pawn.legacy_plugins"
+                        print_yellow "dbg:" "Adding $1.dll to pawn.legacy_plugins"
                         jq ".pawn.legacy_plugins += [\"$1.dll\"]" "$json_SERVER_CONFIG" 2>/dev/null > .__ignored,json && mv .__ignored,json "$json_SERVER_CONFIG"
                     fi
                 else
-                    printf_yellow "dbg:" "Plugin $1 already exists in pawn.legacy_plugins, not added."
+                    print_yellow "dbg:" "Plugin $1 already exists in pawn.legacy_plugins, not added."
                 fi
             }
 
@@ -502,7 +502,7 @@ EOF
                 # Add or fix the JSON structure by adding the "pawn" key containing "legacy_plugins" as an empty array
                 if jq -e '. | type == "object"' "$json_SERVER_CONFIG" 2>/dev/null > /dev/null; then
                     jq '.pawn = {legacy_plugins: []} + .' "$json_SERVER_CONFIG" 2>/dev/null > .__ignored,json && mv .__ignored,json "$json_SERVER_CONFIG"
-                    printf_yellow "dbg:" "Key 'pawn.legacy_plugins' has been added as an empty array."
+                    print_yellow "dbg:" "Key 'pawn.legacy_plugins' has been added as an empty array."
                 fi
             fi
 
@@ -515,7 +515,7 @@ EOF
         fi
     fi
             # end.
-            printf_yellow "[All packages installed]"
+            print_yellow "[All packages installed]"
 
             ignore_this sleep 0.1
 
@@ -533,7 +533,7 @@ EOF
                 echo ":: Enter the name pattern of the include/plugin to remove:"
                 read -r -p ">>> " rm_input_save
 
-                printf_gray ":: Enter the name pattern of the include/plugin to remove:"
+                print_gray ":: Enter the name pattern of the include/plugin to remove:"
                 while true; do
                     read -r -p ">>> " rm_input_save
                     [[ -n "$commands_INPUT" ]] && break
@@ -557,13 +557,13 @@ EOF
 
                 if [[ -n "$zapman_INCLUDES" ]]; then
                     echo "$zapman_INCLUDES" | xargs -0 shred -u
-                    printf_yellow "[OK]" "Removed includes: $zapman_INCLUDES"
+                    print_yellow "[OK]" "Removed includes: $zapman_INCLUDES"
                 else
-                    printf_yellow "dbg:" "No matching include files found: $rm_input_save"
+                    print_yellow "dbg:" "No matching include files found: $rm_input_save"
                 fi
             else
                 # If the $json_ZAPMAN_INCLUDE folder does not exist, print a warning message
-                printf_green "warn:" "$json_ZAPMAN_INCLUDE not found"
+                print_green "warn:" "$json_ZAPMAN_INCLUDE not found"
             fi
 
             if [ -d "$json_ZAPMAN_PLUGINS" ]; then
@@ -571,13 +571,13 @@ EOF
 
                 if [[ -n "$_zapman_plugins" ]]; then
                     echo "$_zapman_plugins" | xargs -0 shred -u
-                    printf_yellow "[OK]" "Removed plugins: $_zapman_plugins"
+                    print_yellow "[OK]" "Removed plugins: $_zapman_plugins"
                 else
-                    printf_yellow "dbg:" "No matching plugin files found: $rm_input_save"
+                    print_yellow "dbg:" "No matching plugin files found: $rm_input_save"
                 fi
             else
                 # If the $json_ZAPMAN_PLUGINS folder does not exist, print a warning message
-                printf_green "warn:" "$json_ZAPMAN_PLUGINS not found"
+                print_green "warn:" "$json_ZAPMAN_PLUGINS not found"
             fi
 
             # Function to remove #include <find_plugin_name> from main.pwn
@@ -587,14 +587,14 @@ EOF
 
                 if [[ -f "$shell_DIR/gamemodes/$json_FILE_SERV" ]]; then  # Check if the main server file exists
                     if grep -q "#include <$escaped_plugins>" "$shell_DIR/gamemodes/$json_FILE_SERV"; then  # Check if the plugin is already included
-                        printf_yellow "dbg:" "Removing #include <$escaped_plugins> from $shell_DIR/gamemodes/$json_FILE_SERV"
+                        print_yellow "dbg:" "Removing #include <$escaped_plugins> from $shell_DIR/gamemodes/$json_FILE_SERV"
                         # Remove the #include line for the plugin from the main server file
                         sed -i "/#include <$escaped_plugins>/d" "$shell_DIR/gamemodes/$json_FILE_SERV"
                     else
-                        printf_yellow "dbg:" "#include <$escaped_plugins> not found in $shell_DIR/gamemodes/$json_FILE_SERV"
+                        print_yellow "dbg:" "#include <$escaped_plugins> not found in $shell_DIR/gamemodes/$json_FILE_SERV"
                     fi
                 else
-                    printf_yellow "dbg:" "$shell_DIR/gamemodes/$json_FILE_SERV not found."
+                    print_yellow "dbg:" "$shell_DIR/gamemodes/$json_FILE_SERV not found."
                 fi
         }
 
@@ -618,14 +618,14 @@ EOF
                     # Ensure that the 'plugins' entry is not an empty line
                     sed -i 's/^plugins *$/plugins /' "$json_SERVER_CONFIG"
                     # Print a success message after the modifications
-                    printf_yellow "[OK]" "Removed $rm_input_save from $json_SERVER_CONFIG"
+                    print_yellow "[OK]" "Removed $rm_input_save from $json_SERVER_CONFIG"
                 else
                     # If no 'plugins' entry is found, print a debug message
-                    printf_yellow "dbg:" "No 'plugins' entry found in $json_SERVER_CONFIG"
+                    print_yellow "dbg:" "No 'plugins' entry found in $json_SERVER_CONFIG"
                 fi
             else
                 # If the $json_SERVER_CONFIG file does not exist, print a warning message
-                printf_green "warn:" "$json_SERVER_CONFIG not found"
+                print_green "warn:" "$json_SERVER_CONFIG not found"
             fi
         elif [[ "$__SAMP_SERVER" == "omp" ]]; then
             # Check if the $json_SERVER_CONFIG file exists
@@ -635,19 +635,19 @@ EOF
                     # Handle array format
                     jq --arg pattern "$rm_input_save" 'walk(if type == "array" then map(select(. != $pattern)) else . end)' "$json_SERVER_CONFIG" > .cache_tmp && mv .cache_tmp "$json_SERVER_CONFIG"
                     # Print a success message after the modifications
-                    printf_yellow "[OK]" "Removed $rm_input_save from $json_SERVER_CONFIG"
+                    print_yellow "[OK]" "Removed $rm_input_save from $json_SERVER_CONFIG"
                 else
                     # If no 'legacy_plugins' entry is found, print a debug message
-                    printf_yellow "dbg:" "No 'legacy_plugins' entry found in $json_SERVER_CONFIG"
+                    print_yellow "dbg:" "No 'legacy_plugins' entry found in $json_SERVER_CONFIG"
                 fi
             else
                 # If the $json_SERVER_CONFIG file does not exist, print a warning message
-                printf_green "warn:" "$json_SERVER_CONFIG not found"
+                print_green "warn:" "$json_SERVER_CONFIG not found"
             fi
         fi
 
             # end.
-            printf_yellow "[OK]" "Removal process completed!"
+            print_yellow "[OK]" "Removal process completed!"
 
             mode_ZAPMAN ""
             ;;
