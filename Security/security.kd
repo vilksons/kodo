@@ -43,8 +43,8 @@ function @ENCRYPTION_TOKEN()
         __BOT_TOKEN=$(jq -r '.bot_token' kodo.json)
 
         if [[ "$__BOT_TOKEN" =~ ^gsk_ ]] && [ -n "$__BOT_TOKEN" ]; then
-            CHATBOT_token_Encrypt=$(echo "$__BOT_TOKEN" | openssl enc -aes-256-cbc -salt -pbkdf2 -pass pass:$ZAPMAN_DECRYPT -base64)
-            jq --arg token "$CHATBOT_token_Encrypt" '.bot_token = $token' kodo.json > ._ignoreme.json && mv ._ignoreme.json kodo.json
+            KCHAT_token_Encrypt=$(echo "$__BOT_TOKEN" | openssl enc -aes-256-cbc -salt -pbkdf2 -pass pass:$ZAPMAN_DECRYPT -base64)
+            jq --arg token "$KCHAT_token_Encrypt" '.bot_token = $token' kodo.json > ._ignoreme.json && mv ._ignoreme.json kodo.json
         fi
     else
         print_red "crit:" "can't create encryption - openssl not found!"

@@ -4,15 +4,15 @@ function kodo_kchat()
 {
     local commands_INPUT=$1
 
-    chatbot_response=$(curl -s -X POST https://api.groq.com/openai/v1/chat/completions \
+    kchat_response=$(curl -s -X POST https://api.groq.com/openai/v1/chat/completions \
         -H "Authorization: Bearer $DECRYPT_TOKEN" \
         -H "Content-Type: application/json" \
         -d "{
-            \"model\": \"$json_CHATBOT_MODEL\",
+            \"model\": \"$json_KCHAT_MODEL\",
             \"messages\": [
                 {
                 \"role\": \"system\",
-                \"content\": \"$json_CHATBOT_BIODATA\"
+                \"content\": \"$json_KCHAT_BIODATA\"
                 },
                 {
                 \"role\": \"user\",
@@ -26,7 +26,7 @@ function kodo_kchat()
             \"stop\": null
         }")
          
-    echo "$chatbot_response" | python3 -c "
+    echo "$kchat_response" | python3 -c "
 import sys, json, re, time
 
 # define ANSI color codes #
@@ -80,12 +80,12 @@ def process_text(text):
 
 try:
     data = json.load(sys.stdin)
-    chatbot_response = data.get('choices', [{}])[0].get('message', {}).get('content')
+    kchat_response = data.get('choices', [{}])[0].get('message', {}).get('content')
 
-    if not chatbot_response:
+    if not kchat_response:
         raise ValueError('Error: Response API Failed/not found.')
 
-    processed_response = process_text(chatbot_response)
+    processed_response = process_text(kchat_response)
 
     for char in processed_response:
         print(char, end='', flush=True)

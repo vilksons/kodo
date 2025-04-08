@@ -26,9 +26,9 @@ ZAPMAN_ainstall_Encrypt=""
 zapman_ainstall_SIZEOF=0
 export zapman_ainstall_SIZEOF
 
-# Chatbot
-CHATBOT_token_Encrypt=""
-export CHATBOT_token_Encrypt
+# KCHAT
+KCHAT_token_Encrypt=""
+export KCHAT_token_Encrypt
 DECRYPT_TOKEN=""
 export DECRYPT_TOKEN
 
@@ -782,10 +782,10 @@ function mode_KODO() {
             fi
             bash
             ;;
-        "chatbot"*)
-            console_TITLE "Chatbot"
+        "kchat"*)
+            console_TITLE "KCHAT"
 
-            local commands_ARGS="${kd_table#chatbot }"
+            local commands_ARGS="${kd_table#kchat }"
 
             if [[ -n "$commands_ARGS" && "$commands_ARGS" != "$kd_table" ]]; then
                 commands_INPUT="$commands_ARGS"
@@ -922,7 +922,7 @@ function mode_KODO() {
                 ["lang"]=":: Rebuild kodo.json - Usage: lang"
                 ["directory"]=":: Display or Change Terminal Directory - Usage: directory | ls"
                 ["remcac"]=":: Remove cache \".cache\" Kodo - Usage: remcac"
-                ["chatbot"]=":: Chatbot Terminal - Usage: chatbot"
+                ["kchat"]=":: KCHAT Terminal - Usage: kchat"
                 ["nano"]=":: GNU/Nano Editor - Usage: nano"
                 ["zapman"]=":: Kodo Mode to Zapman Mode - Usage: zapman"
                 ["sync"]=":: Sync (Upgrade) - Usage: sync | (+) [<args>] [update - only workspace]"
@@ -999,9 +999,9 @@ function help_dialog_kd()
     echo " sync (update/upgrade), lang, directory"
 
     if ! command -v nano &> /dev/null; then
-        echo " exit, remcac, chatbot, fetch"
+        echo " exit, remcac, kchat, fetch"
     else
-        echo " exit, remcac, chatbot, nano, fetch"
+        echo " exit, remcac, kchat, nano, fetch"
     fi
 }
 
