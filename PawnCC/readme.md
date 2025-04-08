@@ -7,7 +7,7 @@ enhancements.
 
 This project was originally started by Zeex but on 2017-12-31, the project was
 taken over by some members of the SA:MP community. Zeex still contributes to the
-project, along with the [Compiler Team][https://github.com/pawn-lang/compiler/graphs/contributors].
+project, along with the [Compiler Team](https://github.com/pawn-lang/compiler/graphs/contributors).
 
 ## Why
 
