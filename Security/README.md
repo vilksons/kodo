@@ -4,7 +4,7 @@ These is Security, module of Kodo/Workspace.
 
 ## How does it work?
 
-Disguise the Server process name. And encrypt 'bot_token' with a random password from Hash Random.
+functions for the security function section used in Kodo. there is encryption/decrypt in it. for KodoAI and Encryption of Zapman AutoInstall Cache Storage.
 
 ## What does not work?
 

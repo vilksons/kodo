@@ -1,13 +1,5 @@
 #!/bin/bash
 
-: '
-    encryption
-'
-: '
-    Cleanup function
-    Removes temporary files and terminates the process if needed
-'
-
 function @ENCRYPTION_CREATE()
 {
     if [ "$console_save_notice" -eq 1 ]; then

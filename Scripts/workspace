@@ -261,6 +261,7 @@ function struct_console_main() {
     local console_missing_save_cmds
 
     for console_missing_save_cmds in python3 wget curl grep awk sed tr jq aria2c openssl; do
+        # python3 wget curl grep awk sed tr jq ariac2 openssl #
         if ! command -v "$console_missing_save_cmds" &>/dev/null; then
             if [ "$console_missing_save_cmds" = "aria2c" ]; then
                 console_missing_cmds+=("aria2")
@@ -301,11 +302,10 @@ function struct_console_main() {
                 if [ -f "$shell_DIR/$1" ] && [ "$console_module_loaded" -ne 1 ]; then
                     chmod +x "$shell_DIR/$1"
                     if [[ "$1" == ".kodo/python/wpython" ]]; then
-                        source <(python3 .wpython 2>/dev/null) >/dev/null 2>&1 || sleep 1.0
+                        source <(python3 .kodo/python/wpython) || sleep 2.0
                     else
-                        source "$shell_DIR/$1" || sleep 1.0
+                        source "$shell_DIR/$1" || sleep 2.0
                     fi
-
                     if [ "$console_module_loaded" -eq 1 ]; then
                         print_green "warn:" "err.. need to kill after installing \"succes\".."
                         print_green " killing.."
@@ -417,11 +417,6 @@ function typeof() {
 export typeof
 
 function mode_KODO() {
-    #
-    #   @Send.kd-Mode
-    #
-    #
-    
     : ' WARNING '
     #   always remember to end use 'end_console_main' or 'struct_console_main' so it doesn't crash or exit Kodo
     
@@ -736,7 +731,7 @@ function mode_KODO() {
                 esac
             fi
             ;;
-        "jkodo")
+        "json")
             if [ -f "$shell_DIR/kodo.json" ]; then
                 mv kodo.json kodo.json.old.txt
             fi
@@ -902,6 +897,61 @@ function mode_KODO() {
             clear; echo -ne "\033[3J"
             struct_console_main ""
             ;;
+        "modular"*)
+            console_TITLE "Modular Checking | Debugging"
+
+            function console_modular_load() {
+                : ' Install or Load modules '
+                if [ -f "$shell_DIR/$1" ]; then
+                    chmod +x "$shell_DIR/$1"
+
+                    echo "[DEBUG]: $1"
+
+                    if [[ "$1" == ".kodo/python/wpython" ]]; then
+                        python3 .kodo/python/wpython && print_yellow "Succes"
+                    else
+                        source "$shell_DIR/$1" && print_yellow "Succes"
+                    fi
+                fi
+            }
+
+            local commands_ARGS="${kd_table#modular }"
+
+            if [[ -n "$commands_ARGS" && "$commands_ARGS" != "$kd_table" ]]; then
+                commands_INPUT="$commands_ARGS"
+
+                if [ -f "$commands_INPUT" ]; then
+                    printf_red "error:" "$commands_INPUT not found!."
+                    struct_console_main ""
+                fi
+
+                console_modular_load "$commands_INPUT" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/$commands_INPUT" ""
+            else
+                console_modular_load ".kodo/python/wpython" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/wpython" ""
+
+                cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
+                
+                console_modular_load ".kodo/security.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Security/security.kd" "silent" 
+
+                console_modular_load ".kodo/compat.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compat/compat.kd" "compat" 
+
+                console_modular_load ".kodo/compiler.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compiler/compiler.kd" "silent" 
+
+                console_modular_load ".kodo/zapman.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Zapman/zapman.kd" "silent" 
+
+                console_modular_load ".kodo/samp.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/samp.kd" "silent" 
+
+                console_modular_load ".kodo/pawncc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/pawncc.kd" "silent" 
+
+                console_modular_load ".kodo/misc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Misc/misc.kd" "silent"
+
+                console_modular_load ".kodo/kodoai.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/KodoAI/kodoai.kd" "silent" 
+
+                console_modular_load ".kodo/server.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Server/server.kd" "end"
+            fi
+
+            struct_console_main ""
+            ;;
         "help"* | "$trigger_kd -h"* | "$trigger_kd --h"*)
             local commands_ARGS="${kd_table#"$trigger_kd -h "}"
             local commands_ARGS="${commands_ARGS#help }"
@@ -921,7 +971,7 @@ function mode_KODO() {
                 ["cat"]=":: Display a files to Kodo Terminal - Usage: cat"
                 ["kill"]=":: Kill a Kodo Terminal - Usage: kill"
                 ["exit"]=":: Exit/End Kodo Terminal - Usage: exit | (+) [<args>] \"all\" to kill all tasks"
-                ["jkodo"]=":: Rebuild kodo.json - Usage: jkodo"
+                ["json"]=":: Rebuild kodo.json - Usage: json"
                 ["directory"]=":: Display or Change Terminal Directory - Usage: directory | ls"
                 ["remcac"]=":: Remove cache \".cache\" Kodo - Usage: remcac"
                 ["kodoai"]=":: KodoAI Chat - Usage: kodoai"
@@ -931,6 +981,7 @@ function mode_KODO() {
                 ["install"]=":: Zapman Mode | Install Package -> Usage: install | (+) [<args>] [url]"
                 ["remove"]=":: Zapman Mode | Remove Package -> Usage: remove | (+) [<args>] [target]"
                 ["sync"]=":: Sync (Upgrade) - Usage: sync | (+) [<args>] [update - only workspace]"
+                ["modular"]=":: Modular Checking - Usage: modular | (+) [<args>] [target]"
                 ["fetch"]=":: Fetch Kodo -> Usage: fetch"
             )
             
@@ -986,37 +1037,53 @@ function not_found_kd()
 
 function help_dialog_kd()
 {
-    : '
-        @Send.Help
-    '
-    local check_param=$1
+    local _param_=$1
 
-    if [[ "$check_param" == "invalid" ]]; then
+    if [[ "$_param_" == "invalid" ]]; then
         echo "Invalid!.. Please Use:"
     fi
 
     echo "Usage: kodo <flags> | help | -h | --h | [<commands>] [<args>]"
     echo "Commands:"
-    echo " compile, running, irunn (compile-run), debug (debugger)"
-    echo " stop (stopped server), restart (restart server)"
-    echo " gamemode, pawncc, clear (clear-screen)"
-    echo " checksums, cat, kill"
-    echo " sync (update/upgrade), jkodo, directory"
-
-    if ! command -v nano &> /dev/null; then
-        echo " exit, remcac, kodoai, fetch"
-    else
-        echo " exit, remcac, kodoai, nano, fetch"
+    echo " | Kodo |"
+    echo " compile (compile gmodes)"
+    echo " running (running server)"
+    echo " irunn (compile-run server)"
+    echo " debug (debugging server)"
+    echo " stop (stopped server)"
+    echo " restart (restart server)"
+    echo " gamemode (download gamemode)"
+    echo " pawncc (download pawncc)"
+    echo " clear (clear-screen)"
+    echo " checksums (checksums of workspace)"
+    echo " cat (cat file to terminal)"
+    echo " kill (kill/restart terminal)"
+    echo " sync (update/upgrade)"
+    echo " modular (module checking)"
+    echo " directory (change/display current directory)"
+    echo " exit (exit from terminal)"
+    echo " remcac (remove cache ~/.cache/)"
+    echo " kodoai (A.I Chat)"
+    echo " json (rebuild kodo.json)"
+    echo " fetch (fetch of workspace)"
+    
+    if command -v nano &> /dev/null; then
+        echo " nano (run nano editor from terminal)"
     fi
 
-    echo " zapman, autoinstall, install, remove"
+    echo " | Zapman |"
+    echo " zapman (enter Zapman)"
+    echo " autoinstall (install packages from cache)"
+    echo " install (install packages)"
+    echo " remove (remove packages)"
+    echo " exit (exit Zapman)"
 }
 
 function help_dialog_pac()
 {
     echo "Usage: kodo <command> [<args>]"
     echo "Commands:"
-    echo " autoinstall - auto Install from Zapman cache"
+    echo " autoinstall - Auto-Install from Zapman cache"
     echo " install     - Install/Reinstall Packages"
     echo " remove      - Remove Packages"
     echo " exit        - Exit Zapman Mode"
