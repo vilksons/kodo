@@ -1,6 +1,6 @@
 ## What is this?
 
-These is KChat (Kodo Chat A.I), module of Kodo/Workspace.
+These is Kodo A.I. Kodo A.I is module of Kodo/Workspace.
 
 ## How does it work?
 

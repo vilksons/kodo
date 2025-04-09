@@ -185,7 +185,7 @@ CONFIGURATION DETAILS
 | `plugins_dir`      | Directory where `.dll` and `.so` plugin files are stored (Zapman).               |
 | `bot_token`        | API key from [Groq Console - https://console.groq.com/keys.                      |
 | `bot_model`        | AI model from Groq Console - https://console.groq.com/.                          |
-| `bot_profile`      | Additional kchat configuration info.                                           |
+| `bot_profile`      | Additional kodoai configuration info.                                           |
 | `remcache_auto`    | Automatically remove `.cache`, table history, etc. (`true`/`false`).             |
 
 EXAMPLE: `include_paths` USAGE

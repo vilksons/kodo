@@ -69,23 +69,23 @@ print_export("json_RM_CACHE", data.get('remcache_auto', ''))
 amx_opt = data.get('amx_flags', [])
 print_export("json_AMX_OPT_F", ' '.join(amx_opt))
 
-# Export the kchat model value
-print_export("json_KCHAT_MODEL", data.get('bot_model', ''))
-# Export the kchat biodata value
-print_export("json_KCHAT_BIODATA", data.get('bot_profile', ''))
+# Export the kodoai model value
+print_export("json_KODOAI_MODEL", data.get('bot_model', ''))
+# Export the kodoai biodata value
+print_export("json_KODOAI_BIODATA", data.get('bot_profile', ''))
 
-# Define a regex pattern to validate the kchat token
+# Define a regex pattern to validate the kodoai token
 valid_token_regex = re.compile("^[a-zA-Z0-9_-]{1,62}$")
 
-# Get the kchat token from the JSON data
-KCHAT_TOKEN = data.get('bot_token', '')
+# Get the kodoai token from the JSON data
+KODOAI_TOKEN = data.get('bot_token', '')
 
-# Validate the kchat token format using the regex pattern
-if not valid_token_regex.match(KCHAT_TOKEN):
+# Validate the kodoai token format using the regex pattern
+if not valid_token_regex.match(KODOAI_TOKEN):
     sys.exit(0)
 
-# Export the kchat token value
-print_export("json_KCHAT_TOKEN", data.get('bot_token', ''))
+# Export the kodoai token value
+print_export("json_KODOAI_TOKEN", data.get('bot_token', ''))
 
 if __name__ == '__main__':
     """ Ensure the script runs only when executed directly, not when imported """

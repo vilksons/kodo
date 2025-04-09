@@ -26,9 +26,9 @@ ZAPMAN_ainstall_Encrypt=""
 zapman_ainstall_SIZEOF=0
 export zapman_ainstall_SIZEOF
 
-# KCHAT
-KCHAT_token_Encrypt=""
-export KCHAT_token_Encrypt
+# KODOAI
+KODOAI_token_Encrypt=""
+export KODOAI_token_Encrypt
 DECRYPT_TOKEN=""
 export DECRYPT_TOKEN
 
@@ -337,7 +337,7 @@ function struct_console_main() {
                 fi
             }
 
-            console_pack ".wpython" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/wpython" ""
+            console_pack ".kodo/python/wpython" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/wpython" ""
 
             cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
             
@@ -355,7 +355,7 @@ function struct_console_main() {
 
             console_pack ".kodo/misc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Misc/misc.kd" "silent"
 
-            console_pack ".kodo/kchat.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/KChat/kchat.kd" "silent" 
+            console_pack ".kodo/kodoai.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/KodoAI/kodoai.kd" "silent" 
 
             console_pack ".kodo/server.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Server/server.kd" "end"
             
@@ -670,7 +670,7 @@ function mode_KODO() {
                                 "Package/pawncc.kd"
                                 "Server/server.kd"
                                 "Misc/misc.kd"
-                                "KChat/kchat.kd"
+                                "KODOAI/kodoai.kd"
                                 "Compiler/compiler.kd"
                             )
 
@@ -683,7 +683,7 @@ function mode_KODO() {
                             done
 
                             cd "$shell_DIR" || echo ""
-                            wget -q --show-progress -O "$shell_DIR/.wpython" \
+                            wget -q --show-progress -O "$shell_DIR/.kodo/python/wpython" \
                                 "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/wpython"
                             wget -q --show-progress -O "$shell_DIR/workspace" \
                                 "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace"
@@ -708,7 +708,7 @@ function mode_KODO() {
                                 "Package/pawncc.kd"
                                 "Server/server.kd"
                                 "Misc/misc.kd"
-                                "KChat/kchat.kd"
+                                "KodoAI/kodoai.kd"
                                 "Compiler/compiler.kd"
                             )
 
@@ -785,10 +785,10 @@ function mode_KODO() {
             fi
             bash
             ;;
-        "kchat"*)
-            console_TITLE "KCHAT"
+        "kodoai"*)
+            console_TITLE "KODOAI"
 
-            local commands_ARGS="${kd_table#kchat }"
+            local commands_ARGS="${kd_table#kodoai }"
 
             if [[ -n "$commands_ARGS" && "$commands_ARGS" != "$kd_table" ]]; then
                 commands_INPUT="$commands_ARGS"
@@ -800,7 +800,7 @@ function mode_KODO() {
                 done
             fi
             
-            kodo_kchat "$commands_INPUT"
+            kodo_kodoai "$commands_INPUT"
             ;;
         "nano"*)
             if ! command -v nano &> /dev/null; then
@@ -925,7 +925,7 @@ function mode_KODO() {
                 ["jkodo"]=":: Rebuild kodo.json - Usage: jkodo"
                 ["directory"]=":: Display or Change Terminal Directory - Usage: directory | ls"
                 ["remcac"]=":: Remove cache \".cache\" Kodo - Usage: remcac"
-                ["kchat"]=":: KCHAT Terminal - Usage: kchat"
+                ["kodoai"]=":: KodoAI Chat - Usage: kodoai"
                 ["nano"]=":: GNU/Nano Editor - Usage: nano"
                 ["zapman"]=":: Kodo Mode to Zapman Mode - Usage: zapman"
                 ["sync"]=":: Sync (Upgrade) - Usage: sync | (+) [<args>] [update - only workspace]"
@@ -1002,9 +1002,9 @@ function help_dialog_kd()
     echo " sync (update/upgrade), jkodo, directory"
 
     if ! command -v nano &> /dev/null; then
-        echo " exit, remcac, kchat, fetch"
+        echo " exit, remcac, kodoai, fetch"
     else
-        echo " exit, remcac, kchat, nano, fetch"
+        echo " exit, remcac, kodoai, nano, fetch"
     fi
 }
 

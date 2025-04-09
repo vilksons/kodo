@@ -1,18 +1,18 @@
 #!/bin/bash
 
-function kodo_kchat()
+function kodo_kodoai()
 {
     local commands_INPUT=$1
 
-    kchat_response=$(curl -s -X POST https://api.groq.com/openai/v1/chat/completions \
+    kodoai_response=$(curl -s -X POST https://api.groq.com/openai/v1/chat/completions \
         -H "Authorization: Bearer $DECRYPT_TOKEN" \
         -H "Content-Type: application/json" \
         -d "{
-            \"model\": \"$json_KCHAT_MODEL\",
+            \"model\": \"$json_KODOAI_MODEL\",
             \"messages\": [
                 {
                 \"role\": \"system\",
-                \"content\": \"$json_KCHAT_BIODATA\"
+                \"content\": \"$json_KODOAI_BIODATA\"
                 },
                 {
                 \"role\": \"user\",
@@ -26,7 +26,7 @@ function kodo_kchat()
             \"stop\": null
         }")
          
-    echo "$kchat_response" | python3 -c "
+    echo "$kodoai_response" | python3 -c "
 import sys, json, re, time
 
 # define ANSI color codes #
@@ -80,12 +80,12 @@ def process_text(text):
 
 try:
     data = json.load(sys.stdin)
-    kchat_response = data.get('choices', [{}])[0].get('message', {}).get('content')
+    kodoai_response = data.get('choices', [{}])[0].get('message', {}).get('content')
 
-    if not kchat_response:
+    if not kodoai_response:
         raise ValueError('Error: Response API Failed/not found.')
 
-    processed_response = process_text(kchat_response)
+    processed_response = process_text(kodoai_response)
 
     for char in processed_response:
         print(char, end='', flush=True)
