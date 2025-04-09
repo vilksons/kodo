@@ -11,15 +11,16 @@ Essential references to understand and use Kodo:
 
 WHAT IS KODO?
 ===============
-   Kodo is an SA:MP-specific toolchain designed for debugging, compiling, and package management.
+Kodo is an SA:MP-specific toolchain designed for debugging, compiling, and package management.
 
 WHAT IS cKODO?
 ===============
-  - cKodo https://github.com/vilksons/kodo/tree/ckodo
-  cKodo is a Kodo Toolchain built on C without any connection to Shell/Bash. and also simpler because it prioritizes devs who don't quite understand the Bash shell language. and more needed feature coverage.
+- cKodo https://github.com/vilksons/kodo/tree/ckodo
+cKodo is a Kodo Toolchain built on C without any connection to Shell/Bash. and also simpler because it prioritizes devs who don't quite understand the Bash shell language. and more needed feature coverage.
 
 WHAT IS bKODO?
 ===============
+- bKodo https://github.com/vilksons/kodo/tree/kodo/bKodo
 bKodo is Batch Kodo, Batch Kodo is a simple Toolchain in the beginning and before the creation of Kodo & cKodo we were originally going to stop supporting it but, thinking about the efficiency for use on Windows, we supported it again even though it is not as complex as Bash/Kodo and C/cKodo.
 
 WHAT IS Kodo A.I?
