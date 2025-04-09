@@ -366,10 +366,6 @@ IF "%KODOTYPEOF%"=="%BATCHOPTION% -c" (
         GOTO BATCHEND
     )
 
-) ELSE IF "%KODOTYPEOF%"=="%BATCHOPTION% -G" (
-    git init
-) ELSE IF "%KODOTYPEOF%"=="%BATCHOPTION% -X" (
-    git clone https://github.com/laterium/sampKodo.git
 ) ELSE IF "%KODOTYPEOF%"=="%BATCHOPTION% -P" (
     START "" "https://github.com/pawn-lang/compiler/releases"
 ) ELSE IF "%KODOTYPEOF%"=="%BATCHOPTION% -D" (
@@ -377,12 +373,6 @@ IF "%KODOTYPEOF%"=="%BATCHOPTION% -c" (
 ) ELSE IF "%KODOTYPEOF%"=="%BATCHOPTION% -K" (
     START %BATCHNAME%
     EXIT
-) ELSE IF "%KODOTYPEOF%"=="%BATCHOPTION% -N" (
-    cmd /c netstat -an
-) ELSE IF "%KODOTYPEOF%"=="%BATCHOPTION% -S" (
-    cmd /c systeminfo
-) ELSE IF "%KODOTYPEOF%"=="%BATCHOPTION% -I" (
-    powershell -Command "ipconfig"
 ) ELSE IF "%KODOTYPEOF%"=="help" (
 
     SET "BATCHTITLE=help"
@@ -391,8 +381,7 @@ IF "%KODOTYPEOF%"=="%BATCHOPTION% -c" (
 :HELPL
     ECHO usage: kodo [-c compile] [-r running] [-t test server] [-ci compile-running] 
     ECHO       	   [-F folder check] [-C clear screen] [-P pawncc release] [-V vscode tasks]
-    ECHO       	   [-X clone sampKodo] [-R rename file] [-K kill batch] [-D directory]
-    ECHO       	   [-N netstat] [-I ipconfig] [-S systeminfo] [-G git init]
+    ECHO       	   [-R rename file] [-K kill batch] [-D directory]
     GOTO COMMAND_TYPEOF
 
 ) ELSE IF "%KODOTYPEOF%"=="kodo ." (
