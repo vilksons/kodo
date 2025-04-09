@@ -313,7 +313,6 @@ function struct_console_main() {
                         SIGNAL_KILL ""
                     fi
                 else
-                    console_module_loaded=1
                     
                     bash_title "Waiting resources.."
 
@@ -326,9 +325,13 @@ function struct_console_main() {
                     fi
 
                     if [ "$3" = "end" ]; then
+                        console_module_loaded=1
+                        wget -q -O "$shell_DIR/$1" "$2" &>/dev/null &
                         clear && cd "$(dirname "$(realpath "$0")")" || echo
                         print_yellow "install succes!"
-                        console_TITLE "Kodo Mode | Usage \`kill\` to refresh"
+                        print_green " killing.."
+                        sleep 0.999
+                        SIGNAL_KILL ""
                         typeof ""
                     fi
                 fi
@@ -894,6 +897,8 @@ function mode_KODO() {
                     SIGNAL_KILL ""
                 fi
             }
+
+            mode_ZAPMAN ""
             ;;
         "clear" | "c" | "C" | "cc")
             console_save_messages=0
