@@ -29,8 +29,8 @@ export zapman_ainstall_SIZEOF
 # KODO.AI
 KODOAI_token_Encrypt=""
 export KODOAI_token_Encrypt
-DECRYPT_TOKEN=""
-export DECRYPT_TOKEN
+_kodoai_decrypt_token_passphrase_=""
+export _kodoai_decrypt_token_passphrase_
 
 # Notice Var
 console_save_messages=0

@@ -5,7 +5,7 @@ function kodo_kodoai()
     local commands_INPUT=$1
 
     kodoai_response=$(curl -s -X POST https://api.groq.com/openai/v1/chat/completions \
-        -H "Authorization: Bearer $DECRYPT_TOKEN" \
+        -H "Authorization: Bearer $_kodoai_decrypt_token_passphrase_" \
         -H "Content-Type: application/json" \
         -d "{
             \"model\": \"$json_KODOAI_MODEL\",

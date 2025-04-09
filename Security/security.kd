@@ -7,35 +7,36 @@ function @ENCRYPTION_CREATE()
             encryption_content=""
 
             for i in {1..100}; do
-                random_text=$(openssl rand -base64 1000 | sha256sum | awk '{print $1}')
-                random_text=$(echo "$random_text" | tr '[:upper:]' '[:lower:]')
+                rand_base64_text=$(openssl rand -base64 1000 | sha256sum | awk '{print $1}')
+                : ' uppercase to lowercase '
+                rand_base64_text=$(echo "$rand_base64_text" | tr '[:upper:]' '[:lower:]')
                 
-                encryption_content="$encryption_content$random_text"$'\n'
-                encryption_content="$encryption_content$random_text"$'\n'
+                encryption_content="$encryption_content$rand_base64_text"$'\n'
+                encryption_content="$encryption_content$rand_base64_text"$'\n'
             done
 
             echo -n "$encryption_content" > "$HOME/.enkodo"
             chmod 444 "$HOME/.enkodo"
         fi
             
-        ZAPMAN_DECRYPT=$(grep -oP '(?<=RHASH_256=).*' "$HOME/.enkodo" || head -n 1 "$HOME/.enkodo")        
-        ZAPMAN_DECRYPT=$(grep -oP '(?<=RHASH_256=).*' "$HOME/.enkodo" || head -n 1 "$HOME/.enkodo")
+        _zapman_decrypt_passphrase_=$(grep -oP '(?<=RHASH_256=).*' "$HOME/.enkodo" || head -n 1 "$HOME/.enkodo")        
+        _zapman_decrypt_passphrase_=$(grep -oP '(?<=RHASH_256=).*' "$HOME/.enkodo" || head -n 1 "$HOME/.enkodo")
 
-        local SIZEOF_TOKEN
-        SIZEOF_TOKEN=$(jq -r '.bot_token' kodo.json)
-        DECRYPT_TOKEN=$(echo "$SIZEOF_TOKEN" | openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:$ZAPMAN_DECRYPT -base64)
+        local _sizeof_rate_token_
+        _sizeof_rate_token_=$(jq -r '.bot_token' kodo.json)
+        _kodoai_decrypt_token_passphrase_=$(echo "$_sizeof_rate_token_" | openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:$_zapman_decrypt_passphrase_ -base64)
     fi
 }
 
 function @ENCRYPTION_TOKEN()
 {
     if command -v openssl &> /dev/null; then
-        ZAPMAN_DECRYPT=$(grep -oP '(?<=RHASH_256=).*' "$HOME/.enkodo" || head -n 1 "$HOME/.enkodo")
+        _zapman_decrypt_passphrase_=$(grep -oP '(?<=RHASH_256=).*' "$HOME/.enkodo" || head -n 1 "$HOME/.enkodo")
 
         __BOT_TOKEN=$(jq -r '.bot_token' kodo.json)
 
         if [[ "$__BOT_TOKEN" =~ ^gsk_ ]] && [ -n "$__BOT_TOKEN" ]; then
-            KODOAI_token_Encrypt=$(echo "$__BOT_TOKEN" | openssl enc -aes-256-cbc -salt -pbkdf2 -pass pass:$ZAPMAN_DECRYPT -base64)
+            KODOAI_token_Encrypt=$(echo "$__BOT_TOKEN" | openssl enc -aes-256-cbc -salt -pbkdf2 -pass pass:$_zapman_decrypt_passphrase_ -base64)
             jq --arg token "$KODOAI_token_Encrypt" '.bot_token = $token' kodo.json > ._ignoreme.json && mv ._ignoreme.json kodo.json
         fi
     else
