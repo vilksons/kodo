@@ -26,7 +26,7 @@ ZAPMAN_ainstall_Encrypt=""
 zapman_ainstall_SIZEOF=0
 export zapman_ainstall_SIZEOF
 
-# KODOAI
+# KODO.AI
 KODOAI_token_Encrypt=""
 export KODOAI_token_Encrypt
 DECRYPT_TOKEN=""
@@ -293,7 +293,7 @@ function struct_console_main() {
             fi
 
             if [ ! -d ".kodo" ]; then
-                mkdir ".kodo" && chmod +x ".kodo"
+                mkdir -p ".kodo/python" && chmod +x ".kodo"
             fi
 
             function console_pack() {
@@ -313,7 +313,6 @@ function struct_console_main() {
                         SIGNAL_KILL ""
                     fi
                 else
-                    
                     bash_title "Waiting resources.."
 
                     ignore_this mkdir -p "$shell_DIR"
