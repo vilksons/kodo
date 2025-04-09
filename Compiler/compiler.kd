@@ -47,6 +47,11 @@ function kodo_init_compilers()
                         if [[ " ${COMPILER_AMX_FLAGS[*]} " != *" $option "* ]]; then
                             # not valid
                             print_red "crit:" "compiler option \`$option\` not found!"
+                            print_yellow "usage:"
+                            printf "\"%s\" " "${COMPILER_AMX_FLAGS[@]}"
+                            echo
+                            printf "\e]8;;https://github.com/vilksons/kodo/wiki/Compiler-Option\e\\ or see here for more.\e]8;;\e\\"
+                            echo
                             amx_valid=false
                             end_console_main ""
                         fi
@@ -249,6 +254,11 @@ function kodo_compilers() {
                 if [[ " ${COMPILER_AMX_FLAGS[*]} " != *" $option "* ]]; then
                     # not valid
                     print_red "crit:" "compiler option \`$option\` not found!"
+                    print_yellow "usage:"
+                    printf "\"%s\" " "${COMPILER_AMX_FLAGS[@]}"
+                    echo
+                    printf "\e]8;;https://github.com/vilksons/kodo/wiki/Compiler-Option\e\\ or see here for more.\e]8;;\e\\"
+                    echo
                     continue
                 fi
             done

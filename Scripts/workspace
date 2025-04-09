@@ -279,13 +279,11 @@ function struct_console_main() {
             echo
             ignore_this sleep 1.0
             console_save_notice=1
-    fi
+        fi
     else
         if [ "$console_save_notice" -ne 1 ]; then
             # Recheck Sync
             if [ -f ".sync" ]; then
-                : ' If there is a problem with creating the ".syncs" file, 
-                    the module will be automatically reinstalled because the ".kodo" folder is deleted. '
                 shred -u .sync
                 if [ -d "$shell_DIR/.kodo" ]; then
                     rm -rf ".kodo"
@@ -304,8 +302,15 @@ function struct_console_main() {
                     if [[ "$1" == ".kodo/python/wpython" ]]; then
                         source <(python3 .kodo/python/wpython) || sleep 2.0
                     else
-                        source "$shell_DIR/$1" || sleep 2.0
+                        if [[ "$1" == ".kodo/compat.kd" ]]; then
+                            source "$shell_DIR/$1" || sleep 2.0
+                            sleep 0.1
+                            compat_now ""
+                        else
+                            source "$shell_DIR/$1" || sleep 2.0
+                        fi
                     fi
+
                     if [ "$console_module_loaded" -eq 1 ]; then
                         print_green "warn:" "err.. need to kill after installing \"succes\".."
                         print_green " killing.."

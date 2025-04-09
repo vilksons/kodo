@@ -82,7 +82,7 @@ KODOAI_TOKEN = data.get('bot_token', '')
 
 # Validate the kodoai token format using the regex pattern
 if not valid_token_regex.match(KODOAI_TOKEN):
-    sys.exit(1)
+    sys.exit(0)
 
 # Export the kodoai token value
 print_export("json_KODOAI_TOKEN", data.get('bot_token', ''))
@@ -93,4 +93,4 @@ if __name__ == '__main__':
     # Check if the number of command-line arguments is not equal to 2
     if len(sys.argv) != 2:
         """ Exit with no error (0) if the argument count is incorrect """
-        sys.exit(1)
+        sys.exit(0)
