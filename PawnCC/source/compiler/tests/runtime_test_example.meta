@@ -1,7 +1,0 @@
-{
-  'test_type': 'runtime',
-  'output': """
-    Run time error 4: "Array index out of bounds"
-  """,
-  'should_fail': True
-}
