@@ -1,6 +1,6 @@
 ## What is this?
 
-These is Kodo A.I. Kodo A.I is module of Kodo/Workspace.
+These is Vireon A.I. Vireon A.I is module of Kodo/Workspace.
 
 ## How does it work?
 

@@ -27,10 +27,10 @@ zapman_ainstall_SIZEOF=0
 export zapman_ainstall_SIZEOF
 
 # KODO.AI
-KODOAI_token_Encrypt=""
-export KODOAI_token_Encrypt
-_kodoai_decrypt_token_passphrase_=""
-export _kodoai_decrypt_token_passphrase_
+VIREON_token_Encrypt=""
+export VIREON_token_Encrypt
+_vireon_decrypt_token_passphrase_=""
+export _vireon_decrypt_token_passphrase_
 
 # Notice Var
 console_save_messages=0
@@ -359,7 +359,7 @@ function struct_console_main() {
 
             console_pack ".kodo/misc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Misc/misc.kd" "silent"
 
-            console_pack ".kodo/kodoai.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/KodoAI/kodoai.kd" "silent" 
+            console_pack ".kodo/vireon.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Vireon/vireon.kd" "silent" 
 
             console_pack ".kodo/server.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Server/server.kd" "end"
             
@@ -669,7 +669,7 @@ function mode_KODO() {
                                 "Package/pawncc.kd"
                                 "Server/server.kd"
                                 "Misc/misc.kd"
-                                "KODOAI/kodoai.kd"
+                                "VIREON/vireon.kd"
                                 "Compiler/compiler.kd"
                             )
 
@@ -707,7 +707,7 @@ function mode_KODO() {
                                 "Package/pawncc.kd"
                                 "Server/server.kd"
                                 "Misc/misc.kd"
-                                "KodoAI/kodoai.kd"
+                                "Vireon/vireon.kd"
                                 "Compiler/compiler.kd"
                             )
 
@@ -784,10 +784,10 @@ function mode_KODO() {
             fi
             bash
             ;;
-        "kodoai"*)
-            console_TITLE "KODOAI"
+        "vireon"*)
+            console_TITLE "VIREON"
 
-            local commands_ARGS="${kd_table#kodoai }"
+            local commands_ARGS="${kd_table#vireon }"
 
             if [[ -n "$commands_ARGS" && "$commands_ARGS" != "$kd_table" ]]; then
                 commands_INPUT="$commands_ARGS"
@@ -799,7 +799,7 @@ function mode_KODO() {
                 done
             fi
             
-            kodo_kodoai "$commands_INPUT"
+            kodo_vireon "$commands_INPUT"
             ;;
         "nano"*)
             if ! command -v nano &> /dev/null; then
@@ -950,7 +950,7 @@ function mode_KODO() {
 
                 console_modular_load ".kodo/misc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Misc/misc.kd" "silent"
 
-                console_modular_load ".kodo/kodoai.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/KodoAI/kodoai.kd" "silent" 
+                console_modular_load ".kodo/vireon.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Vireon/vireon.kd" "silent" 
 
                 console_modular_load ".kodo/server.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Server/server.kd" "end"
             fi
@@ -979,7 +979,7 @@ function mode_KODO() {
                 ["json"]=":: Rebuild kodo.json - Usage: json"
                 ["directory"]=":: Display or Change Terminal Directory - Usage: directory | ls"
                 ["remcac"]=":: Remove cache \".cache\" Kodo - Usage: remcac"
-                ["kodoai"]=":: KodoAI Chat - Usage: kodoai"
+                ["vireon"]=":: Vireon Chat - Usage: vireon"
                 ["nano"]=":: GNU/Nano Editor - Usage: nano"
                 ["zapman"]=":: Kodo Mode to Zapman Mode - Usage: zapman"
                 ["autoinstall"]=":: Zapman Mode | AutoInstall Package -> Usage: autoinstall"
@@ -1068,7 +1068,7 @@ function help_dialog_kd()
     echo " directory (change/display current directory)"
     echo " exit (exit from terminal)"
     echo " remcac (remove cache ~/.cache/)"
-    echo " kodoai (A.I Chat)"
+    echo " vireon (A.I Chat)"
     echo " json (rebuild kodo.json)"
     echo " fetch (fetch of workspace)"
     

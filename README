@@ -27,9 +27,9 @@ WHAT IS bKODO?
 - bKodo https://github.com/vilksons/kodo/tree/kodo/bKodo
 bKodo is Batch Kodo, Batch Kodo is a simple Toolchain in the beginning and before the creation of Kodo & cKodo we were originally going to stop supporting it but, thinking about the efficiency for use on Windows, we supported it again even though it is not as complex as Bash/Kodo and C/cKodo.
 
-WHAT IS Kodo A.I?
+WHAT IS Vireon A.I?
 ===============
-Kodo A.I is an Artificial Intelligence created for Chat A.I dedicated to Kodo Toolchain. Kodo relies on the use of Data Managers such as cURL and Python as its integration of the json API response. which allows full management of users and freedom of modification with Python. and Kodo A.I has Encryption on Bot Token so that no one can copy and see your Bot Token other than in Kodo A.I with a complicated decrypt Pass.
+Vireon A.I is an Artificial Intelligence created for Chat A.I dedicated to Kodo Toolchain. Kodo relies on the use of Data Managers such as cURL and Python as its integration of the json API response. which allows full management of users and freedom of modification with Python. and Vireon A.I has Encryption on Bot Token so that no one can copy and see your Bot Token other than in Vireon A.I with a complicated decrypt Pass.
 
 KEEPING UP-TO-DATE
 ==================
@@ -198,7 +198,7 @@ CONFIGURATION DETAILS
 | `plugins_dir`      | Directory where `.dll` and `.so` plugin files are stored (Zapman).               |
 | `bot_token`        | API key from [Groq Console - https://console.groq.com/keys.                      |
 | `bot_model`        | AI model from Groq Console - https://console.groq.com/.                          |
-| `bot_profile`      | Additional kodoai configuration info.                                           |
+| `bot_profile`      | Additional vireon configuration info.                                           |
 | `remcache_auto`    | Automatically remove `.cache`, table history, etc. (`true`/`false`).             |
 
 EXAMPLE: `include_paths` USAGE

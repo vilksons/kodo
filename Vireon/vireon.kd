@@ -1,18 +1,18 @@
 #!/bin/bash
 
-function kodo_kodoai()
+function kodo_vireon()
 {
     local commands_INPUT=$1
 
-    kodoai_response=$(curl -s -X POST https://api.groq.com/openai/v1/chat/completions \
-        -H "Authorization: Bearer $_kodoai_decrypt_token_passphrase_" \
+    vireon_response=$(curl -s -X POST https://api.groq.com/openai/v1/chat/completions \
+        -H "Authorization: Bearer $_vireon_decrypt_token_passphrase_" \
         -H "Content-Type: application/json" \
         -d "{
-            \"model\": \"$json_KODOAI_MODEL\",
+            \"model\": \"$json_VIREON_MODEL\",
             \"messages\": [
                 {
                 \"role\": \"system\",
-                \"content\": \"$json_KODOAI_BIODATA\"
+                \"content\": \"$json_VIREON_BIODATA\"
                 },
                 {
                 \"role\": \"user\",
@@ -26,7 +26,7 @@ function kodo_kodoai()
             \"stop\": null
         }")
          
-    echo "$kodoai_response" | python3 -c "
+    echo "$vireon_response" | python3 -c "
 import sys, json, re, time
 
 # define ANSI color codes #
@@ -80,12 +80,12 @@ def process_text(text):
 
 try:
     data = json.load(sys.stdin)
-    kodoai_response = data.get('choices', [{}])[0].get('message', {}).get('content')
+    vireon_response = data.get('choices', [{}])[0].get('message', {}).get('content')
 
-    if not kodoai_response:
+    if not vireon_response:
         raise ValueError('Error: Response API Failed/not found.')
 
-    processed_response = process_text(kodoai_response)
+    processed_response = process_text(vireon_response)
 
     for char in processed_response:
         print(char, end='', flush=True)

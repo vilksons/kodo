@@ -4,7 +4,7 @@ These is Security, module of Kodo/Workspace.
 
 ## How does it work?
 
-functions for the security function section used in Kodo. there is encryption/decrypt in it. for KodoAI and Encryption of Zapman AutoInstall Cache Storage.
+functions for the security function section used in Kodo. there is encryption/decrypt in it. for Vireon and Encryption of Zapman AutoInstall Cache Storage.
 
 ## What does not work?
 

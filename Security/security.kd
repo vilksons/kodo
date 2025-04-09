@@ -24,7 +24,7 @@ function @ENCRYPTION_CREATE()
 
         local _sizeof_rate_token_
         _sizeof_rate_token_=$(jq -r '.bot_token' kodo.json)
-        _kodoai_decrypt_token_passphrase_=$(echo "$_sizeof_rate_token_" | openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:$_zapman_decrypt_passphrase_ -base64)
+        _vireon_decrypt_token_passphrase_=$(echo "$_sizeof_rate_token_" | openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:$_zapman_decrypt_passphrase_ -base64)
     fi
 }
 
@@ -36,8 +36,8 @@ function @ENCRYPTION_TOKEN()
         __BOT_TOKEN=$(jq -r '.bot_token' kodo.json)
 
         if [[ "$__BOT_TOKEN" =~ ^gsk_ ]] && [ -n "$__BOT_TOKEN" ]; then
-            KODOAI_token_Encrypt=$(echo "$__BOT_TOKEN" | openssl enc -aes-256-cbc -salt -pbkdf2 -pass pass:$_zapman_decrypt_passphrase_ -base64)
-            jq --arg token "$KODOAI_token_Encrypt" '.bot_token = $token' kodo.json > ._ignoreme.json && mv ._ignoreme.json kodo.json
+            VIREON_token_Encrypt=$(echo "$__BOT_TOKEN" | openssl enc -aes-256-cbc -salt -pbkdf2 -pass pass:$_zapman_decrypt_passphrase_ -base64)
+            jq --arg token "$VIREON_token_Encrypt" '.bot_token = $token' kodo.json > ._ignoreme.json && mv ._ignoreme.json kodo.json
         fi
     else
         print_red "crit:" "can't create encryption - openssl not found!"
