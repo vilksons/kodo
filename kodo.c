@@ -340,7 +340,6 @@ Usage: \"restart\"");
                         } else {
                             snprintf(_compiler_, 276, "%s %s \"%s\" -o\"%s\" \"%s\"", pf_found[0], all_paths, arg1, kd_gamemode_output, kd_compiler_opt);
                         }
-                        printf("\n");
             
                         if (_compiler_) {
                             int ret = kd_sys(_compiler_);
