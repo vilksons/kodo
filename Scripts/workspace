@@ -927,6 +927,9 @@ function mode_KODO() {
                 ["kodoai"]=":: KodoAI Chat - Usage: kodoai"
                 ["nano"]=":: GNU/Nano Editor - Usage: nano"
                 ["zapman"]=":: Kodo Mode to Zapman Mode - Usage: zapman"
+                ["autoinstall"]=":: Zapman Mode | AutoInstall Package -> Usage: autoinstall"
+                ["install"]=":: Zapman Mode | Install Package -> Usage: install | (+) [<args>] [url]"
+                ["remove"]=":: Zapman Mode | Remove Package -> Usage: remove | (+) [<args>] [target]"
                 ["sync"]=":: Sync (Upgrade) - Usage: sync | (+) [<args>] [update - only workspace]"
                 ["fetch"]=":: Fetch Kodo -> Usage: fetch"
             )
@@ -997,7 +1000,7 @@ function help_dialog_kd()
     echo " compile, running, irunn (compile-run), debug (debugger)"
     echo " stop (stopped server), restart (restart server)"
     echo " gamemode, pawncc, clear (clear-screen)"
-    echo " checksums, cat, zapman, kill"
+    echo " checksums, cat, kill"
     echo " sync (update/upgrade), jkodo, directory"
 
     if ! command -v nano &> /dev/null; then
@@ -1005,6 +1008,8 @@ function help_dialog_kd()
     else
         echo " exit, remcac, kodoai, nano, fetch"
     fi
+
+    echo " zapman, autoinstall, remove, exit"
 }
 
 function help_dialog_pac()
