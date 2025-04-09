@@ -23,7 +23,7 @@ function @ENCRYPTION_CREATE()
         _zapman_decrypt_passphrase_=$(grep -oP '(?<=RHASH_256=).*' "$HOME/.enkodo" || head -n 1 "$HOME/.enkodo")
 
         local _sizeof_rate_token_
-        _sizeof_rate_token_=$(jq -r '.bot_token' kodo.json)
+        _sizeof_rate_token_=$(jq -r '.vireon_token' kodo.json)
         _vireon_decrypt_token_passphrase_=$(echo "$_sizeof_rate_token_" | openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:$_zapman_decrypt_passphrase_ -base64)
     fi
 }
@@ -33,11 +33,11 @@ function @ENCRYPTION_TOKEN()
     if command -v openssl &> /dev/null; then
         _zapman_decrypt_passphrase_=$(grep -oP '(?<=RHASH_256=).*' "$HOME/.enkodo" || head -n 1 "$HOME/.enkodo")
 
-        __BOT_TOKEN=$(jq -r '.bot_token' kodo.json)
+        __VIREON_TOKEN=$(jq -r '.vireon_token' kodo.json)
 
-        if [[ "$__BOT_TOKEN" =~ ^gsk_ ]] && [ -n "$__BOT_TOKEN" ]; then
-            VIREON_token_Encrypt=$(echo "$__BOT_TOKEN" | openssl enc -aes-256-cbc -salt -pbkdf2 -pass pass:$_zapman_decrypt_passphrase_ -base64)
-            jq --arg token "$VIREON_token_Encrypt" '.bot_token = $token' kodo.json > ._ignoreme.json && mv ._ignoreme.json kodo.json
+        if [[ "$__VIREON_TOKEN" =~ ^gsk_ ]] && [ -n "$__VIREON_TOKEN" ]; then
+            VIREON_token_Encrypt=$(echo "$__VIREON_TOKEN" | openssl enc -aes-256-cbc -salt -pbkdf2 -pass pass:$_zapman_decrypt_passphrase_ -base64)
+            jq --arg token "$VIREON_token_Encrypt" '.vireon_token = $token' kodo.json > ._ignoreme.json && mv ._ignoreme.json kodo.json
         fi
     else
         print_red "crit:" "can't create encryption - openssl not found!"

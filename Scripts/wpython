@@ -70,22 +70,22 @@ amx_opt = data.get('amx_flags', [])
 print_export("json_AMX_OPT_F", ' '.join(amx_opt))
 
 # Export the vireon model value
-print_export("json_VIREON_MODEL", data.get('bot_model', ''))
+print_export("json_VIREON_MODEL", data.get('vireon_model', ''))
 # Export the vireon biodata value
-print_export("json_VIREON_BIODATA", data.get('bot_profile', ''))
+print_export("json_VIREON_BIODATA", data.get('vireon_profile', ''))
 
 # Define a regex pattern to validate the vireon token
 valid_token_regex = re.compile("^[a-zA-Z0-9_-]{1,62}$")
 
 # Get the vireon token from the JSON data
-VIREON_TOKEN = data.get('bot_token', '')
+VIREON_TOKEN = data.get('vireon_token', '')
 
 # Validate the vireon token format using the regex pattern
 if not valid_token_regex.match(VIREON_TOKEN):
     sys.exit(0)
 
 # Export the vireon token value
-print_export("json_VIREON_TOKEN", data.get('bot_token', ''))
+print_export("json_VIREON_TOKEN", data.get('vireon_token', ''))
 
 if __name__ == '__main__':
     """ Ensure the script runs only when executed directly, not when imported """

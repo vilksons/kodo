@@ -206,9 +206,9 @@ if [ ! -f "kodo.json" ]; then
     "samp_executable": "samp03svr",
     "include_dir": "pawno/include",
     "plugins_dir": "plugins",
-    "bot_token": "",
-    "bot_model": "qwen-2.5-32b",
-    "bot_profile": "",
+    "vireon_token": "",
+    "vireon_model": "qwen-2.5-32b",
+    "vireon_profile": "",
     "remcache_auto": "false"
 }
 EOF
@@ -233,9 +233,9 @@ SIGNAL_KILL ""
     "samp_executable": "omp-server",
     "include_dir": "qawno/include",
     "plugins_dir": "components",
-    "bot_token": "",
-    "bot_model": "qwen-2.5-32b",
-    "bot_profile": "",
+    "vireon_token": "",
+    "vireon_model": "qwen-2.5-32b",
+    "vireon_profile": "",
     "remcache_auto": "false"
 EOF
 SIGNAL_KILL ""
