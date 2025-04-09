@@ -52,7 +52,7 @@ function space_servers() {
         
         if [ -f "$json_LOG_SERV" ]; then
             sleep 2 > /dev/null
-            cat $json_LOG_SERV
+            cat "$json_LOG_SERV"
             echo
         else
             echo "# $json_LOG_SERV not found."
@@ -67,7 +67,7 @@ function space_servers() {
         echo
 
         sleep 2 > /dev/null
-        if grep -i "error" $json_LOG_SERV > /dev/null; then
+        if grep -i "error" "$json_LOG_SERV" > /dev/null; then
             start_true ""
         else
             start_false ""
@@ -94,7 +94,7 @@ function space_wargs_servers() {
         end_console_main ""
     fi
 
-    mv $json_SERVER_CONFIG .$json_SERVER_CONFIG.bak
+    mv "$json_SERVER_CONFIG" ".$json_SERVER_CONFIG.bak"
 
     if [[ "$json_SERVER_CONFIG" == "config.json" ]]; then
         cp ".$json_SERVER_CONFIG.bak" "$json_SERVER_CONFIG"
@@ -151,7 +151,7 @@ with open(kodo_conf_json, 'w') as file:
 
         if [ -f "$json_SERVER_CONFIG" ]; then
             rm -rf "$json_SERVER_CONFIG"
-            mv .$json_SERVER_CONFIG.bak $json_SERVER_CONFIG
+            mv ".$json_SERVER_CONFIG.bak" "$json_SERVER_CONFIG"
         fi
 
         if [ "$pid_status" -ne 0 ]; then
@@ -164,7 +164,7 @@ with open(kodo_conf_json, 'w') as file:
             
             if [ -f "$json_LOG_SERV" ]; then
                 sleep 2 > /dev/null
-                cat $json_LOG_SERV
+                cat "$json_LOG_SERV"
                 echo
             else
                 echo "# $json_LOG_SERV not found."
@@ -179,7 +179,7 @@ with open(kodo_conf_json, 'w') as file:
             echo
 
             sleep 2 > /dev/null
-            if grep -i "error" $json_LOG_SERV > /dev/null; then
+            if grep -i "error" "$json_LOG_SERV" > /dev/null; then
                 start_true ""
             else
                 start_false ""
@@ -258,7 +258,7 @@ function error_cache() {
         @strain.Error
     '
     echo
-    grep -i "error" $json_LOG_SERV
+    grep -i "error" "$json_LOG_SERV"
     echo
     check2 ""
 }
@@ -269,7 +269,7 @@ function failed_cache() {
         @strain.Failed
     '
     echo
-    grep -i "failed" $json_LOG_SERV
+    grep -i "failed" "$json_LOG_SERV"
     echo
     check3 ""
 }
@@ -280,13 +280,13 @@ function invalid_cache() {
         @strain.Invalid
     '
     echo
-    grep -i "invalid" $json_LOG_SERV
+    grep -i "invalid" "$json_LOG_SERV"
     echo
 }
 export invalid_cache
 
 function check2() {
-    if grep -i "failed" $json_LOG_SERV > /dev/null; then
+    if grep -i "failed" "$json_LOG_SERV" > /dev/null; then
         start_true2 ""
     else
         start_false2 ""
@@ -295,7 +295,7 @@ function check2() {
 export check2
 
 function check3() {
-    if grep -i "invalid" $json_LOG_SERV > /dev/null; then
+    if grep -i "invalid" "$json_LOG_SERV" > /dev/null; then
         start_true3 ""
     else
         start_false3 ""

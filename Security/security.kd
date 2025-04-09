@@ -24,7 +24,7 @@ function @ENCRYPTION_CREATE()
 
         local _sizeof_rate_token_
         _sizeof_rate_token_=$(jq -r '.vireon_token' kodo.json)
-        _vireon_decrypt_token_passphrase_=$(echo "$_sizeof_rate_token_" | openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:$_zapman_decrypt_passphrase_ -base64)
+        _vireon_decrypt_token_passphrase_=$(echo "$_sizeof_rate_token_" | openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:"$_zapman_decrypt_passphrase_" -base64)
     fi
 }
 
@@ -36,7 +36,7 @@ function @ENCRYPTION_TOKEN()
         __VIREON_TOKEN=$(jq -r '.vireon_token' kodo.json)
 
         if [[ "$__VIREON_TOKEN" =~ ^gsk_ ]] && [ -n "$__VIREON_TOKEN" ]; then
-            VIREON_token_Encrypt=$(echo "$__VIREON_TOKEN" | openssl enc -aes-256-cbc -salt -pbkdf2 -pass pass:$_zapman_decrypt_passphrase_ -base64)
+            VIREON_token_Encrypt=$(echo "$__VIREON_TOKEN" | openssl enc -aes-256-cbc -salt -pbkdf2 -pass pass:"$_zapman_decrypt_passphrase_" -base64)
             jq --arg token "$VIREON_token_Encrypt" '.vireon_token = $token' kodo.json > ._ignoreme.json && mv ._ignoreme.json kodo.json
         fi
     else

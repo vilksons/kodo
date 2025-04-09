@@ -82,7 +82,7 @@ VIREON_TOKEN = data.get('vireon_token', '')
 
 # Validate the vireon token format using the regex pattern
 if not valid_token_regex.match(VIREON_TOKEN):
-    sys.exit(0)
+    sys.exit(1)
 
 # Export the vireon token value
 print_export("json_VIREON_TOKEN", data.get('vireon_token', ''))
