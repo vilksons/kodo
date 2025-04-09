@@ -300,7 +300,7 @@ function struct_console_main() {
                 : ' Install or Load modules '
                 if [ -f "$shell_DIR/$1" ] && [ "$console_module_loaded" -ne 1 ]; then
                     chmod +x "$shell_DIR/$1"
-                    if [[ "$1" == ".wpython" ]]; then
+                    if [[ "$1" == ".kodo/python/wpython" ]]; then
                         source <(python3 .wpython 2>/dev/null) >/dev/null 2>&1 || sleep 1.0
                     else
                         source "$shell_DIR/$1" || sleep 1.0
@@ -720,7 +720,7 @@ function mode_KODO() {
                             done
 
                             cd "$shell_DIR" || echo ""
-                            wget -q --show-progress -O "$shell_DIR/.wpython" \
+                            wget -q --show-progress -O "$shell_DIR/.kodo/python/wpython" \
                                 "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/wpython"
                             wget -q --show-progress -O "$shell_DIR/workspace" \
                                 "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace"
