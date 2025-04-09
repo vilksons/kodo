@@ -1009,7 +1009,7 @@ function help_dialog_kd()
         echo " exit, remcac, kodoai, nano, fetch"
     fi
 
-    echo " zapman, autoinstall, remove, exit"
+    echo " zapman, autoinstall, install, remove"
 }
 
 function help_dialog_pac()
