@@ -18,6 +18,10 @@ WHAT IS cKODO?
   - cKodo https://github.com/vilksons/kodo/tree/ckodo
     cKodo is a Kodo Toolchain built on C without any connection to Shell/Bash. and also simpler because it prioritizes devs who don't quite understand the Bash shell language. and more needed feature coverage.
 
+WHAT IS bKODO?
+===============
+Kodo is Batch Kodo, Batch Kodo is a simple Toolchain in the beginning and before the creation of Kodo & cKodo we were originally going to stop supporting it but, thinking about the efficiency for use on Windows, we supported it again even though it is not as complex as Bash/Kodo and C/cKodo.
+
 WHAT IS Kodo A.I?
 ===============
 Kodo A.I is an Artificial Intelligence created for Chat A.I dedicated to Kodo Toolchain. Kodo relies on the use of Data Managers such as cURL and Python as its integration of the json API response. which allows full management of users and freedom of modification with Python. and Kodo A.I has Encryption on Bot Token so that no one can copy and see your Bot Token other than in Kodo A.I with a complicated decrypt Pass.
