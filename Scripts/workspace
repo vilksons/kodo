@@ -737,7 +737,7 @@ function mode_KODO() {
                 esac
             fi
             ;;
-        "lang")
+        "jkodo")
             if [ -f "$shell_DIR/kodo.json" ]; then
                 mv kodo.json kodo.json.old.txt
             fi
@@ -889,7 +889,7 @@ function mode_KODO() {
             fetch_now ""
             ;;
         "zapman")
-            mode_KODO "" || {
+            mode_ZAPMAN "" || {
                 if [ "$console_module_loaded" -eq 1 ]; then
                     print_green "warn:" "err.. need to kill after installing \"succes\".."
                     print_green " killing.."
@@ -897,8 +897,6 @@ function mode_KODO() {
                     SIGNAL_KILL ""
                 fi
             }
-
-            mode_ZAPMAN ""
             ;;
         "clear" | "c" | "C" | "cc")
             console_save_messages=0
@@ -924,7 +922,7 @@ function mode_KODO() {
                 ["cat"]=":: Display a files to Kodo Terminal - Usage: cat"
                 ["kill"]=":: Kill a Kodo Terminal - Usage: kill"
                 ["exit"]=":: Exit/End Kodo Terminal - Usage: exit | (+) [<args>] \"all\" to kill all tasks"
-                ["lang"]=":: Rebuild kodo.json - Usage: lang"
+                ["jkodo"]=":: Rebuild kodo.json - Usage: jkodo"
                 ["directory"]=":: Display or Change Terminal Directory - Usage: directory | ls"
                 ["remcac"]=":: Remove cache \".cache\" Kodo - Usage: remcac"
                 ["kchat"]=":: KCHAT Terminal - Usage: kchat"
@@ -1001,7 +999,7 @@ function help_dialog_kd()
     echo " stop (stopped server), restart (restart server)"
     echo " gamemode, pawncc, clear (clear-screen)"
     echo " checksums, cat, zapman, kill"
-    echo " sync (update/upgrade), lang, directory"
+    echo " sync (update/upgrade), jkodo, directory"
 
     if ! command -v nano &> /dev/null; then
         echo " exit, remcac, kchat, fetch"
