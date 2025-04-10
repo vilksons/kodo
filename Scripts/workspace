@@ -71,6 +71,9 @@ export COMPILER_PAWNCC
 COMPILER_NEXT=0
 export COMPILER_NEXT
 
+commands_OPAMX=()
+export commands_OPAMX
+
 # Struct of kodo.toml
 toml_INCLUDE="nul"
 export toml_INCLUDE
@@ -98,9 +101,6 @@ toml_VIREON_TOKEN="nul"
 export toml_VIREON_TOKEN
 toml_AMX_OPT_F=""
 export toml_AMX_OPT_F
-
-commands_OPAMX=()
-export commands_OPAMX
 
 function collor_yellow() {
 # Color Text {Yellow}
