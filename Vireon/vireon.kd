@@ -101,6 +101,6 @@ except KeyboardInterrupt:
     sys.exit(130)
 "
 
-    end_console_main ""
+    end_kodo_t_main ""
     echo
 }

@@ -18,7 +18,7 @@ function space_servers() {
                     struct_choice_samp ""
                     ;;
                 [Nn])
-                    struct_console_main ""
+                    struct_kodo_t_main ""
                     ;;
                 *)
                     struct_choice_samp ""
@@ -60,7 +60,7 @@ function space_servers() {
 
         echo -e "$(collor_yellow "# End.")"
         echo
-        struct_console_main ""
+        struct_kodo_t_main ""
     else
         echo
         echo -e "$(collor_yellow "# Success")"
@@ -91,7 +91,7 @@ function space_wargs_servers() {
     
     if [ ! -f "$toml_SERVER_CONFIG" ]; then
         echo "$toml_SERVER_CONFIG not found!"
-        end_console_main ""
+        end_kodo_t_main ""
     fi
 
     mv "$toml_SERVER_CONFIG" ".$toml_SERVER_CONFIG.bak"
@@ -128,7 +128,7 @@ with open(kodo_conf_json, 'w') as file:
                     struct_choice_samp ""
                     ;;
                 [Nn])
-                    struct_console_main ""
+                    struct_kodo_t_main ""
                     ;;
                 *)
                     struct_choice_samp ""
@@ -172,7 +172,7 @@ with open(kodo_conf_json, 'w') as file:
 
             echo -e "$(collor_yellow "# End.")"
             echo
-            struct_console_main ""
+            struct_kodo_t_main ""
         else
             echo
             echo -e "$(collor_yellow "# Success")"

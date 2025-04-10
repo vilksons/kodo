@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function mode_ZAPMAN() {
-    console_TITLE "Zapman Mode"
+    kodo_t_TITLE "Zapman Mode"
     
     rest_var ""
     
@@ -66,7 +66,7 @@ function struct_ZAPMAN()
             ;;
         ########################################################################################################################################################
         "$tb_zapman2"*)
-            console_TITLE "Install Packages"
+            kodo_t_TITLE "Install Packages"
 
             local tb_zapman2_input_args="${zapman_table#"$tb_zapman2 "}"
 
@@ -515,7 +515,7 @@ EOF
             ;;
         ########################################################################################################################################################
         "$tb_zapman3"*)
-            console_TITLE "Remove Packages"
+            kodo_t_TITLE "Remove Packages"
 
             local tb_zapman3_input_args="${zapman_table#"$tb_zapman3 "}"
 
@@ -653,13 +653,13 @@ EOF
             ;;
         "help")
             shell_TITLE="help"
-            console_TITLE "help"
+            kodo_t_TITLE "help"
 
             help_dialog_pac
             mode_ZAPMAN ""
             ;;
        "exit")
-            struct_console_main ""
+            struct_kodo_t_main ""
             ;;
         *)
             echo "error: $zapman_table: command not found"

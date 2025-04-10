@@ -41,12 +41,12 @@ _vireon_decrypt_token_passphrase_=""
 export _vireon_decrypt_token_passphrase_
 
 # Notice Var
-console_save_messages=0
-export console_save_messages
-console_save_notice=0
-export console_save_notice
-console_module_loaded=0
-export console_module_loaded
+kodo_t_save_messages=0
+export kodo_t_save_messages
+kodo_t_save_notice=0
+export kodo_t_save_notice
+kodo_t_module_loaded=0
+export kodo_t_module_loaded
 
 # General
 shell_TITLE=""
@@ -175,15 +175,15 @@ function bash_title() {
     echo -ne "\033]0;$1\007"
 }
 
-function console_TITLE()
+function kodo_t_TITLE()
 {
 # Tile Functions
-# ' console_TITLE "title" '
+# ' kodo_t_TITLE "title" '
     local title=$1
     shell_TITLE="$title"
     bash_title "$shell_TITLE"
 }
-export console_TITLE
+export kodo_t_TITLE
 
 if [ ! -d ".cache" ]; then
     mkdir ".cache" && chmod +x ".cache"
@@ -322,7 +322,7 @@ SIGNAL_KILL ""
     fi
 else
     ignore_this @ENCRYPTION_TOKEN ""  || {
-        if [ "$console_module_loaded" -eq 1 ]; then
+        if [ "$kodo_t_module_loaded" -eq 1 ]; then
                 print_green "warn:" "err.. need to kill after installing \"succes\".."
                 print_green " killing.."
                 sleep 0.999 && SIGNAL_KILL "" && typeof ""
@@ -399,32 +399,32 @@ function @LOAD_KODO_TOML()
     fi
 }
 
-function struct_console_main() {
-    local console_missing_cmds=()
-    local console_missing_save_cmds
+function struct_kodo_t_main() {
+    local kodo_t_missing_cmds=()
+    local kodo_t_missing_save_cmds
 
-    for console_missing_save_cmds in python3 wget curl grep awk sed tr jq tomlq aria2c openssl; do
+    for kodo_t_missing_save_cmds in python3 wget curl grep awk sed tr jq tomlq aria2c openssl; do
         # python3 wget curl grep awk sed tr jq ariac2 openssl #
-        if ! command -v "$console_missing_save_cmds" &>/dev/null; then
-            if [ "$console_missing_save_cmds" = "aria2c" ]; then
-                console_missing_cmds+=("aria2")
+        if ! command -v "$kodo_t_missing_save_cmds" &>/dev/null; then
+            if [ "$kodo_t_missing_save_cmds" = "aria2c" ]; then
+                kodo_t_missing_cmds+=("aria2")
             else
-                console_missing_cmds+=("$console_missing_save_cmds")
+                kodo_t_missing_cmds+=("$kodo_t_missing_save_cmds")
             fi
         fi
     done
 
-    if ((${#console_missing_cmds[@]} > 0)); then
-        if [ "$console_save_notice" -ne 1 ]; then
+    if ((${#kodo_t_missing_cmds[@]} > 0)); then
+        if [ "$kodo_t_save_notice" -ne 1 ]; then
             print_red "Can't load Workspace Module."
-            print_red " Missing packages:" "${console_missing_cmds[*]}"
+            print_red " Missing packages:" "${kodo_t_missing_cmds[*]}"
             printf "\e]8;;https://github.com/vilksons/kodo/wiki/Required-Packages\e\\ Please see here for more.\e]8;;\e\\"
             echo
             ignore_this sleep 1.0
-            console_save_notice=1
+            kodo_t_save_notice=1
         fi
     else
-        if [ "$console_save_notice" -ne 1 ]; then
+        if [ "$kodo_t_save_notice" -ne 1 ]; then
             # Recheck Sync
             if [ -f ".sync" ]; then
                 shred -u .sync
@@ -438,9 +438,9 @@ function struct_console_main() {
                 mkdir -p ".kodo/python" && chmod +x ".kodo"
             fi
 
-            function console_pack() {
+            function kodo_t_pack() {
                 : ' Install or Load modules '
-                if [ -f "$shell_DIR/$1" ] && [ "$console_module_loaded" -ne 1 ]; then
+                if [ -f "$shell_DIR/$1" ] && [ "$kodo_t_module_loaded" -ne 1 ]; then
                     chmod +x "$shell_DIR/$1"
                     if [[ "$1" == ".kodo/python/wpython" ]]; then
                         source <(python3 .kodo/python/wpython) || sleep 2.0
@@ -454,15 +454,13 @@ function struct_console_main() {
                         fi
                     fi
 
-                    if [ "$console_module_loaded" -eq 1 ]; then
+                    if [ "$kodo_t_module_loaded" -eq 1 ]; then
                         print_green "warn:" "err.. need to kill after installing \"succes\".."
                         print_green " killing.."
                         sleep 0.999 && SIGNAL_KILL "" && typeof ""
                     fi
                 else
                     bash_title "Waiting resources.."
-
-                    ignore_this mkdir -p "$shell_DIR"
 
                     if [ "$3" != "silent" ]; then
                         wget -q -O "$shell_DIR/$1" "$2" &>/dev/null
@@ -471,7 +469,7 @@ function struct_console_main() {
                     fi
 
                     if [ "$3" = "end" ]; then
-                        console_module_loaded=1
+                        kodo_t_module_loaded=1
                         wget -q -O "$shell_DIR/$1" "$2" &>/dev/null &
                         clear && cd "$(dirname "$(realpath "$0")")" || echo
                         print_yellow "install succes!"
@@ -481,29 +479,29 @@ function struct_console_main() {
                 fi
             }
 
-            console_pack ".kodo/python/wpython" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/wpython" ""
+            kodo_t_pack ".kodo/python/wpython" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/wpython" ""
 
             cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
             
-            console_pack ".kodo/security.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Security/security.kd" "silent" 
+            kodo_t_pack ".kodo/security.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Security/security.kd" "silent" 
 
-            console_pack ".kodo/compat.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compat/compat.kd" "compat" 
+            kodo_t_pack ".kodo/compat.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compat/compat.kd" "compat" 
 
-            console_pack ".kodo/compiler.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compiler/compiler.kd" "silent" 
+            kodo_t_pack ".kodo/compiler.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compiler/compiler.kd" "silent" 
 
-            console_pack ".kodo/zapman.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Zapman/zapman.kd" "silent" 
+            kodo_t_pack ".kodo/zapman.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Zapman/zapman.kd" "silent" 
 
-            console_pack ".kodo/samp.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/samp.kd" "silent" 
+            kodo_t_pack ".kodo/samp.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/samp.kd" "silent" 
 
-            console_pack ".kodo/pawncc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/pawncc.kd" "silent" 
+            kodo_t_pack ".kodo/pawncc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/pawncc.kd" "silent" 
 
-            console_pack ".kodo/misc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Misc/misc.kd" "silent"
+            kodo_t_pack ".kodo/misc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Misc/misc.kd" "silent"
 
-            console_pack ".kodo/vireon.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Vireon/vireon.kd" "silent" 
+            kodo_t_pack ".kodo/vireon.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Vireon/vireon.kd" "silent" 
 
-            console_pack ".kodo/server.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Server/server.kd" "end"
+            kodo_t_pack ".kodo/server.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Server/server.kd" "end"
             
-            console_save_notice=1
+            kodo_t_save_notice=1
         fi
     fi
     
@@ -533,17 +531,17 @@ function struct_console_main() {
 
     rest_var "" && typeof ""
 }
-export struct_console_main
+export struct_kodo_t_main
 
 function typeof() {
-    if [ "$console_save_messages" -ne 1 ]; then
-        console_save_messages=1
+    if [ "$kodo_t_save_messages" -ne 1 ]; then
+        kodo_t_save_messages=1
         printf "Welcome to Kodo!"
         echo
     fi
     
-    if [ "$console_module_loaded" != 1 ]; then
-        console_TITLE "Kodo Mode"
+    if [ "$kodo_t_module_loaded" != 1 ]; then
+        kodo_t_TITLE "Kodo Mode"
     fi
     
     HISTFILE="$HOME/kodo/.kodo.txt"
@@ -563,13 +561,13 @@ export typeof
 
 function mode_KODO() {
     : ' WARNING '
-    #   always remember to end use 'end_console_main' or 'struct_console_main' so it doesn't crash or exit Kodo
+    #   always remember to end use 'end_kodo_t_main' or 'struct_kodo_t_main' so it doesn't crash or exit Kodo
     
     local trigger_kd="kodo"
 
     case "$kd_table" in
         "compile"*)
-            console_TITLE "Compiler"
+            kodo_t_TITLE "Compiler"
 
             local commands_ARGS="${kd_table#compile }"
             local commands_INPUT=""
@@ -584,10 +582,10 @@ function mode_KODO() {
 
             kodo_init_compilers "$commands_INPUT"
 
-            end_console_main ""
+            end_kodo_t_main ""
             ;;
         "running"*)
-            console_TITLE "Running"
+            kodo_t_TITLE "Running"
             
             local commands_ARGS="${kd_table#running }"
             
@@ -601,7 +599,7 @@ function mode_KODO() {
 
             if [[ "$commands_INPUT" == "." ]]; then
                 space_servers "" || {
-                    if [ "$console_module_loaded" -eq 1 ]; then
+                    if [ "$kodo_t_module_loaded" -eq 1 ]; then
                         print_green "warn:" "err.. need to kill after installing \"succes\".."
                         print_green " killing.."
                         sleep 0.999 && SIGNAL_KILL "" && typeof ""
@@ -609,21 +607,21 @@ function mode_KODO() {
                 }
             else
                 space_wargs_servers "$commands_INPUT" || {
-                    if [ "$console_module_loaded" -eq 1 ]; then
+                    if [ "$kodo_t_module_loaded" -eq 1 ]; then
                         print_green "warn:" "err.. need to kill after installing \"succes\".."
                         print_green " killing.."
                         sleep 0.999 && SIGNAL_KILL "" && typeof ""
                     fi
                 }
             fi
-            end_console_main ""
+            end_kodo_t_main ""
             ;;
         "irunn")
-            console_TITLE "Compile & Running"
+            kodo_t_TITLE "Compile & Running"
 
             compiler_MODE="false"
             kodo_compilers "" || {
-                if [ "$console_module_loaded" -eq 1 ]; then
+                if [ "$kodo_t_module_loaded" -eq 1 ]; then
                     print_green "warn:" "err.. need to kill after installing \"succes\".."
                     print_green " killing.."
                     sleep 0.999 && SIGNAL_KILL "" && typeof ""
@@ -631,7 +629,7 @@ function mode_KODO() {
             }
             ;;
         "debug"*)
-            console_TITLE "Debugging"
+            kodo_t_TITLE "Debugging"
 
             local commands_ARGS="${kd_table#debug }"
             
@@ -649,7 +647,7 @@ function mode_KODO() {
             
             if [[ "$commands_INPUT" == "." ]]; then
                 space_servers "" || {
-                    if [ "$console_module_loaded" -eq 1 ]; then
+                    if [ "$kodo_t_module_loaded" -eq 1 ]; then
                         print_green "warn:" "err.. need to kill after installing \"succes\".."
                         print_green " killing.."
                         sleep 0.999 && SIGNAL_KILL "" && typeof ""
@@ -657,37 +655,37 @@ function mode_KODO() {
                 }
             else
                 space_wargs_servers "$commands_INPUT" || {
-                    if [ "$console_module_loaded" -eq 1 ]; then
+                    if [ "$kodo_t_module_loaded" -eq 1 ]; then
                         print_green "warn:" "err.. need to kill after installing \"succes\".."
                         print_green " killing.."
                         sleep 0.999 && SIGNAL_KILL "" && typeof ""
                     fi
                 }
             fi
-            end_console_main ""
+            end_kodo_t_main ""
             ;;
         "stop")
-            console_TITLE "Stop"
+            kodo_t_TITLE "Stop"
 
             ignore_this pkill -9 -f "$toml_EXE_SERV"
 
-            end_console_main ""
+            end_kodo_t_main ""
             ;;
         "restart")
-            console_TITLE "Restart"
+            kodo_t_TITLE "Restart"
 
             ignore_this pkill -9 -f "$toml_EXE_SERV" && sleep 1
             space_servers ""
 
-            end_console_main ""
+            end_kodo_t_main ""
             ;;
         "gamemode")
-            console_TITLE "Downloads | GameMode"
+            kodo_t_TITLE "Downloads | GameMode"
 
             struct_choice_samp ""
 
-            end_console_main "" || {
-                if [ "$console_module_loaded" -eq 1 ]; then
+            end_kodo_t_main "" || {
+                if [ "$kodo_t_module_loaded" -eq 1 ]; then
                     print_green "warn:" "err.. need to kill after installing \"succes\".."
                     print_green " killing.."
                     sleep 0.999 && SIGNAL_KILL "" && typeof ""
@@ -695,12 +693,12 @@ function mode_KODO() {
             }
             ;;
         "pawncc")
-            console_TITLE "Downloads | PawnCC"
+            kodo_t_TITLE "Downloads | PawnCC"
 
             struct_choice_pawncc ""
 
-            end_console_main "" || {
-                if [ "$console_module_loaded" -eq 1 ]; then
+            end_kodo_t_main "" || {
+                if [ "$kodo_t_module_loaded" -eq 1 ]; then
                     print_green "warn:" "err.. need to kill after installing \"succes\".."
                     print_green " killing.."
                     sleep 0.999 && SIGNAL_KILL "" && typeof ""
@@ -708,7 +706,7 @@ function mode_KODO() {
             }
             ;;
         "cat"*)
-            console_TITLE "Cat"
+            kodo_t_TITLE "Cat"
 
             local commands_ARGS="${kd_table#cat }"
             
@@ -724,10 +722,10 @@ function mode_KODO() {
 
             cat "$commands_INPUT"
             echo
-            end_console_main ""
+            end_kodo_t_main ""
             ;;
         "directory"*)
-            console_TITLE "Directory - $shell_DIR"
+            kodo_t_TITLE "Directory - $shell_DIR"
 
             local commands_ARGS="${kd_table#directory }"
             
@@ -735,21 +733,21 @@ function mode_KODO() {
                 commands_INPUT="$commands_ARGS"
             else
                 ls -a
-                end_console_main ""
+                end_kodo_t_main ""
             fi
 
             ignore_this cd "$commands_INPUT" && ls -a && shell_TITLE="directory - $shell_DIR" && bash_title "$shell_TITLE" || echo
-            struct_console_main ""
+            struct_kodo_t_main ""
             ;;
         "ls")
             ls -a
-            struct_console_main ""
+            struct_kodo_t_main ""
             ;;
         "kill")
-            console_TITLE "Kill"
+            kodo_t_TITLE "Kill"
 
-            console_save_notice=0
-            console_save_messages=0
+            kodo_t_save_notice=0
+            kodo_t_save_messages=0
             
             ignore_this clear
             ignore_this sleep 0.10
@@ -759,7 +757,7 @@ function mode_KODO() {
             ;;
         "sync"*)
             if [[ "$kd_table" == "sync" ]]; then
-                console_TITLE "Sync"
+                kodo_t_TITLE "Sync"
             fi
 
             local commands_ARGS="${kd_table#sync }"
@@ -770,7 +768,7 @@ function mode_KODO() {
 
             if [[ "$latest" == "$current" ]]; then
                 echo "warning: $shell_NAME is up to date, Nothing to do."
-                end_console_main ""
+                end_kodo_t_main ""
             else
                 print_gray ":: New Commits Found..: Commits (SHA1): "
                 echo "$latest"
@@ -792,7 +790,7 @@ function mode_KODO() {
                     
                     function __upgrade_kodo__()
                     {
-                        console_TITLE "Sync | Upgrade"
+                        kodo_t_TITLE "Sync | Upgrade"
 
                         echo "Upgrading.."
                         
@@ -826,7 +824,7 @@ function mode_KODO() {
                         if  [ "$kd_table" = "sync" ]; then
                             __upgrade_kodo__ ""
                         elif [ "$commands_ARGS" = "update" ]; then
-                            console_TITLE "Sync | Update"
+                            kodo_t_TITLE "Sync | Update"
 
                             echo "Updating.."
 
@@ -842,7 +840,7 @@ function mode_KODO() {
                         bash "$shell_DIR/workspace"
                         ;;
                     *)
-                        end_console_main ""
+                        end_kodo_t_main ""
                         ;;
                 esac
             fi
@@ -852,11 +850,11 @@ function mode_KODO() {
                 mv kodo.toml kodo.toml.old.txt
             fi
 
-            console_module_loaded=0
-            struct_console_main ""
+            kodo_t_module_loaded=0
+            struct_kodo_t_main ""
             ;;
         "checksums"*)
-            console_TITLE "Checksums"
+            kodo_t_TITLE "Checksums"
 
             local commands_ARGS="${kd_table#checksums }"
 
@@ -866,7 +864,7 @@ function mode_KODO() {
                 commands_INPUT="$commands_ARGS"
             else
                 echo "sha1:" && sha1sum "$shell_NAME" && echo "sha256:" && sha256sum "$shell_NAME" && echo "md5:" && md5sum "$shell_NAME"
-                end_console_main ""
+                end_kodo_t_main ""
             fi
 
             for algo in $commands_INPUT; do
@@ -881,10 +879,10 @@ function mode_KODO() {
                 fi
             done
 
-            end_console_main ""
+            end_kodo_t_main ""
             ;;
         "exit"*)
-            console_TITLE "Exit"
+            kodo_t_TITLE "Exit"
 
             local commands_ARGS="${kd_table#exit }"
 
@@ -897,7 +895,7 @@ function mode_KODO() {
             bash
             ;;
         "vireon"*)
-            console_TITLE "Vireon Chat A.I"
+            kodo_t_TITLE "Vireon Chat A.I"
 
             local commands_ARGS="${kd_table#vireon }"
 
@@ -916,10 +914,10 @@ function mode_KODO() {
         "nano"*)
             if ! command -v nano &> /dev/null; then
                 print_red "crit:" "nano not found!, install first."
-                end_console_main ""
+                end_kodo_t_main ""
             fi
             
-            console_TITLE "GNU/Nano"
+            kodo_t_TITLE "GNU/Nano"
             
             local commands_ARGS="${kd_table#nano }"
 
@@ -934,19 +932,19 @@ function mode_KODO() {
             fi
 
             nano "$commands_INPUT"
-            end_console_main ""
+            end_kodo_t_main ""
             ;;
         "remcac")
-            console_TITLE "Remove Cache"
+            kodo_t_TITLE "Remove Cache"
 
             if [ "$compiler_MODE" != "nul" ]; then
                 print_red "crit:" "can't remove cache!."
-                end_console_main ""
+                end_kodo_t_main ""
             fi
 
             if [ ! -f "$shell_DIR/.cache/zapman" ] && [ ! -f "$shell_DIR/.cache/compiler.log" ]; then
                 echo "no cache found."
-                end_console_main ""
+                end_kodo_t_main ""
             fi
 
             if [ -f "$shell_DIR/.cache/zapman" ]; then
@@ -983,16 +981,16 @@ function mode_KODO() {
                             cd "$shell_DIR" || echo
                             shred -u ".cache/compiler.log" && print_yellow " successfully"
                             sleep 1
-                            end_console_main ""
+                            end_kodo_t_main ""
                             ;;
                         *)
                             echo "Operation cancelled"
-                            end_console_main ""
+                            end_kodo_t_main ""
                             ;;
                     esac
                 done
             else
-                end_console_main ""
+                end_kodo_t_main ""
             fi
         
             ;;
@@ -1001,7 +999,7 @@ function mode_KODO() {
             ;;
         "zapman")
             mode_ZAPMAN "" || {
-                if [ "$console_module_loaded" -eq 1 ]; then
+                if [ "$kodo_t_module_loaded" -eq 1 ]; then
                     print_green "warn:" "err.. need to kill after installing \"succes\".."
                     print_green " killing.."
                     sleep 0.999 && SIGNAL_KILL "" && typeof ""
@@ -1009,14 +1007,14 @@ function mode_KODO() {
             }
             ;;
         "clear" | "c" | "C" | "cc")
-            console_save_messages=0
+            kodo_t_save_messages=0
             clear; echo -ne "\033[3J"
-            struct_console_main ""
+            struct_kodo_t_main ""
             ;;
         "modular"*)
-            console_TITLE "Modular Checking | Debugging"
+            kodo_t_TITLE "Modular Checking | Debugging"
 
-            function console_modular_load() {
+            function kodo_t_modular_load() {
                 : ' Install or Load modules '
                 if [ -f "$shell_DIR/$1" ]; then
                     chmod +x "$shell_DIR/$1"
@@ -1038,35 +1036,35 @@ function mode_KODO() {
 
                 if [ -f "$commands_INPUT" ]; then
                     printf_red "error:" "$commands_INPUT not found!."
-                    struct_console_main ""
+                    struct_kodo_t_main ""
                 fi
 
-                console_modular_load "$commands_INPUT" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/$commands_INPUT" ""
+                kodo_t_modular_load "$commands_INPUT" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/$commands_INPUT" ""
             else
-                console_modular_load ".kodo/python/wpython" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/wpython" ""
+                kodo_t_modular_load ".kodo/python/wpython" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/wpython" ""
 
                 cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
                 
-                console_modular_load ".kodo/security.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Security/security.kd" "silent" 
+                kodo_t_modular_load ".kodo/security.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Security/security.kd" "silent" 
 
-                console_modular_load ".kodo/compat.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compat/compat.kd" "compat" 
+                kodo_t_modular_load ".kodo/compat.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compat/compat.kd" "compat" 
 
-                console_modular_load ".kodo/compiler.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compiler/compiler.kd" "silent" 
+                kodo_t_modular_load ".kodo/compiler.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compiler/compiler.kd" "silent" 
 
-                console_modular_load ".kodo/zapman.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Zapman/zapman.kd" "silent" 
+                kodo_t_modular_load ".kodo/zapman.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Zapman/zapman.kd" "silent" 
 
-                console_modular_load ".kodo/samp.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/samp.kd" "silent" 
+                kodo_t_modular_load ".kodo/samp.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/samp.kd" "silent" 
 
-                console_modular_load ".kodo/pawncc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/pawncc.kd" "silent" 
+                kodo_t_modular_load ".kodo/pawncc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/pawncc.kd" "silent" 
 
-                console_modular_load ".kodo/misc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Misc/misc.kd" "silent"
+                kodo_t_modular_load ".kodo/misc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Misc/misc.kd" "silent"
 
-                console_modular_load ".kodo/vireon.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Vireon/vireon.kd" "silent" 
+                kodo_t_modular_load ".kodo/vireon.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Vireon/vireon.kd" "silent" 
 
-                console_modular_load ".kodo/server.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Server/server.kd" "end"
+                kodo_t_modular_load ".kodo/server.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Server/server.kd" "end"
             fi
 
-            struct_console_main ""
+            struct_kodo_t_main ""
             ;;
         "help"* | "$trigger_kd -h"* | "$trigger_kd --h"*)
             local commands_ARGS="${kd_table#"$trigger_kd -h "}"
@@ -1123,13 +1121,13 @@ function mode_KODO() {
                 help_dialog_kd ""
             fi
 
-            struct_console_main ""
+            struct_kodo_t_main ""
             ;;
         "$trigger_kd" | "user:~$:" | "user:~$:")
-            struct_console_main ""
+            struct_kodo_t_main ""
             ;;
         "")
-            struct_console_main ""
+            struct_kodo_t_main ""
             ;;
         *)
             not_found_kd ""
@@ -1141,12 +1139,12 @@ export mode_KODO
 function not_found_kd()
 {
     echo "error: $kd_table: command not found"
-    if [ "$console_module_loaded" -eq 1 ]; then
+    if [ "$kodo_t_module_loaded" -eq 1 ]; then
         print_green "warn:" "err.. need to kill after installing \"succes\".."
         print_green " killing.."
         sleep 0.999 && SIGNAL_KILL "" && typeof ""
     else
-        struct_console_main ""
+        struct_kodo_t_main ""
     fi
 }
 
@@ -1204,13 +1202,13 @@ function help_dialog_pac()
     echo " exit        - Exit Zapman Mode"
 }
 
-function end_console_main() {
+function end_kodo_t_main() {
     echo -e "$(collor_yellow "# Press any key to return.")"
     read -r -n 1 -s
-    struct_console_main ""
+    struct_kodo_t_main ""
 }
 
 : '
     @summary: Main
 '
-struct_console_main ""
+struct_kodo_t_main ""

@@ -6,7 +6,7 @@ function struct_compilers_linux()
     read -r -p ">> " SEL_C
 
     if [[ -z "$SEL_C" || "$SEL_C" =~ ^[Yy]$ ]]; then
-        cd "$shell_DIR" || end_console_main ""
+        cd "$shell_DIR" || end_kodo_t_main ""
         echo "Select the PawnCC version to download:"
         echo "[A/a] PawnCC 3.10.10"
         echo "[B/b] PawnCC 3.10.9"
@@ -83,7 +83,7 @@ function struct_compilers_linux()
         if ! curl -L --progress-bar -o "$call_download_file_CURL" "$DOWNLOAD_URL_CURL"; then
             echo -e "$(collor_red "fail:") Failed to download the file.."
 
-            end_console_main ""
+            end_kodo_t_main ""
         else
             tar -xzvf "$call_download_file_CURL" -C "$shell_DIR"
 
@@ -91,10 +91,10 @@ function struct_compilers_linux()
             echo -e "$(collor_yellow "Download completed successfully.")"
             echo "See https://github.com/vilksons/kodo/wiki/PawnCC-Installation for Docs."
 
-            end_console_main ""
+            end_kodo_t_main ""
         fi
     else
-        end_console_main ""
+        end_kodo_t_main ""
     fi
 }
 export struct_compilers_linux
@@ -105,7 +105,7 @@ function struct_compilers_win()
     read -r -p ">> " SEL_C
     
     if [[ -z "$SEL_C" || "$SEL_C" =~ ^[Yy]$ ]]; then
-        cd "$shell_DIR" || end_console_main ""
+        cd "$shell_DIR" || end_kodo_t_main ""
         echo "Select the PawnCC version to download:"
         echo "[A/a] PawnCC 3.10.10"
         echo "[B/b] PawnCC 3.10.9"
@@ -182,7 +182,7 @@ function struct_compilers_win()
         if ! curl -L --progress-bar -o "$call_download_file_CURL" "$DOWNLOAD_URL_CURL"; then
             echo -e "$(collor_red "fail:") Failed to download the file.."
 
-            end_console_main ""
+            end_kodo_t_main ""
         else
             unzip -q "$call_download_file_CURL" -d "$shell_DIR"
 
@@ -190,10 +190,10 @@ function struct_compilers_win()
             echo -e "$(collor_yellow "Download completed successfully.")"
             echo
 
-            end_console_main ""
+            end_kodo_t_main ""
         fi
     else
-        end_console_main ""
+        end_kodo_t_main ""
     fi
 }
 export struct_compilers_win

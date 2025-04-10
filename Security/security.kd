@@ -2,7 +2,7 @@
 
 function @ENCRYPTION_CREATE()
 {
-    if [ "$console_save_notice" -eq 1 ]; then
+    if [ "$kodo_t_save_notice" -eq 1 ]; then
         if [ ! -f "$HOME/kodo/.enkodo" ] && [ -n "$RHASH_256" ]; then
             encryption_content=""
 
@@ -94,4 +94,4 @@ trap security_cleanup SIGTERM SIGQUIT SIGHUP
 : '
 	anti exit for SIGINT (^C)
 '
-trap end_console_main SIGINT
+trap end_kodo_t_main SIGINT

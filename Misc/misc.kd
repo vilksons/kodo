@@ -72,6 +72,6 @@ function fetch_now()
     else
         echo "Kodo Platform: Unknown"
     fi
-    end_console_main ""
+    end_kodo_t_main ""
 }
 export fetch_now

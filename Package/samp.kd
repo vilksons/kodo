@@ -6,7 +6,7 @@ function struct_samp_linux()
     read -r -p ">> " SEL_C
 
     if [[ -z "$SEL_C" || "$SEL_C" =~ ^[Yy]$ ]]; then
-        cd "$shell_DIR" || end_console_main ""
+        cd "$shell_DIR" || end_kodo_t_main ""
         echo "Select the SA-MP version to download:"
         echo "[A/a] SA-MP  0.3.DL R1"
         echo "[B/b] SA-MP  0.3.7 R3"
@@ -71,7 +71,7 @@ function struct_samp_linux()
         if ! curl -L --progress-bar -o "$call_download_file_CURL" "$DOWNLOAD_URL_CURL"; then
             echo -e "$(collor_red "fail:") Failed to download the file.."
             
-            end_console_main ""
+            end_kodo_t_main ""
         else
             tar -xzvf "$call_download_file_CURL" -C "$shell_DIR"
 
@@ -80,10 +80,10 @@ function struct_samp_linux()
             echo
             echo "Please rename \"rcon_password\" before running this command again"
 
-            end_console_main ""
+            end_kodo_t_main ""
         fi
     else
-        end_console_main ""
+        end_kodo_t_main ""
     fi
 }
 export struct_samp_linux
@@ -94,7 +94,7 @@ function struct_samp_win()
     read -r -p ">> " SEL_C
     
     if [[ -z "$SEL_C" || "$SEL_C" =~ ^[Yy]$ ]]; then
-        cd "$shell_DIR" || end_console_main ""
+        cd "$shell_DIR" || end_kodo_t_main ""
         echo "Select the SA-MP version to download:"
         echo "[A/a] SA-MP 0.3.DL R1"
         echo "[B/b] SA-MP 0.3.7 R3"
@@ -159,7 +159,7 @@ function struct_samp_win()
         if ! curl -L --progress-bar -o "$call_download_file_CURL" "$DOWNLOAD_URL_CURL"; then
             echo -e "$(collor_red "fail:") Failed to download the file.."
 
-            end_console_main ""
+            end_kodo_t_main ""
         else
             unzip -q "$call_download_file_CURL" -d "$shell_DIR"
 
@@ -168,10 +168,10 @@ function struct_samp_win()
             echo
             echo "Please rename \"rcon_password\" before running this command again"
 
-            end_console_main ""
+            end_kodo_t_main ""
         fi
     else
-        end_console_main ""
+        end_kodo_t_main ""
     fi
 }
 export struct_samp_win

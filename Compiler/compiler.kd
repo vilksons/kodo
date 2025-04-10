@@ -17,7 +17,7 @@ function kodo_init_compilers()
     if [[ "$kd_table" == "compile" ]]; then
         compiler_MODE="true"
         kodo_compilers "" || {
-            if [ "$console_module_loaded" -eq 1 ]; then
+            if [ "$kodo_t_module_loaded" -eq 1 ]; then
                 print_green "warn:" "err.. need to kill after installing \"succes\".."
                 print_green " killing.."
                 sleep 0.999
@@ -29,7 +29,7 @@ function kodo_init_compilers()
             if [[ "$commands_INPUT" == "." ]]; then
                 compiler_MODE="true"
                 kodo_compilers "" || {
-                    if [ "$console_module_loaded" -eq 1 ]; then
+                    if [ "$kodo_t_module_loaded" -eq 1 ]; then
                         print_green "warn:" "err.. need to kill after installing \"succes\".."
                         print_green " killing.."
                         sleep 0.999
@@ -53,7 +53,7 @@ function kodo_init_compilers()
                             printf "\e]8;;https://github.com/vilksons/kodo/wiki/Compiler-Option\e\\ or see here for more.\e]8;;\e\\"
                             echo
                             amx_valid=false
-                            end_console_main ""
+                            end_kodo_t_main ""
                         fi
                     done
 
@@ -80,7 +80,7 @@ function kodo_init_compilers()
                 case "$INSTALL_NOW" in
                     [Yy])
                         struct_choice_pawncc "" || {
-                            if [ "$console_module_loaded" -eq 1 ]; then
+                            if [ "$kodo_t_module_loaded" -eq 1 ]; then
                                 print_green "warn:" "err.. need to kill after installing \"succes\".."
                                 print_green " killing.."
                                 sleep 0.999
@@ -89,8 +89,8 @@ function kodo_init_compilers()
                         }
                         ;;
                     [Nn])
-                        struct_console_main "" || {
-                            if [ "$console_module_loaded" -eq 1 ]; then
+                        struct_kodo_t_main "" || {
+                            if [ "$kodo_t_module_loaded" -eq 1 ]; then
                                 print_green "warn:" "err.. need to kill after installing \"succes\".."
                                 print_green " killing.."
                                 sleep 0.999
@@ -100,7 +100,7 @@ function kodo_init_compilers()
                         ;;
                     *)
                         struct_choice_pawncc "" || {
-                            if [ "$console_module_loaded" -eq 1 ]; then
+                            if [ "$kodo_t_module_loaded" -eq 1 ]; then
                                 print_green "warn:" "err.. need to kill after installing \"succes\".."
                                 print_green " killing.."
                                 sleep 0.999
@@ -114,7 +114,7 @@ function kodo_init_compilers()
 
         if ! find "$shell_DIR" -type f -name "$commands_INPUT" | grep -q .; then
             print_red "crit:" "$commands_INPUT not found!."
-            struct_console_main ""
+            struct_kodo_t_main ""
         fi
 
         : '
@@ -156,7 +156,7 @@ function kodo_init_compilers()
                 local elapsed=$((end_time - start_time))
                 
                 bash_cache_compiler "" || {
-                    if [ "$console_module_loaded" -eq 1 ]; then
+                    if [ "$kodo_t_module_loaded" -eq 1 ]; then
                         print_green "warn:" "err.. need to kill after installing \"succes\".."
                         print_green " killing.."
                         sleep 0.999
@@ -179,9 +179,9 @@ function kodo_init_compilers()
                     echo -e "$(collor_green " Finished: $AMX_O")"
                     
                     if [[ "$compiler_MODE" == "true" ]]; then
-                        console_TITLE "compilers"
+                        kodo_t_TITLE "compilers"
                     elif [[ "$compiler_MODE" == "false" ]]; then
-                        console_TITLE "compiler - running"
+                        kodo_t_TITLE "compiler - running"
                     fi
                     echo
                     echo "total size: $(stat -c%s "$AMX_O") bytes"
@@ -217,7 +217,7 @@ function kodo_compilers() {
                     struct_choice_pawncc ""
                     ;;
                 [Nn])
-                    struct_console_main ""
+                    struct_kodo_t_main ""
                     ;;
                 *)
                     struct_choice_pawncc ""
@@ -292,9 +292,9 @@ function kodo_compilers() {
                 echo -e "$(collor_green " Finished: $AMX_O")"
 
                 if [[ "$compiler_MODE" == "true" ]]; then
-                    console_TITLE "compilers"
+                    kodo_t_TITLE "compilers"
                 elif [[ "$compiler_MODE" == "false" ]]; then
-                    console_TITLE "compiler - running"
+                    kodo_t_TITLE "compiler - running"
                 fi
                 echo
                 echo "total size: $(stat -c%s "$AMX_O") bytes"
@@ -306,10 +306,10 @@ function kodo_compilers() {
     if [[ "$SHFILE" == "false" ]]; then
         echo -e "$(collor_red "..io not found!")"
         echo
-        end_console_main ""
+        end_kodo_t_main ""
     fi
     if [[ "$compiler_MODE" == "true" || "$compiler_MODE" == "nul" || "$compiler_MODE" == "" ]]; then
-        end_console_main ""
+        end_kodo_t_main ""
     elif [[ "$compiler_MODE" == "false" ]]; then
         space_servers ""
     fi
