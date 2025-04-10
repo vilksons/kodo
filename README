@@ -27,122 +27,13 @@ KEEPING UP-TO-DATE
 Always update using:
     `sync`
 
-PREREQUISITES of Kodo
+PREREQUISITES 
 =============
 
 INSTALLATION
-------------
-Supported Platforms:
-- Linux, Darwin, Windows, macOS, and Android/iPhone via:
-  - Docker (Windows/macOS): https://www.docker.com/
-  - WSL/WSL2 (Windows): https://learn.microsoft.com/en-us/windows/wsl/install
-  - MSYS2 (Windows): https://www.msys2.org/
-  - mingw-w64 (Windows/macOS): https://www.mingw-w64.org/
-  - Cygwin (Windows): https://www.cygwin.com/
-  - Babun (Windows): https://github.com/babun/babun
-  - Termux (Android/Emulator): https://termux.dev/en/
-  - UserLAnd (Android/Emulator): https://github.com/CypherpunkArmory/UserLAnd
-  - Linux Deploy (Android/Emulator): https://github.com/meefik/linuxdeploy
-  - iSH (iPhone): https://github.com/ish-app/ish
-  - a-Shell (iPhone): https://github.com/holzschu/a-shell
-
-INSTALL `kodo/workspace` SCRIPT
----------------------------------
-  - Download via GNU/Wget:
-      * wget -q -O workspace https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace
-  - Download via cURL:
-      * curl -L -o workspace https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace
-
-INSTALL REQUIRED PACKAGES
-*************************
-Full list available at:
-  - https://github.com/vilksons/kodo/wiki/Required-Packages
-
-INSTALLATION STEPS
-*************************
-1. Open the Terminal.
-2. Make the `workspace` script executable:
-   - chmod +x workspace
-3. Run the script:
-   - bash ./workspace
-
-Docker Usage
-*************************
-  (MacOS)
-  @ docker run -it ubuntu
-    @ docker run -v ~/Downloads:/mnt/downloads -it ubuntu
-      ^ allowed downloads directory
-    * apt update
-      ^ refresh repository
-    - apt upgrade
-      ^ (optional) upgrade packages if needed
-    * dpkg --add-architecture i386
-    * apt update
-      ^ refresh repository
-    * apt install libc6:i386 libstdc++6:i386
-      |           ^ -------- ^ i386 configuration
-      ^ x86 support for x64 (needed)
-    * apt install python3 wget curl grep awk sed coreutils yq jq aria2 unzip tar 
-      | ↸ ------- ^ ----- ^ -- ^ -- ^ -- ^ - ^ - ^ ------- ^ --- ^ --- ^ --- ^ - ^
-      ^ (required) packages required for kodo/workspace              
-  @ cd /path/to/kodo/
-    ^ cd to kodo/workspace
-  @ chmod +x workspace
-    |     ^ type of permissions, recommended +x : 755
-    ^ give permissions for the kodo/workspace
-  @ ./workspace
-    ^ runn the kodo/workspace
-
-  (Linux/WSL2)
-  @ sudo usermod -aG docker $USER
-    ^ added docker user to Your Linux.
-  @ newgrp docker
-    ^ added new group for docker
-  @ sudo systemctl start docker
-    ^ start docker
-  @ sudo systemctl enable docker
-    ^ enabler docker
-  @ docker run -it ubuntu
-    @ docker run -v ~/Downloads:/mnt/downloads -it ubuntu
-      ^ allowed downloads directory
-    * apt update
-      ^ refresh repository
-    - apt upgrade
-      ^ (optional) upgrade packages if needed
-    * dpkg --add-architecture i386
-    * apt update
-      ^ refresh repository
-    * apt install libc6:i386 libstdc++6:i386
-      |           ^ -------- ^ i386 added configuration
-      ^ x86 support for x64 (needed)
-    * apt install python3 wget curl grep awk sed coreutils yq jq aria2 unzip tar
-      | ↸ ------- ^ ----- ^ -- ^ -- ^ -- ^ - ^ - ^ ------- ^ --- ^ --- ^ --- ^ - ^
-      ^ (required) packages required for kodo/workspace                        
-  @ cd /path/to/kodo/
-    ^ cd to kodo/workspace
-  @ chmod +x workspace
-    |     ^ type of permissions, recommended +x : 755
-    ^ give permissions for the kodo/workspace
-  @ ./workspace
-    ^ runn the kodo/workspace
-
-  (Additional)
-    @ docker ps -a
-      ^ check all running/previously run docker
-      - docker start <container-names>
-        |            ^ docker container names
-        ^ for start a docker images
-      - docker exec -it <container-names> /bin/bash
-        |                                 ^ location session, /bin/bash : /bin/sh 
-        ^ to running the containers
-    @ docker stop <container-names>
-      ^ to stop a docker containers
-    @ docker rm -f <container-names>
-      |         ^ -f for forcing
-      ^ to remove a docker containers
-      - docker rm -f $(docker ps -a -q)
-        |         ^ -f for forcing
-        ^ to remove all docker containers
+=============
+Please See: https://github.com/vilksons/kodo/blob/kodo/INSTALL
+        or: https://github.com/vilksons/kodo/blob/kodo/INSTALL.md
 
 USAGE
 =====

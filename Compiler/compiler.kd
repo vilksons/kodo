@@ -128,8 +128,8 @@ function kodo_init_compilers()
             if [ -f "$__LOOP_COMPILES_FILE" ] && [[ "$__LOOP_COMPILES_FILE" != *.amx ]]; then
                 bash_title "$__LOOP_COMPILES_FILE"
 
-                local AMX_O
-                AMX_O="$(dirname "$__LOOP_COMPILES_FILE")/$(basename "${__LOOP_COMPILES_FILE%.*}.amx")"
+                local _AMX_OUTPUT_
+                _AMX_OUTPUT_="$(dirname "$__LOOP_COMPILES_FILE")/$(basename "${__LOOP_COMPILES_FILE%.*}.amx")"
 
                 echo
                 echo -e "$(collor_green " Compiling: $commands_INPUT")"
@@ -143,13 +143,29 @@ function kodo_init_compilers()
                 start_time=$(date +%s%3N)
 
                     for _ in {1..10}; do
-                        if [ "$COMPILER_NEXT" -eq 1 ]; then
-                            "$COMPILER_PAWNCC" -i"$toml_INCLUDE" "$toml_EXCLUDE" "$__LOOP_COMPILES_FILE" -o"$AMX_O" "$toml_AMX_OPT_F" > "$__cache_save_compile" 2>&1
-                        elif [ "$COMPILER_NEXT" -eq 2 ]; then
-                            "$COMPILER_PAWNCC" -i"$toml_INCLUDE" "$toml_EXCLUDE" "$__LOOP_COMPILES_FILE" -o"$AMX_O" "$toml_AMX_OPT_F" "${commands_OPAMX[@]}" > "$__cache_save_compile" 2>&1
+                        if [ -z "$toml_INCLUDE" ]; then
+                            toml_INCLUDE="pawno/include"
                         fi
+
+                        if [ -z "$toml_EXCLUDE" ]; then
+                            toml_EXCLUDE="qawno/include"
+                        fi
+
+                        compile_options="-i$toml_INCLUDE $toml_EXCLUDE $__LOOP_COMPILES_FILE -o$_AMX_OUTPUT_"
+
+                        if [ "$toml_AMX_OPT_F" != "nul" ]; then
+                            compile_options="$compile_options $toml_AMX_OPT_F"
+                        fi
+
+                        if [ "$COMPILER_NEXT" -eq 1 ]; then
+                            compile_options="$compile_options -d2 -;+ -(+ -\\+ -Z+"
+                        elif [ "$COMPILER_NEXT" -eq 2 ]; then
+                            compile_options="$compile_options ${commands_OPAMX[@]}"
+                        fi
+
+                        "$COMPILER_PAWNCC" $compile_options > "$__cache_save_compile" 2>&1
                     done
-                
+
                 local end_time
                 end_time=$(date +%s%3N)
 
@@ -174,9 +190,9 @@ function kodo_init_compilers()
                     fi
                 fi
 
-                if [ -s "$AMX_O" ]; then
+                if [ -s "$_AMX_OUTPUT_" ]; then
                     echo
-                    echo -e "$(collor_green " Finished: $AMX_O")"
+                    echo -e "$(collor_green " Finished: $_AMX_OUTPUT_")"
                     
                     if [[ "$compiler_MODE" == "true" ]]; then
                         kodo_t_TITLE "compilers"
@@ -184,7 +200,7 @@ function kodo_init_compilers()
                         kodo_t_TITLE "compiler - running"
                     fi
                     echo
-                    echo "total size: $(stat -c%s "$AMX_O") bytes"
+                    echo "total size: $(stat -c%s "$_AMX_OUTPUT_") bytes"
                     if [ "$COMPILER_NEXT" == 2 ]; then
                         echo -n "with +option compiler: "
                         echo "${commands_OPAMX[@]}"
@@ -239,8 +255,8 @@ function kodo_compilers() {
             SHFILE="true"
             bash_title "$__LOOP_COMPILES_FILE"
 
-            local AMX_O
-            AMX_O="$(dirname "$__LOOP_COMPILES_FILE")/$(basename "${__LOOP_COMPILES_FILE%.io*}.amx")"
+            local _AMX_OUTPUT_
+            _AMX_OUTPUT_="$(dirname "$__LOOP_COMPILES_FILE")/$(basename "${__LOOP_COMPILES_FILE%.io*}.amx")"
 
             echo
             echo -e "$(collor_green " Compiling: $__LOOP_COMPILES_FILE")"
@@ -267,7 +283,23 @@ function kodo_compilers() {
             start_time=$(date +%s%3N)
 
                 for _ in {1..10}; do
-                    "$COMPILER_PAWNCC" -i"$toml_INCLUDE" "$toml_EXCLUDE" "$__LOOP_COMPILES_FILE" -o"$AMX_O" "$toml_AMX_OPT_F" > "$__cache_save_compile" 2>&1
+                    if [ -z "$toml_INCLUDE" ]; then
+                        toml_INCLUDE="pawno/include"
+                    fi
+                    
+                    if [ -z "$toml_EXCLUDE" ]; then
+                        toml_EXCLUDE="qawno/include"
+                    fi
+                    
+                    compile_command="$COMPILER_PAWNCC -i$toml_INCLUDE $toml_EXCLUDE $__LOOP_COMPILES_FILE -o$_AMX_OUTPUT_"
+                    
+                    if [ "$toml_AMX_OPT_F" != "nul" ]; then
+                        compile_command="$compile_command $toml_AMX_OPT_F"
+                    else
+                        compile_command="$compile_command -d2 -;+ -(+ -\\+ -Z+"
+                    fi
+                    
+                    $compile_command > "$__cache_save_compile" 2>&1
                 done
 
             local end_time
@@ -287,9 +319,9 @@ function kodo_compilers() {
                 fi
             fi
             
-            if [ -s "$AMX_O" ]; then
+            if [ -s "$_AMX_OUTPUT_" ]; then
                 echo
-                echo -e "$(collor_green " Finished: $AMX_O")"
+                echo -e "$(collor_green " Finished: $_AMX_OUTPUT_")"
 
                 if [[ "$compiler_MODE" == "true" ]]; then
                     kodo_t_TITLE "compilers"
@@ -297,7 +329,7 @@ function kodo_compilers() {
                     kodo_t_TITLE "compiler - running"
                 fi
                 echo
-                echo "total size: $(stat -c%s "$AMX_O") bytes"
+                echo "total size: $(stat -c%s "$_AMX_OUTPUT_") bytes"
                 echo "Total execution time: ${elapsed} ms"
             fi
         fi

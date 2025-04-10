@@ -96,6 +96,8 @@ toml_VIREON_BIODATA="nul"
 export toml_VIREON_BIODATA
 toml_VIREON_TOKEN="nul"
 export toml_VIREON_TOKEN
+toml_AMX_OPT_F=""
+export toml_AMX_OPT_F
 
 commands_OPAMX=()
 
@@ -255,7 +257,7 @@ token = "VIREON_ABC123-token"
 
 [compiler]
 exclude_paths = ["includes1/", "includes2/", "includes3/"]
-amx_flags = ["-d3", "-(+", "-;+"]
+amx_flags = ["-d2", "-;+", "-(+", "-\\+", "-Z+"]
 EOF
 fi
 }
@@ -899,7 +901,6 @@ function mode_KODO() {
             else
                 end_kodo_t_main ""
             fi
-        
             ;;
         "fetch")
             fetch_now ""
