@@ -185,21 +185,21 @@ Almost all are equipped with Hashing, Hashing SHA256 Double. including Bot Token
 CONFIGURATION DETAILS
 ------------------------------
 
-| Key                | Description                                                                      |
-|--------------------|----------------------------------------------------------------------------------|
-| `amx_flags`        | Compiler option flags. See https://github.com/vilksons/kodo/wiki/Compiler-Option |
-| `include_paths`    | Directory path for additional includes used in compilation.                      |
-| `exclude_paths`    | Paths to exclude from compilation.                                               |
-| `samp_log`         | SA-MP server log file path.                                                      |
-| `samp_config`      | SA-MP configuration file (for Zapman).                                           |
-| `samp_init`        | SA-MP main server file (for Zapman).                                             |
-| `samp_executable`  | Path to the SA-MP server executable.                                             |
-| `include_dir`      | Directory for includes managed by the package manager (Zapman).                  |
-| `plugins_dir`      | Directory where `.dll` and `.so` plugin files are stored (Zapman).               |
-| `vireon_token`     | API key from [Groq Console - https://console.groq.com/keys.                      |
-| `vireon_model`     | AI model from Groq Console - https://console.groq.com/.                          |
-| `vireon_profile`   | Additional vireon configuration info.                                            |
-| `remcache_auto`    | Automatically remove `.cache`, table history, etc. (`true`/`false`).             |
+| Key            | Description                                                                          |
+|----------------|--------------------------------------------------------------------------------------|
+| amx_flags      | Compiler option flags. See https://github.com/vilksons/kodo/wiki/Compiler-Option     |
+| include_paths  | Directory path for additional includes used in compilation.                          |
+| exclude_paths  | Paths to exclude from compilation.                                                   |
+| log            | SA-MP server log file path.                                                          |
+| config         | SA-MP configuration file (for Zapman).                                               |
+| init           | SA-MP main server file (for Zapman).                                                 |
+| executable     | Path to the SA-MP server executable.                                                 |
+| include_dir    | Directory for includes managed by the package manager (Zapman).                      |
+| plugins_dir    | Directory where .dll and .so plugin files are stored (Zapman).                       |
+| token          | API key from Groq Console - https://console.groq.com/keys                            |
+| model          | AI model from Groq Console - https://console.groq.com/                               |
+| profile        | Additional Vireon configuration info.                                                |
+| remcache_auto  | Automatically remove .cache, table history, etc. (true/false).                       |
 
 EXAMPLE: `include_paths` USAGE
 ------------------------------
