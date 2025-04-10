@@ -2,7 +2,6 @@
 
 import os
 import hashlib
-import json
 import sys
 import re
 import base64
