@@ -414,6 +414,8 @@ function struct_kodo_t_main() {
             
             kodo_t_save_notice=1
 
+            cd "$shell_DIR" >/dev/null 2>&1 || echo ""
+
             ignore_this @KODO_TOML_CREATE "" &&
             ignore_this @LOAD_KODO_TOML ""
         fi
