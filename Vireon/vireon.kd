@@ -41,11 +41,22 @@ color_groups = {
     GREEN: [
         'true', 'string', 'int', 'float', 'bool',
         'double', 'char', 'if', 'else', 'while', 'for', 'do',
-        'switch', 'case', 'class', 'void', 'inline', 'include', 'end', 'printf', 'print', 'std'
+        'switch', 'case', 'class', 'void', 'inline', 'include',
+        'end', 'printf', 'print', 'std', 'const', 'constexpr', 'static',
+        'public', 'private', 'protected', 'struct', 'enum', 'typedef',
+        'new', 'delete', 'sizeof', 'this', 'namespace', 'using', 'template'
     ],
-    RED: ['false', 'return', 'throw', 'break', 'continue', 'foo', 'sudo'],
-    ORANGE: ['try', 'catch', 'finally', 'goto', 'main'],
-    GRAY: ['gcc', 'clang', 'sudo'],
+    RED: [
+        'false', 'return', 'throw', 'break', 'continue', 'foo', 'sudo',
+        'abort', 'exit', 'assert', 'panic', 'fatal', 'fail', 'raise'
+    ],
+    ORANGE: [
+        'try', 'catch', 'finally', 'goto', 'main', 'except', 'with', 'yield',
+        'await', 'async', 'lambda', 'defer', 'then'
+    ],
+    GRAY: [
+        'gcc', 'clang', 'sudo', 'cmake', 'make', 'g++', 'ld', 'objdump', 'valgrind'
+    ],
 }
 
 # flatten into a single keyword-to-color dictionary #
