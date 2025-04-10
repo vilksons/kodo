@@ -29,14 +29,13 @@ Always update using:
 
 PREREQUISITES 
 =============
-
 INSTALLATION
-=============
+------------
 Please See: https://github.com/vilksons/kodo/blob/kodo/INSTALL
         or: https://github.com/vilksons/kodo/blob/kodo/INSTALL.md
 
-USAGE
-=====
+KODO USAGE
+=============
 FILE RENAMING
 -------------
 You can rename `yourmode.pwn` files to a project-appropriate format (e.g., `yourmode.io.pwn`) for consistency.
