@@ -784,18 +784,19 @@ function mode_KODO() {
                         if [[ -d "$shell_DIR/.kodo" ]]; then
                             rm -rf "$shell_DIR/.kodo"
                         fi
-                        mkdir -p "$shell_DIR/.kodo"
-                        chmod +x "$shell_DIR/.kodo"
+                        if [ ! -d ".kodo" ]; then
+                            mkdir -p ".kodo/python" && chmod +x ".kodo"
+                        fi
 
                         echo "$latest" > "$shell_DIR/.itskodo"
                     
-                    function Upgrade_Kodo()
+                    function __upgrade_kodo__()
                     {
                         console_TITLE "Sync | Upgrade"
 
                         echo "Upgrading.."
                         
-                        local kodo_modular=(
+                        local __kodo_modular__=(
                             "Security/security.kd"
                             "Compat/compat.kd"
                             "Zapman/zapman.kd"
@@ -809,7 +810,7 @@ function mode_KODO() {
 
                         cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
 
-                        for __file__ in "${kodo_modular[@]}"; do
+                        for __file__ in "${__kodo_modular__[@]}"; do
                             wget -q --show-progress -O "$(basename "$__file__")" \
                                 "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/$__file__" \
                                 || { touch "$shell_DIR/.sync"; }
@@ -823,7 +824,7 @@ function mode_KODO() {
                     }
                         
                         if  [ "$kd_table" = "sync" ]; then
-                            Upgrade_Kodo ""
+                            __upgrade_kodo__ ""
                         elif [ "$commands_ARGS" = "update" ]; then
                             console_TITLE "Sync | Update"
 
@@ -833,7 +834,7 @@ function mode_KODO() {
                             wget -q --show-progress -O "workspace" \
                                 "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace"
                         else
-                            Upgrade_Kodo ""
+                            __upgrade_kodo__ ""
                         fi
                         
                         chmod +x "$shell_DIR/workspace"
