@@ -246,7 +246,7 @@ log = "$log"
 config = "$config"
 init = "main.pwn"
 executable = "$executable"
-remcache_auto = true
+remcache_auto = false
 
 [vireon]
 model = "gsk_abcd"
@@ -262,70 +262,51 @@ fi
 
 function @LOAD_KODO_TOML()
 {
-    toml_INCLUDE=$(tomlq -r '.paths.include_paths' kodo.toml)
-    if [ "$toml_INCLUDE" = "nul" ]; then
-        print_red "error:" "failed to load \"include_paths\" from \"toml_INCLUDE\".."
-    fi
+    local toml_data
+    toml_data=$(tomlq -c '.' kodo.toml)
 
-    toml_ZAPMAN_INCLUDE=$(tomlq -r '.paths.include_dir' kodo.toml)
-    if [ "$toml_ZAPMAN_INCLUDE" = "nul" ]; then
-        print_red "error:" "failed to load \"include_dir\" from \"toml_ZAPMAN_INCLUDE\".."
-    fi
-    
-    toml_ZAPMAN_PLUGINS=$(tomlq -r '.paths.plugins_dir' kodo.toml)
-    if [ "$toml_ZAPMAN_PLUGINS" = "nul" ]; then
-        print_red "error:" "failed to load \"plugins_dir\" from \"toml_ZAPMAN_PLUGINS\".."
-    fi
+    # paths
+    toml_INCLUDE=$(echo "$toml_data" | jq -r '.paths.include_paths')
+    [[ "$toml_INCLUDE" == "null" ]] && print_red "error:" "failed to load \"include_paths\""
 
-    toml_LOG_SERV=$(tomlq -r '.server.log' kodo.toml)
-    if [ "$toml_LOG_SERV" = "nul" ]; then
-        print_red "error:" "failed to load \"log\" from \"toml_LOG_SERV\".."
-    fi
+    toml_ZAPMAN_INCLUDE=$(echo "$toml_data" | jq -r '.paths.include_dir')
+    [[ "$toml_ZAPMAN_INCLUDE" == "null" ]] && print_red "error:" "failed to load \"include_dir\""
 
-    toml_SERVER_CONFIG=$(tomlq -r '.server.config' kodo.toml)
-    if [ "$toml_SERVER_CONFIG" = "nul" ]; then
-        print_red "error:" "failed to load \"config\" from \"toml_SERVER_CONFIG\".."
-    fi
+    toml_ZAPMAN_PLUGINS=$(echo "$toml_data" | jq -r '.paths.plugins_dir')
+    [[ "$toml_ZAPMAN_PLUGINS" == "null" ]] && print_red "error:" "failed to load \"plugins_dir\""
 
-    toml_FILE_SERV=$(tomlq -r '.server.init' kodo.toml)
-    if [ "$toml_FILE_SERV" = "nul" ]; then
-        print_red "error:" "failed to load \"init\" from \"toml_FILE_SERV\".."
-    fi
+    # server
+    toml_LOG_SERV=$(echo "$toml_data" | jq -r '.server.log')
+    [[ "$toml_LOG_SERV" == "null" ]] && print_red "error:" "failed to load \"log\""
 
-    toml_EXE_SERV=$(tomlq -r '.server.executable' kodo.toml)
-    if [ "$toml_EXE_SERV" = "nul" ]; then
-        print_red "error:" "failed to load \"executable\" from \"toml_EXE_SERV\".."
-    fi
+    toml_SERVER_CONFIG=$(echo "$toml_data" | jq -r '.server.config')
+    [[ "$toml_SERVER_CONFIG" == "null" ]] && print_red "error:" "failed to load \"config\""
 
-    toml_RM_CACHE=$(tomlq -r '.server.remcache_auto' kodo.toml)
-    if [ "$toml_RM_CACHE" = "nul" ]; then
-        print_red "error:" "failed to load \"remcache_auto\" from \"toml_RM_CACHE\".."
-    fi
+    toml_FILE_SERV=$(echo "$toml_data" | jq -r '.server.init')
+    [[ "$toml_FILE_SERV" == "null" ]] && print_red "error:" "failed to load \"init\""
 
-    toml_VIREON_MODEL=$(tomlq -r '.vireon.model' kodo.toml)
-    if [ "$toml_VIREON_MODEL" = "nul" ]; then
-        print_red "error:" "failed to load \"include_paths\" from \"toml_VIREON_MODEL\".."
-    fi
+    toml_EXE_SERV=$(echo "$toml_data" | jq -r '.server.executable')
+    [[ "$toml_EXE_SERV" == "null" ]] && print_red "error:" "failed to load \"executable\""
 
-    toml_VIREON_BIODATA=$(tomlq -r '.vireon.profile' kodo.toml)
-    if [ "$toml_VIREON_BIODATA" = "nul" ]; then
-        print_red "error:" "failed to load \"profile\" from \"toml_VIREON_BIODATA\".."
-    fi
+    toml_RM_CACHE=$(echo "$toml_data" | jq -r '.server.remcache_auto')
+    [[ "$toml_RM_CACHE" == "null" ]] && print_red "error:" "failed to load \"remcache_auto\""
 
-    toml_VIREON_TOKEN=$(tomlq -r '.vireon.token' kodo.toml)
-    if [ "$toml_VIREON_TOKEN" = "nul" ]; then
-        print_red "error:" "failed to load \"token\" from \"toml_VIREON_TOKEN\".."
-    fi
+    # vireon
+    toml_VIREON_MODEL=$(echo "$toml_data" | jq -r '.vireon.model')
+    [[ "$toml_VIREON_MODEL" == "null" ]] && print_red "error:" "failed to load \"model\""
 
-    toml_EXCLUDE=$(tomlq -r '.compiler.exclude_paths[]' kodo.toml | xargs -I {} echo -n "-i\"{}\" " )
-    if [ "$toml_EXCLUDE" = "nul" ]; then
-        print_red "error:" "failed to load \"exclude_paths\" from \"toml_EXCLUDE\".."
-    fi
+    toml_VIREON_BIODATA=$(echo "$toml_data" | jq -r '.vireon.profile')
+    [[ "$toml_VIREON_BIODATA" == "null" ]] && print_red "error:" "failed to load \"profile\""
 
-    toml_AMX_OPT_F=$(tomlq -r '.compiler.amx_flags[]' kodo.toml | xargs)
-    if [ "$toml_AMX_OPT_F" = "nul" ]; then
-        print_red "error:" "failed to load \"include_paths\" from \"toml_AMX_OPT_F\".."
-    fi
+    toml_VIREON_TOKEN=$(echo "$toml_data" | jq -r '.vireon.token')
+    [[ "$toml_VIREON_TOKEN" == "null" ]] && print_red "error:" "failed to load \"token\""
+
+    # compiler
+    toml_EXCLUDE=$(echo "$toml_data" | jq -r '.compiler.exclude_paths[]?' | xargs -I {} echo -n "-i\"{}\" " )
+    [[ -z "$toml_EXCLUDE" ]] && print_red "error:" "failed to load \"exclude_paths\""
+
+    toml_AMX_OPT_F=$(echo "$toml_data" | jq -r '.compiler.amx_flags[]?' | xargs)
+    [[ -z "$toml_AMX_OPT_F" ]] && print_red "error:" "failed to load \"amx_flags\""
 }
 
 function struct_kodo_t_main() {
@@ -372,14 +353,13 @@ function struct_kodo_t_main() {
                 if [ -f "$shell_DIR/$1" ] && [ "$kodo_t_module_loaded" -ne 1 ]; then
                     chmod +x "$shell_DIR/$1"
                     if [[ "$1" == ".kodo/python/wpython" ]]; then
-                        source <(python3 .kodo/python/wpython) || sleep 2.0
+                        source <(python3 .kodo/python/wpython) || sleep 1.0
                     else
                         if [[ "$1" == ".kodo/compat.kd" ]]; then
-                            source "$shell_DIR/$1" || sleep 2.0
-                            sleep 0.1
+                            source "$shell_DIR/$1" || sleep 1.0
                             compat_now ""
                         else
-                            source "$shell_DIR/$1" || sleep 2.0
+                            source "$shell_DIR/$1" || sleep 1.0
                         fi
                     fi
 
