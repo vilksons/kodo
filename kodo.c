@@ -1,7 +1,7 @@
 /*
  * Project Name: Kodo Toolchain
- * Project File: Kodo/kodo.c
- * Copyright (C) Kodo/Contributors
+ * Project File: cKodokodo.c
+ * Copyright (C) cKodoContributors
  *
  * This program is distributed under the terms of the GNU General Public License v2.0.
  * See the LICENSE file for details.
