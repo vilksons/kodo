@@ -8,11 +8,11 @@ function kodo_vireon()
         -H "Authorization: Bearer $_vireon_decrypt_token_passphrase_" \
         -H "Content-Type: application/json" \
         -d "{
-            \"model\": \"$json_VIREON_MODEL\",
+            \"model\": \"$toml_VIREON_MODEL\",
             \"messages\": [
                 {
                 \"role\": \"system\",
-                \"content\": \"$json_VIREON_BIODATA\"
+                \"content\": \"$toml_VIREON_BIODATA\"
                 },
                 {
                 \"role\": \"user\",

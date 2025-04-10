@@ -63,6 +63,19 @@ export COMPILER_PAWNCC
 COMPILER_NEXT=0
 export COMPILER_NEXT
 
+# Value of kodo.toml
+toml_INCLUDE=""
+toml_ZAPMAN_INCLUDE=""
+toml_ZAPMAN_PLUGINS=""
+toml_LOG_SERV=""
+toml_SERVER_CONFIG=""
+toml_FILE_SERV=""
+toml_EXE_SERV=""
+toml_RM_CACHE=""
+toml_VIREON_MODEL=""
+toml_VIREON_BIODATA=""
+toml_VIREON_TOKEN=""
+
 commands_OPAMX=()
 
 function collor_yellow() {
@@ -183,61 +196,107 @@ function rest_var() {
     zapman_ainstall_SIZEOF=0
 }
 
-function @LANG_CREATE()
+function @KODO_TOML_CREATE()
 {
-if [ ! -f "kodo.json" ]; then
+if [ ! -f "kodo.toml" ]; then
     if [[ "$__SAMP_SERVER" == "samp" ]]; then
-    cat > kodo.json <<EOF
-{
-    "amx_flags": [
-        "-;+",
-        "-(+",
-        "-d3"
-    ],
-    "include_paths": "pawno/include",
-    "exclude_paths": [
-        "includes",
-        "includes2",
-        "includes3"
-    ],
-    "samp_log": "server_log.txt",
-    "samp_config": "server.cfg",
-    "samp_init": "main.pwn",
-    "samp_executable": "samp03svr",
-    "include_dir": "pawno/include",
-    "plugins_dir": "plugins",
-    "vireon_token": "",
-    "vireon_model": "qwen-2.5-32b",
-    "vireon_profile": "",
-    "remcache_auto": "false"
-}
+    if [[ "$__OS__" == "windows" ]]; then
+    cat > kodo.toml <<EOF
+[paths]
+include_paths = "src/includes"
+include_dir = "zapman/include"
+plugins_dir = "zapman/plugins"
+
+[server]
+log = "server.log"
+config = "server.cfg"
+init = "main.pwn"
+executable = "samp-server.exe"
+remcache_auto = true
+
+[vireon]
+model = "gsk_abcd"
+profile = "hello vireom, your name is john"
+token = "VIREON_ABC123-token"
+
+[compiler]
+exclude_paths = ["includes1/", "includes2/", "includes3/"]
+amx_flags = ["-d3", "-(+", "-;+"]
 EOF
+    elif [[ "$__OS__" == "linux" ]]; then
+    cat > kodo.toml <<EOF
+[paths]
+include_paths = "src/includes"
+include_dir = "zapman/include"
+plugins_dir = "zapman/plugins"
+
+[server]
+log = "server.log"
+config = "server.cfg"
+init = "main.pwn"
+executable = "samp03svr"
+remcache_auto = true
+
+[vireon]
+model = "gsk_abcd"
+profile = "hello vireom, your name is john"
+token = "VIREON_ABC123-token"
+
+[compiler]
+exclude_paths = ["includes1/", "includes2/", "includes3/"]
+amx_flags = ["-d3", "-(+", "-;+"]
+EOF
+    fi
 SIGNAL_KILL ""
     elif [[ "$__SAMP_SERVER" == "omp" ]]; then
-        cat > kodo.json <<EOF
-{
-    "amx_flags": [
-        "-;+",
-        "-(+",
-        "-d3"
-    ],
-    "include_paths": "qawno/include",
-    "exclude_paths": [
-        "includes",
-        "includes2",
-        "includes3"
-    ],
-    "samp_log": "log.txt",
-    "samp_config": "config.json",
-    "samp_init": "main.pwn",
-    "samp_executable": "omp-server",
-    "include_dir": "qawno/include",
-    "plugins_dir": "components",
-    "vireon_token": "",
-    "vireon_model": "qwen-2.5-32b",
-    "vireon_profile": "",
-    "remcache_auto": "false"
+    if [[ "$__OS__" == "windows" ]]; then
+    cat > kodo.toml <<EOF
+cat > kodo.toml <<EOF
+[paths]
+include_paths = "src/includes"
+include_dir = "zapman/include"
+plugins_dir = "zapman/plugins"
+
+[server]
+log = "log.txt"
+config = "config.json"
+init = "main.pwn"
+executable = "omp-server.exe"
+remcache_auto = true
+
+[vireon]
+model = "gsk_abcd"
+profile = "hello vireom, your name is john"
+token = "VIREON_ABC123-token"
+
+[compiler]
+exclude_paths = ["includes1/", "includes2/", "includes3/"]
+amx_flags = ["-d3", "-(+", "-;+"]
 EOF
+    elif [[ "$__OS__" == "linux" ]]; then
+    cat > kodo.toml <<EOF
+[paths]
+include_paths = "src/includes"
+include_dir = "zapman/include"
+plugins_dir = "zapman/plugins"
+
+[server]
+log = "log.txt"
+config = "config.json"
+init = "main.pwn"
+executable = "omp-server"
+remcache_auto = true
+
+[vireon]
+model = "gsk_abcd"
+profile = "hello vireom, your name is john"
+token = "VIREON_ABC123-token"
+
+[compiler]
+exclude_paths = ["includes1/", "includes2/", "includes3/"]
+amx_flags = ["-d3", "-(+", "-;+"]
+EOF
+    fi
 SIGNAL_KILL ""
     fi
 else
@@ -252,6 +311,26 @@ else
     fi
 }
 
+function @LOAD_KODO_TOML()
+{
+    toml_INCLUDE=$(tomlq -r '.paths.include_paths' kodo.toml)
+    toml_ZAPMAN_INCLUDE=$(tomlq -r '.paths.include_dir' kodo.toml)
+    toml_ZAPMAN_PLUGINS=$(tomlq -r '.paths.plugins_dir' kodo.toml)
+
+    toml_LOG_SERV=$(tomlq -r '.server.log' kodo.toml)
+    toml_SERVER_CONFIG=$(tomlq -r '.server.config' kodo.toml)
+    toml_FILE_SERV=$(tomlq -r '.server.init' kodo.toml)
+    toml_EXE_SERV=$(tomlq -r '.server.executable' kodo.toml)
+    toml_RM_CACHE=$(tomlq -r '.server.remcache_auto' kodo.toml)
+
+    toml_VIREON_MODEL=$(tomlq -r '.vireon.model' kodo.toml)
+    toml_VIREON_BIODATA=$(tomlq -r '.vireon.profile' kodo.toml)
+    toml_VIREON_TOKEN=$(tomlq -r '.vireon.token' kodo.toml)
+
+    toml_EXCLUDE=$(tomlq -r '.compiler.exclude_paths[]' kodo.toml | xargs -I {} echo -n "-i\"{}\" " )
+    toml_AMX_OPT_F=$(tomlq -r '.compiler.amx_flags[]' kodo.toml | xargs)
+}
+
 function struct_console_main() {
     #
     #   @mode.Typeof
@@ -260,7 +339,7 @@ function struct_console_main() {
     local console_missing_cmds=()
     local console_missing_save_cmds
 
-    for console_missing_save_cmds in python3 wget curl grep awk sed tr jq aria2c openssl; do
+    for console_missing_save_cmds in python3 wget curl grep awk sed tr jq tomlq aria2c openssl; do
         # python3 wget curl grep awk sed tr jq ariac2 openssl #
         if ! command -v "$console_missing_save_cmds" &>/dev/null; then
             if [ "$console_missing_save_cmds" = "aria2c" ]; then
@@ -386,9 +465,11 @@ function struct_console_main() {
     fi
 
     ignore_this @ENCRYPTION_CREATE ""
-    
-    @LANG_CREATE ""
-	
+
+    ignore_this @KODO_TOML_CREATE ""
+
+    ignore_this @LOAD_KODO_TOML ""
+
     rest_var ""
 
     typeof ""
@@ -405,7 +486,7 @@ function typeof() {
     if [ "$console_module_loaded" != 1 ]; then
         console_TITLE "Kodo Mode"
     fi
-
+    
     HISTFILE="$HOME/.kodo.txt"
     touch "$HISTFILE"
 
@@ -534,14 +615,14 @@ function mode_KODO() {
         "stop")
             console_TITLE "Stop"
 
-            ignore_this pkill -9 -f "$json_EXE_SERV"
+            ignore_this pkill -9 -f "$toml_EXE_SERV"
 
             end_console_main ""
             ;;
         "restart")
             console_TITLE "Restart"
 
-            ignore_this pkill -9 -f "$json_EXE_SERV" && sleep 1
+            ignore_this pkill -9 -f "$toml_EXE_SERV" && sleep 1
             space_servers ""
 
             end_console_main ""
@@ -736,11 +817,12 @@ function mode_KODO() {
                 esac
             fi
             ;;
-        "json")
-            if [ -f "$shell_DIR/kodo.json" ]; then
-                mv kodo.json kodo.json.old.txt
+        "toml")
+            if [ -f "$shell_DIR/kodo.toml" ]; then
+                mv kodo.toml kodo.toml.old.txt
             fi
 
+            console_module_loaded=0
             struct_console_main ""
             ;;
         "checksums"*)
@@ -976,7 +1058,7 @@ function mode_KODO() {
                 ["cat"]=":: Display a files to Kodo Terminal - Usage: cat"
                 ["kill"]=":: Kill a Kodo Terminal - Usage: kill"
                 ["exit"]=":: Exit/End Kodo Terminal - Usage: exit | (+) [<args>] \"all\" to kill all tasks"
-                ["json"]=":: Rebuild kodo.json - Usage: json"
+                ["toml"]=":: Rebuild kodo.toml - Usage: toml"
                 ["directory"]=":: Display or Change Terminal Directory - Usage: directory | ls"
                 ["remcac"]=":: Remove cache \".cache\" Kodo - Usage: remcac"
                 ["vireon"]=":: Vireon Chat - Usage: vireon"
@@ -1069,7 +1151,7 @@ function help_dialog_kd()
     echo " exit (exit from terminal)"
     echo " remcac (remove cache ~/.cache/)"
     echo " vireon (A.I Chat)"
-    echo " json (rebuild kodo.json)"
+    echo " toml (rebuild kodo.toml)"
     echo " fetch (fetch of workspace)"
     
     if command -v nano &> /dev/null; then

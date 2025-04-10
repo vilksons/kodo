@@ -23,7 +23,7 @@ function @ENCRYPTION_CREATE()
         _zapman_decrypt_passphrase_=$(grep -oP '(?<=RHASH_256=).*' "$HOME/.enkodo" || head -n 1 "$HOME/.enkodo")
 
         local _sizeof_rate_token_
-        _sizeof_rate_token_=$(jq -r '.vireon_token' kodo.json)
+        _sizeof_rate_token_=$(jq -r '.vireon_token' kodo.toml)
         _vireon_decrypt_token_passphrase_=$(echo "$_sizeof_rate_token_" | openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:"$_zapman_decrypt_passphrase_" -base64)
     fi
 }
@@ -33,11 +33,11 @@ function @ENCRYPTION_TOKEN()
     if command -v openssl &> /dev/null; then
         _zapman_decrypt_passphrase_=$(grep -oP '(?<=RHASH_256=).*' "$HOME/.enkodo" || head -n 1 "$HOME/.enkodo")
 
-        __VIREON_TOKEN=$(jq -r '.vireon_token' kodo.json)
+        __VIREON_TOKEN=$(jq -r '.vireon_token' kodo.toml)
 
         if [[ "$__VIREON_TOKEN" =~ ^gsk_ ]] && [ -n "$__VIREON_TOKEN" ]; then
             VIREON_token_Encrypt=$(echo "$__VIREON_TOKEN" | openssl enc -aes-256-cbc -salt -pbkdf2 -pass pass:"$_zapman_decrypt_passphrase_" -base64)
-            jq --arg token "$VIREON_token_Encrypt" '.vireon_token = $token' kodo.json > ._ignoreme.json && mv ._ignoreme.json kodo.json
+            jq --arg token "$VIREON_token_Encrypt" '.vireon_token = $token' kodo.toml > ._ignoreme.json && mv ._ignoreme.json kodo.toml
         fi
     else
         print_red "crit:" "can't create encryption - openssl not found!"
@@ -49,7 +49,7 @@ function security_file_rm()
     : ' Remove File Logs '
     cd "$shell_DIR" >/dev/null 2>&1 || echo "" &&
 
-    if [[ "$json_RM_CACHE" == "true" ]]; then
+    if [[ "$toml_RM_CACHE" == "true" ]]; then
         ignore_this rm -rf "$shell_DIR/.cache"
 
         for __file in wget-log*; do

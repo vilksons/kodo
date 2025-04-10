@@ -194,23 +194,23 @@ EOF
                 fi
                 mkdir -p "$zapman_extract_dirs"
 
-                if [ -n "$json_ZAPMAN_INCLUDE" ]; then
+                if [ -n "$toml_ZAPMAN_INCLUDE" ]; then
                     # if not null
-                    if [ ! -d "$json_ZAPMAN_INCLUDE" ]; then
+                    if [ ! -d "$toml_ZAPMAN_INCLUDE" ]; then
                         # if not exist -> d : dir - f : file
-                        mkdir -p "$json_ZAPMAN_INCLUDE"
+                        mkdir -p "$toml_ZAPMAN_INCLUDE"
                     fi
                 else
-                    if [ ! -d "$json_ZAPMAN_INCLUDE" ]; then
+                    if [ ! -d "$toml_ZAPMAN_INCLUDE" ]; then
                         # if not exist -> d : dir - f : file
                         mkdir -p "pawno/include"
-                        json_ZAPMAN_INCLUDE="pawno/include"
+                        toml_ZAPMAN_INCLUDE="pawno/include"
                     fi
                 fi
 
-                if [ ! -d "$json_ZAPMAN_PLUGINS" ]; then
+                if [ ! -d "$toml_ZAPMAN_PLUGINS" ]; then
                     # if not exist -> d : dir - f : file
-                    mkdir "$json_ZAPMAN_PLUGINS" >/dev/null 2>&1 || mkdir "plugins" >/dev/null 2>&1
+                    mkdir "$toml_ZAPMAN_PLUGINS" >/dev/null 2>&1 || mkdir "plugins" >/dev/null 2>&1
                 fi
 
                 #
@@ -331,7 +331,7 @@ EOF
 
                 mapfile -t _zapman_include < <(find "$zapman_extract_dirs" -type f -name "*.inc" -exec basename {} \;)
 
-                if [ -d "$json_ZAPMAN_INCLUDE" ]; then
+                if [ -d "$toml_ZAPMAN_INCLUDE" ]; then
                     find "$zapman_extract_dirs" -type f -name "*.inc" | while IFS= read -r inc_file; do
                         _real_path=$(realpath --relative-to="$zapman_extract_dirs" "$inc_file" 2> /dev/null || echo "$inc_file")
                         
@@ -344,13 +344,13 @@ EOF
 
                         # Check if $_real_path contains '/' which indicates a more complete path
                         # If there is a '/', we need to get the directory from $_real_path
-                        # $json_ZAPMAN_INCLUDE will be combined with the directory of that path
+                        # $toml_ZAPMAN_INCLUDE will be combined with the directory of that path
                         if [[ "$_real_path" == */* ]]; then
-                            _dest_path="$json_ZAPMAN_INCLUDE/$(dirname "$_real_path")"
+                            _dest_path="$toml_ZAPMAN_INCLUDE/$(dirname "$_real_path")"
                         else
                             # If there is no '/', $_real_path is just a file name
-                            # So, we just point to the base directory $json_ZAPMAN_INCLUDE
-                            _dest_path="$json_ZAPMAN_INCLUDE"
+                            # So, we just point to the base directory $toml_ZAPMAN_INCLUDE
+                            _dest_path="$toml_ZAPMAN_INCLUDE"
                         fi
 
                         mkdir -p "$_dest_path"
@@ -381,7 +381,7 @@ EOF
 
                     # If neither "components" nor "plugins" exist, move .dll and .so files instead
                     else
-                        find "$zapman_extract_dirs" -type f \( -name "*.dll" -o -name "*.so" \) -exec mv -f {} "$json_ZAPMAN_PLUGINS/" \;
+                        find "$zapman_extract_dirs" -type f \( -name "*.dll" -o -name "*.so" \) -exec mv -f {} "$toml_ZAPMAN_PLUGINS/" \;
                     fi
 
                     # Cleanup: Remove the extracted archive and its directory
@@ -397,31 +397,31 @@ EOF
 
         zapman_include_serv() {
             # Check if the main file exists
-            if [[ -f "$shell_DIR/gamemodes/$json_FILE_SERV" ]]; then
+            if [[ -f "$shell_DIR/gamemodes/$toml_FILE_SERV" ]]; then
                 # Check if the include already exists in the file
-                if ! grep -qxF "#include <$1>" "$shell_DIR/gamemodes/$json_FILE_SERV"; then
+                if ! grep -qxF "#include <$1>" "$shell_DIR/gamemodes/$toml_FILE_SERV"; then
                     # Check if a_samp or open.mp includes are present
-                    if grep -Eq "^a_samp|a_samp.inc|open\.mp" "$shell_DIR/gamemodes/$json_FILE_SERV"; then
+                    if grep -Eq "^a_samp|a_samp.inc|open\.mp" "$shell_DIR/gamemodes/$toml_FILE_SERV"; then
                         # Debug message
                         print_yellow "dbg:" "Adding #include <$1> after #include <a_samp> or #include <open.mp>"
                         # Insert the include after a_samp or open.mp
                         awk -v inc="#include <$1>" '
                             /^#include (<|")?(a_samp|a_samp.inc|open\.mp)(>|")?/ { print; print inc; next }
                             { print }
-                        ' "$shell_DIR/gamemodes/$json_FILE_SERV" > "$shell_DIR/gamemodes/$json_FILE_SERV.tmp" && mv "$shell_DIR/gamemodes/$json_FILE_SERV.tmp" "$shell_DIR/gamemodes/$json_FILE_SERV"
+                        ' "$shell_DIR/gamemodes/$toml_FILE_SERV" > "$shell_DIR/gamemodes/$toml_FILE_SERV.tmp" && mv "$shell_DIR/gamemodes/$toml_FILE_SERV.tmp" "$shell_DIR/gamemodes/$toml_FILE_SERV"
                     else
                         # Debug message if no a_samp or open.mp found
                         print_yellow "dbg:" "No #include <a_samp> | \"a_samp\" or #include <open.mp> | \"open.mp\" found, adding at the beginning"
                         # Add the include at the beginning of the file
-                        sed -i "1i#include <$1>" "$shell_DIR/gamemodes/$json_FILE_SERV"
+                        sed -i "1i#include <$1>" "$shell_DIR/gamemodes/$toml_FILE_SERV"
                     fi
                 else
                     # Debug message if the include already exists
-                    print_yellow "dbg:" "#include <$1> already exists in $shell_DIR/gamemodes/$json_FILE_SERV"
+                    print_yellow "dbg:" "#include <$1> already exists in $shell_DIR/gamemodes/$toml_FILE_SERV"
                 fi
             else
                 # Debug message if the file is not found
-                print_yellow "dbg:" "$shell_DIR/gamemodes/$json_FILE_SERV not found."
+                print_yellow "dbg:" "$shell_DIR/gamemodes/$toml_FILE_SERV not found."
             fi
         }
 
@@ -433,23 +433,23 @@ EOF
                 fi
             done
 
-    if [ -f "$shell_DIR/$json_SERVER_CONFIG" ]; then
+    if [ -f "$shell_DIR/$toml_SERVER_CONFIG" ]; then
         if [[ "$__SAMP_SERVER" == "samp" ]]; then
                 zapman_plugin_serv_samp() {
                     # Check if the plugin is already listed in server.cfg
-                    if ! grep -qE "^plugins.*\b$1\b" "$json_SERVER_CONFIG"; then
+                    if ! grep -qE "^plugins.*\b$1\b" "$toml_SERVER_CONFIG"; then
                         # If both .so and .dll files exist
-                        if [[ -f "$json_ZAPMAN_PLUGINS/$1.so" && -f "$json_ZAPMAN_PLUGINS/$1.dll" ]]; then
+                        if [[ -f "$toml_ZAPMAN_PLUGINS/$1.so" && -f "$toml_ZAPMAN_PLUGINS/$1.dll" ]]; then
                             print_yellow "dbg:" "Adding $1.so and $1.dll to the plugins"
-                            sed -i -E "s/^(plugins.*)/\1 $1.dll $1.so/" "$json_SERVER_CONFIG"
+                            sed -i -E "s/^(plugins.*)/\1 $1.dll $1.so/" "$toml_SERVER_CONFIG"
                         # If only .so exists
-                        elif [[ -f "$json_ZAPMAN_PLUGINS/$1.so" ]]; then
+                        elif [[ -f "$toml_ZAPMAN_PLUGINS/$1.so" ]]; then
                             print_yellow "dbg:" "Adding $1.so to the plugins"
-                            sed -i -E "s/^(plugins.*)/\1 $1.so/" "$json_SERVER_CONFIG"
+                            sed -i -E "s/^(plugins.*)/\1 $1.so/" "$toml_SERVER_CONFIG"
                         # If only .dll exists
-                        elif [[ -f "$json_ZAPMAN_PLUGINS/$1.dll" ]]; then
+                        elif [[ -f "$toml_ZAPMAN_PLUGINS/$1.dll" ]]; then
                             print_yellow "dbg:" "Adding $1.dll to the plugins"
-                            sed -i -E "s/^(plugins.*)/\1 $1.dll/" "$json_SERVER_CONFIG"
+                            sed -i -E "s/^(plugins.*)/\1 $1.dll/" "$toml_SERVER_CONFIG"
                         fi
                     else
                         print_yellow "dbg:" "Plugin $1 already exists, not added."
@@ -457,8 +457,8 @@ EOF
                 }
 
                 # Check if the "plugins" line exists in server.cfg
-                if ! grep -q "^plugins" "$json_SERVER_CONFIG"; then
-                    echo "plugins" >> "$json_SERVER_CONFIG"
+                if ! grep -q "^plugins" "$toml_SERVER_CONFIG"; then
+                    echo "plugins" >> "$toml_SERVER_CONFIG"
                     print_yellow "dbg:" "The 'plugins' line has been added to server.cfg."
                 fi
 
@@ -469,19 +469,19 @@ EOF
         elif [[ "$__SAMP_SERVER" == "omp" ]]; then
             zapman_plugin_serv_omp() {
                 # Check if the plugin already exists in the "legacy_plugins" array within the "pawn" object
-                if ! grep -q -E "$1\.(so|dll)" "$json_SERVER_CONFIG"; then
+                if ! grep -q -E "$1\.(so|dll)" "$toml_SERVER_CONFIG"; then
                     # If both .so and .dll exist
-                    if [[ -f "$json_ZAPMAN_PLUGINS/$1.so" && -f "$json_ZAPMAN_PLUGINS/$1.dll" ]]; then
+                    if [[ -f "$toml_ZAPMAN_PLUGINS/$1.so" && -f "$toml_ZAPMAN_PLUGINS/$1.dll" ]]; then
                         print_yellow "dbg:" "Adding $1.so and $1.dll to pawn.legacy_plugins"
-                        jq ".pawn.legacy_plugins += [\"$1.dll\", \"$1.so\"]" "$json_SERVER_CONFIG" 2>/dev/null > .__ignored,json && mv .__ignored,json "$json_SERVER_CONFIG"
+                        jq ".pawn.legacy_plugins += [\"$1.dll\", \"$1.so\"]" "$toml_SERVER_CONFIG" 2>/dev/null > .__ignored,json && mv .__ignored,json "$toml_SERVER_CONFIG"
                     # If only .so exists
-                    elif [[ -f "$json_ZAPMAN_PLUGINS/$1.so" ]]; then
+                    elif [[ -f "$toml_ZAPMAN_PLUGINS/$1.so" ]]; then
                         print_yellow "dbg:" "Adding $1.so to pawn.legacy_plugins"
-                        jq ".pawn.legacy_plugins += [\"$1.so\"]" "$json_SERVER_CONFIG" 2>/dev/null > .__ignored,json && mv .__ignored,json "$json_SERVER_CONFIG"
+                        jq ".pawn.legacy_plugins += [\"$1.so\"]" "$toml_SERVER_CONFIG" 2>/dev/null > .__ignored,json && mv .__ignored,json "$toml_SERVER_CONFIG"
                     # If only .dll exists
-                    elif [[ -f "$json_ZAPMAN_PLUGINS/$1.dll" ]]; then
+                    elif [[ -f "$toml_ZAPMAN_PLUGINS/$1.dll" ]]; then
                         print_yellow "dbg:" "Adding $1.dll to pawn.legacy_plugins"
-                        jq ".pawn.legacy_plugins += [\"$1.dll\"]" "$json_SERVER_CONFIG" 2>/dev/null > .__ignored,json && mv .__ignored,json "$json_SERVER_CONFIG"
+                        jq ".pawn.legacy_plugins += [\"$1.dll\"]" "$toml_SERVER_CONFIG" 2>/dev/null > .__ignored,json && mv .__ignored,json "$toml_SERVER_CONFIG"
                     fi
                 else
                     print_yellow "dbg:" "Plugin $1 already exists in pawn.legacy_plugins, not added."
@@ -490,16 +490,16 @@ EOF
 
             # Checking if the JSON file has the correct structure
             # Ensure the config.json file is an object and has a "pawn" object with a "legacy_plugins" array
-            if ! jq -e '.pawn.legacy_plugins' "$json_SERVER_CONFIG" 2>/dev/null > /dev/null; then
+            if ! jq -e '.pawn.legacy_plugins' "$toml_SERVER_CONFIG" 2>/dev/null > /dev/null; then
                 # Add or fix the JSON structure by adding the "pawn" key containing "legacy_plugins" as an empty array
-                if jq -e '. | type == "object"' "$json_SERVER_CONFIG" 2>/dev/null > /dev/null; then
-                    jq '.pawn = {legacy_plugins: []} + .' "$json_SERVER_CONFIG" 2>/dev/null > .__ignored,json && mv .__ignored,json "$json_SERVER_CONFIG"
+                if jq -e '. | type == "object"' "$toml_SERVER_CONFIG" 2>/dev/null > /dev/null; then
+                    jq '.pawn = {legacy_plugins: []} + .' "$toml_SERVER_CONFIG" 2>/dev/null > .__ignored,json && mv .__ignored,json "$toml_SERVER_CONFIG"
                     print_yellow "dbg:" "Key 'pawn.legacy_plugins' has been added as an empty array."
                 fi
             fi
 
             # Remove duplicates from the legacy_plugins array
-            jq '.pawn.legacy_plugins |= unique' "$json_SERVER_CONFIG" > .__ignored,json && mv .__ignored,json "$json_SERVER_CONFIG"
+            jq '.pawn.legacy_plugins |= unique' "$toml_SERVER_CONFIG" > .__ignored,json && mv .__ignored,json "$toml_SERVER_CONFIG"
 
             # Adding plugins based on zapman_DEPENDS and new_zapman_DEPENDS variables
             zapman_plugin_serv_omp "$zapman_DEPENDS"
@@ -544,8 +544,8 @@ EOF
                 done
             }
 
-            if [ -d "$json_ZAPMAN_INCLUDE" ]; then
-                zapman_INCLUDES=$(find "$json_ZAPMAN_INCLUDE" -type f -name "*.inc" -print0 | regex_to_remove "$rm_input_save")
+            if [ -d "$toml_ZAPMAN_INCLUDE" ]; then
+                zapman_INCLUDES=$(find "$toml_ZAPMAN_INCLUDE" -type f -name "*.inc" -print0 | regex_to_remove "$rm_input_save")
 
                 if [[ -n "$zapman_INCLUDES" ]]; then
                     echo "$zapman_INCLUDES" | xargs -0 shred -u
@@ -554,12 +554,12 @@ EOF
                     print_yellow "dbg:" "No matching include files found: $rm_input_save"
                 fi
             else
-                # If the $json_ZAPMAN_INCLUDE folder does not exist, print a warning message
-                print_green "warn:" "$json_ZAPMAN_INCLUDE not found"
+                # If the $toml_ZAPMAN_INCLUDE folder does not exist, print a warning message
+                print_green "warn:" "$toml_ZAPMAN_INCLUDE not found"
             fi
 
-            if [ -d "$json_ZAPMAN_PLUGINS" ]; then
-                _zapman_plugins=$(find "$json_ZAPMAN_PLUGINS" -type f \( -name "*.dll" -o -name "*.so" \) -print0 | regex_to_remove "$rm_input_save")
+            if [ -d "$toml_ZAPMAN_PLUGINS" ]; then
+                _zapman_plugins=$(find "$toml_ZAPMAN_PLUGINS" -type f \( -name "*.dll" -o -name "*.so" \) -print0 | regex_to_remove "$rm_input_save")
 
                 if [[ -n "$_zapman_plugins" ]]; then
                     echo "$_zapman_plugins" | xargs -0 shred -u
@@ -568,8 +568,8 @@ EOF
                     print_yellow "dbg:" "No matching plugin files found: $rm_input_save"
                 fi
             else
-                # If the $json_ZAPMAN_PLUGINS folder does not exist, print a warning message
-                print_green "warn:" "$json_ZAPMAN_PLUGINS not found"
+                # If the $toml_ZAPMAN_PLUGINS folder does not exist, print a warning message
+                print_green "warn:" "$toml_ZAPMAN_PLUGINS not found"
             fi
 
             # Function to remove #include <find_plugin_name> from main.pwn
@@ -577,16 +577,16 @@ EOF
                 local escaped_plugins
                 escaped_plugins=$(echo "$1" | sed 's/[&/\]/\\&/g')  # Escape special characters in the plugin name
 
-                if [[ -f "$shell_DIR/gamemodes/$json_FILE_SERV" ]]; then  # Check if the main server file exists
-                    if grep -q "#include <$escaped_plugins>" "$shell_DIR/gamemodes/$json_FILE_SERV"; then  # Check if the plugin is already included
-                        print_yellow "dbg:" "Removing #include <$escaped_plugins> from $shell_DIR/gamemodes/$json_FILE_SERV"
+                if [[ -f "$shell_DIR/gamemodes/$toml_FILE_SERV" ]]; then  # Check if the main server file exists
+                    if grep -q "#include <$escaped_plugins>" "$shell_DIR/gamemodes/$toml_FILE_SERV"; then  # Check if the plugin is already included
+                        print_yellow "dbg:" "Removing #include <$escaped_plugins> from $shell_DIR/gamemodes/$toml_FILE_SERV"
                         # Remove the #include line for the plugin from the main server file
-                        sed -i "/#include <$escaped_plugins>/d" "$shell_DIR/gamemodes/$json_FILE_SERV"
+                        sed -i "/#include <$escaped_plugins>/d" "$shell_DIR/gamemodes/$toml_FILE_SERV"
                     else
-                        print_yellow "dbg:" "#include <$escaped_plugins> not found in $shell_DIR/gamemodes/$json_FILE_SERV"
+                        print_yellow "dbg:" "#include <$escaped_plugins> not found in $shell_DIR/gamemodes/$toml_FILE_SERV"
                     fi
                 else
-                    print_yellow "dbg:" "$shell_DIR/gamemodes/$json_FILE_SERV not found."
+                    print_yellow "dbg:" "$shell_DIR/gamemodes/$toml_FILE_SERV not found."
                 fi
         }
 
@@ -598,43 +598,43 @@ EOF
             done
 
         if [[ "$__SAMP_SERVER" == "samp" ]]; then
-            # Check if the $json_SERVER_CONFIG file exists
-            if [ -f "$json_SERVER_CONFIG" ]; then
-                # Check if the 'plugins' entry exists in the $json_SERVER_CONFIG file
-                if grep -q "^plugins" "$json_SERVER_CONFIG"; then
+            # Check if the $toml_SERVER_CONFIG file exists
+            if [ -f "$toml_SERVER_CONFIG" ]; then
+                # Check if the 'plugins' entry exists in the $toml_SERVER_CONFIG file
+                if grep -q "^plugins" "$toml_SERVER_CONFIG"; then
                     # Remove occurrences of $rm_input_save followed by .so, .dll, or no extension
                     # This pattern is globally replaced in the file
-                    sed -i "/^plugins /s/\b$rm_input_save\(\.so\|\.dll\|\)//g" "$json_SERVER_CONFIG"
+                    sed -i "/^plugins /s/\b$rm_input_save\(\.so\|\.dll\|\)//g" "$toml_SERVER_CONFIG"
                     # Replace double spaces with single space throughout the file
-                    sed -i 's/  / /g' "$json_SERVER_CONFIG"
+                    sed -i 's/  / /g' "$toml_SERVER_CONFIG"
                     # Ensure that the 'plugins' entry is not an empty line
-                    sed -i 's/^plugins *$/plugins /' "$json_SERVER_CONFIG"
+                    sed -i 's/^plugins *$/plugins /' "$toml_SERVER_CONFIG"
                     # Print a success message after the modifications
-                    print_yellow "[OK]" "Removed $rm_input_save from $json_SERVER_CONFIG"
+                    print_yellow "[OK]" "Removed $rm_input_save from $toml_SERVER_CONFIG"
                 else
                     # If no 'plugins' entry is found, print a debug message
-                    print_yellow "dbg:" "No 'plugins' entry found in $json_SERVER_CONFIG"
+                    print_yellow "dbg:" "No 'plugins' entry found in $toml_SERVER_CONFIG"
                 fi
             else
-                # If the $json_SERVER_CONFIG file does not exist, print a warning message
-                print_green "warn:" "$json_SERVER_CONFIG not found"
+                # If the $toml_SERVER_CONFIG file does not exist, print a warning message
+                print_green "warn:" "$toml_SERVER_CONFIG not found"
             fi
         elif [[ "$__SAMP_SERVER" == "omp" ]]; then
-            # Check if the $json_SERVER_CONFIG file exists
-            if [ -f "$json_SERVER_CONFIG" ]; then
-            # Check if the 'legacy_plugins' entry exists in the $json_SERVER_CONFIG file
-                if grep -qE '"legacy_plugins"[[:space:]]*:' "$json_SERVER_CONFIG"; then
+            # Check if the $toml_SERVER_CONFIG file exists
+            if [ -f "$toml_SERVER_CONFIG" ]; then
+            # Check if the 'legacy_plugins' entry exists in the $toml_SERVER_CONFIG file
+                if grep -qE '"legacy_plugins"[[:space:]]*:' "$toml_SERVER_CONFIG"; then
                     # Handle array format
-                    jq --arg pattern "$rm_input_save" 'walk(if type == "array" then map(select(. != $pattern)) else . end)' "$json_SERVER_CONFIG" > .cache_tmp && mv .cache_tmp "$json_SERVER_CONFIG"
+                    jq --arg pattern "$rm_input_save" 'walk(if type == "array" then map(select(. != $pattern)) else . end)' "$toml_SERVER_CONFIG" > .cache_tmp && mv .cache_tmp "$toml_SERVER_CONFIG"
                     # Print a success message after the modifications
-                    print_yellow "[OK]" "Removed $rm_input_save from $json_SERVER_CONFIG"
+                    print_yellow "[OK]" "Removed $rm_input_save from $toml_SERVER_CONFIG"
                 else
                     # If no 'legacy_plugins' entry is found, print a debug message
-                    print_yellow "dbg:" "No 'legacy_plugins' entry found in $json_SERVER_CONFIG"
+                    print_yellow "dbg:" "No 'legacy_plugins' entry found in $toml_SERVER_CONFIG"
                 fi
             else
-                # If the $json_SERVER_CONFIG file does not exist, print a warning message
-                print_green "warn:" "$json_SERVER_CONFIG not found"
+                # If the $toml_SERVER_CONFIG file does not exist, print a warning message
+                print_green "warn:" "$toml_SERVER_CONFIG not found"
             fi
         fi
 

@@ -175,7 +175,7 @@ STARTING & DEBUGGING
  o Debug a script:
 	debug yourmode.pwn
 
-CONFIGURATION `kodo.json`
+CONFIGURATION `kodo.toml`
 ========================
 
 NOTICE
@@ -205,7 +205,7 @@ EXAMPLE: `include_paths` USAGE
 ------------------------------
     If a script inside `includes/` is not recognized, define:
         "include_paths": "includes"
-    in `kodo.json`.
+    in `kodo.toml`.
 
 EXAMPLE DIRECTORY STRUCTURE
 ---------------------------

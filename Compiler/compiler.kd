@@ -144,9 +144,9 @@ function kodo_init_compilers()
 
                     for _ in {1..10}; do
                         if [ "$COMPILER_NEXT" -eq 1 ]; then
-                            "$COMPILER_PAWNCC" -i"$json_INCLUDE" "$json_EXCLUDE" "$__LOOP_COMPILES_FILE" -o"$AMX_O" "$json_AMX_OPT_F" > "$__cache_save_compile" 2>&1
+                            "$COMPILER_PAWNCC" -i"$toml_INCLUDE" "$toml_EXCLUDE" "$__LOOP_COMPILES_FILE" -o"$AMX_O" "$toml_AMX_OPT_F" > "$__cache_save_compile" 2>&1
                         elif [ "$COMPILER_NEXT" -eq 2 ]; then
-                            "$COMPILER_PAWNCC" -i"$json_INCLUDE" "$json_EXCLUDE" "$__LOOP_COMPILES_FILE" -o"$AMX_O" "$json_AMX_OPT_F" "${commands_OPAMX[@]}" > "$__cache_save_compile" 2>&1
+                            "$COMPILER_PAWNCC" -i"$toml_INCLUDE" "$toml_EXCLUDE" "$__LOOP_COMPILES_FILE" -o"$AMX_O" "$toml_AMX_OPT_F" "${commands_OPAMX[@]}" > "$__cache_save_compile" 2>&1
                         fi
                     done
                 
@@ -167,7 +167,7 @@ function kodo_init_compilers()
                 cat "$__cache_save_compile"
                 ignore_this sleep 0.1
 
-                if [[ "$json_RM_CACHE" == "true" ]]; then
+                if [[ "$toml_RM_CACHE" == "true" ]]; then
                     cache_compiler=".cache/compiler.log"
                     if [ -f "$cache_compiler" ]; then
                         shred -u "$cache_compiler"
@@ -249,7 +249,7 @@ function kodo_compilers() {
             : '
                 @PawnCC.Compile
             '
-            for option in $json_AMX_OPT_F; do
+            for option in $toml_AMX_OPT_F; do
                 # option checking
                 if [[ " ${COMPILER_AMX_FLAGS[*]} " != *" $option "* ]]; then
                     # not valid
@@ -267,7 +267,7 @@ function kodo_compilers() {
             start_time=$(date +%s%3N)
 
                 for _ in {1..10}; do
-                    "$COMPILER_PAWNCC" -i"$json_INCLUDE" "$json_EXCLUDE" "$__LOOP_COMPILES_FILE" -o"$AMX_O" "$json_AMX_OPT_F" > "$__cache_save_compile" 2>&1
+                    "$COMPILER_PAWNCC" -i"$toml_INCLUDE" "$toml_EXCLUDE" "$__LOOP_COMPILES_FILE" -o"$AMX_O" "$toml_AMX_OPT_F" > "$__cache_save_compile" 2>&1
                 done
 
             local end_time
@@ -280,7 +280,7 @@ function kodo_compilers() {
             cat "$__cache_save_compile"
             ignore_this sleep 0.1
 
-            if [[ "$json_RM_CACHE" == "true" ]]; then
+            if [[ "$toml_RM_CACHE" == "true" ]]; then
                 cache_compiler=".cache/compiler.log"
                 if [ -f "$cache_compiler" ]; then
                     shred -u "$cache_compiler"
