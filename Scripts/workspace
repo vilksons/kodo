@@ -746,7 +746,7 @@ function mode_KODO() {
                                 "Package/pawncc.kd"
                                 "Server/server.kd"
                                 "Misc/misc.kd"
-                                "VIREON/vireon.kd"
+                                "Vireon/vireon.kd"
                                 "Compiler/compiler.kd"
                             )
 
