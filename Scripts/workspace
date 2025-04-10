@@ -413,9 +413,7 @@ function struct_console_main() {
                         clear && cd "$(dirname "$(realpath "$0")")" || echo
                         print_yellow "install succes!"
                         print_green " killing.."
-                        sleep 0.999
-                        SIGNAL_KILL ""
-                        typeof ""
+                        sleep 0.999 && SIGNAL_KILL ""
                     fi
                 fi
             }
@@ -470,9 +468,7 @@ function struct_console_main() {
 
     ignore_this @LOAD_KODO_TOML ""
 
-    rest_var ""
-
-    typeof ""
+    rest_var "" && typeof ""
 }
 export struct_console_main
 
