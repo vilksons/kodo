@@ -217,72 +217,35 @@ function rest_var() {
     zapman_ainstall_SIZEOF=0
 }
 
-function @KODO_TOML_CREATE()
-{
-if [ ! -f "kodo.toml" ]; then
+function @KODO_TOML_CREATE() {
+    if [ ! -f "kodo.toml" ]; then
+    local executable=""
+    local log=""
+    local config=""
+
     if [[ "$__SAMP_SERVER" == "samp" ]]; then
-    if [[ "$__OS__" == "windows" ]]; then
-    cat > kodo.toml <<EOF
-[paths]
-include_paths = "src/includes"
-include_dir = "zapman/include"
-plugins_dir = "zapman/plugins"
-
-[server]
-log = "server.log"
-config = "server.cfg"
-init = "main.pwn"
-executable = "samp-server.exe"
-remcache_auto = true
-
-[vireon]
-model = "gsk_abcd"
-profile = "hello vireom, your name is john"
-token = "VIREON_ABC123-token"
-
-[compiler]
-exclude_paths = ["includes1/", "includes2/", "includes3/"]
-amx_flags = ["-d3", "-(+", "-;+"]
-EOF
-    elif [[ "$__OS__" == "linux" ]]; then
-    cat > kodo.toml <<EOF
-[paths]
-include_paths = "src/includes"
-include_dir = "zapman/include"
-plugins_dir = "zapman/plugins"
-
-[server]
-log = "server.log"
-config = "server.cfg"
-init = "main.pwn"
-executable = "samp03svr"
-remcache_auto = true
-
-[vireon]
-model = "gsk_abcd"
-profile = "hello vireom, your name is john"
-token = "VIREON_ABC123-token"
-
-[compiler]
-exclude_paths = ["includes1/", "includes2/", "includes3/"]
-amx_flags = ["-d3", "-(+", "-;+"]
-EOF
-    fi
-SIGNAL_KILL ""
+        log="server.log"
+        config="server.cfg"
+        executable="samp-server.exe"
+        [[ "$__OS__" == "linux" ]] && executable="samp03svr"
     elif [[ "$__SAMP_SERVER" == "omp" ]]; then
-    if [[ "$__OS__" == "windows" ]]; then
+        log="log.txt"
+        config="config.json"
+        executable="omp-server.exe"
+        [[ "$__OS__" == "linux" ]] && executable="omp-server"
+    fi
+
     cat > kodo.toml <<EOF
-cat > kodo.toml <<EOF
 [paths]
 include_paths = "src/includes"
 include_dir = "zapman/include"
 plugins_dir = "zapman/plugins"
 
 [server]
-log = "log.txt"
-config = "config.json"
+log = "$log"
+config = "$config"
 init = "main.pwn"
-executable = "omp-server.exe"
+executable = "$executable"
 remcache_auto = true
 
 [vireon]
@@ -294,41 +257,7 @@ token = "VIREON_ABC123-token"
 exclude_paths = ["includes1/", "includes2/", "includes3/"]
 amx_flags = ["-d3", "-(+", "-;+"]
 EOF
-    elif [[ "$__OS__" == "linux" ]]; then
-    cat > kodo.toml <<EOF
-[paths]
-include_paths = "src/includes"
-include_dir = "zapman/include"
-plugins_dir = "zapman/plugins"
-
-[server]
-log = "log.txt"
-config = "config.json"
-init = "main.pwn"
-executable = "omp-server"
-remcache_auto = true
-
-[vireon]
-model = "gsk_abcd"
-profile = "hello vireom, your name is john"
-token = "VIREON_ABC123-token"
-
-[compiler]
-exclude_paths = ["includes1/", "includes2/", "includes3/"]
-amx_flags = ["-d3", "-(+", "-;+"]
-EOF
-    fi
-SIGNAL_KILL ""
-    fi
-else
-    ignore_this @ENCRYPTION_TOKEN ""  || {
-        if [ "$kodo_t_module_loaded" -eq 1 ]; then
-                print_green "warn:" "err.. need to kill after installing \"succes\".."
-                print_green " killing.."
-                sleep 0.999 && SIGNAL_KILL "" && typeof ""
-            fi
-        }
-    fi
+fi
 }
 
 function @LOAD_KODO_TOML()
@@ -525,8 +454,7 @@ function struct_kodo_t_main() {
 
     ignore_this @ENCRYPTION_CREATE ""
 
-    ignore_this @KODO_TOML_CREATE ""
-
+    ignore_this @KODO_TOML_CREATE "" &&
     ignore_this @LOAD_KODO_TOML ""
 
     rest_var "" && typeof ""
@@ -744,8 +672,6 @@ function mode_KODO() {
             struct_kodo_t_main ""
             ;;
         "kill")
-            kodo_t_TITLE "Kill"
-
             kodo_t_save_notice=0
             kodo_t_save_messages=0
             
@@ -814,10 +740,11 @@ function mode_KODO() {
                                 || { touch "$shell_DIR/.sync"; }
                         done
 
-                        cd "$shell_DIR" || echo ""
-                        wget -q --show-progress -O "$shell_DIR/.kodo/python/wpython" \
-                            "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/wpython"
-                        wget -q --show-progress -O "$shell_DIR/workspace" \
+                        cd "$shell_DIR/.kodo/python" >/dev/null 2>&1 || echo ""
+                        wget -q --show-progress -O "wpython" \
+                            "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/wpython" &&
+                        cd "$shell_DIR" >/dev/null 2>&1 || echo ""
+                        wget -q --show-progress -O "workspace" \
                             "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace"
                     }
                         
