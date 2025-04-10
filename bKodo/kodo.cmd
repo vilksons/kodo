@@ -4,8 +4,8 @@ setlocal EnableDelayedExpansion
 
 color F
 
-SET "ASM_OPTION_M=-o"
-SET "ASM_OPTION_P=-C- -O0 -d2"
+SET "PAWN_OPTION_M=-o"
+SET "PAWN_OPTION_P=-C- -O0 -d2"
 
 SET "BATCHDIR=%~dp0"
 SET "BATCHTITLE="
@@ -449,7 +449,7 @@ GOTO COMMAND_TYPEOF
             SET "AMX_O=%%~dpnF"
             SET "AMX_O=!AMX_O:.io=!%.amx"
 
-            "!BATCHPAWNCC!" "%%F" %ASM_OPTION_M%"!AMX_O!" %ASM_OPTION_P% > %METADAT_FILE% 2>&1
+            "!BATCHPAWNCC!" "%%F" %PAWN_OPTION_M%"!AMX_O!" %PAWN_OPTION_P% > %METADAT_FILE% 2>&1
             TYPE %METADAT_FILE%
 
             IF EXIST "!AMX_O!" (
@@ -463,13 +463,13 @@ GOTO COMMAND_TYPEOF
                         CALL :COLOURTEXT a "[#]~"
 						
                         IF "%BATCHSTS%"=="true" (
-                            SET "BATCHTITLE=compilers "%ASM_OPTION_M% %ASM_OPTION_P%""
+                            SET "BATCHTITLE=compilers "%PAWN_OPTION_M% %PAWN_OPTION_P%""
                             TITLE user:~/!BATCHTITLE!
                         ) ELSE IF "%BATCHSTS%"=="false" (
-                            SET "BATCHTITLE=compiler - running "%ASM_OPTION_M% %ASM_OPTION_P%""
+                            SET "BATCHTITLE=compiler - running "%PAWN_OPTION_M% %PAWN_OPTION_P%""
                             TITLE user:~/!BATCHTITLE!
                         )
-                        ECHO Total Size [%%~zA / bytes] ^| "!AMX_O!" ^| "%ASM_OPTION_M% %ASM_OPTION_P%" 
+                        ECHO Total Size [%%~zA / bytes] ^| "!AMX_O!" ^| "%PAWN_OPTION_M% %PAWN_OPTION_P%" 
                 )
             ) ELSE (
                     setlocal DisableDelayedExpansion 
