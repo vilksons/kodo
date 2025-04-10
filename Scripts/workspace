@@ -2,6 +2,10 @@
 
 clear && cd "$(dirname "$(realpath "$0")")" || echo
 
+if [ -d "$HOME/kodo" ]; then
+    mkdir "$HOME/kodo"
+fi
+
 __OS_NOTICE__=0
 export __OS_NOTICE__
 
@@ -23,10 +27,11 @@ export __SAMP_SERVER
 
 # Zapman
 ZAPMAN_ainstall_Encrypt=""
+export ZAPMAN_ainstall_Encrypt
 zapman_ainstall_SIZEOF=0
 export zapman_ainstall_SIZEOF
 
-# KODO.AI
+# Vireon A.I
 VIREON_token_Encrypt=""
 export VIREON_token_Encrypt
 _vireon_decrypt_token_passphrase_=""
@@ -63,18 +68,31 @@ export COMPILER_PAWNCC
 COMPILER_NEXT=0
 export COMPILER_NEXT
 
-# Value of kodo.toml
-toml_INCLUDE=""
-toml_ZAPMAN_INCLUDE=""
-toml_ZAPMAN_PLUGINS=""
-toml_LOG_SERV=""
-toml_SERVER_CONFIG=""
-toml_FILE_SERV=""
-toml_EXE_SERV=""
-toml_RM_CACHE=""
-toml_VIREON_MODEL=""
-toml_VIREON_BIODATA=""
-toml_VIREON_TOKEN=""
+# Struct of kodo.toml
+toml_INCLUDE="nul"
+export toml_INCLUDE
+toml_EXCLUDE="nul"
+export toml_EXCLUDE
+toml_ZAPMAN_INCLUDE="nul"
+export toml_ZAPMAN_INCLUDE
+toml_ZAPMAN_PLUGINS="nul"
+export toml_ZAPMAN_PLUGINS
+toml_LOG_SERV="nul"
+export toml_LOG_SERV
+toml_SERVER_CONFIG="nul"
+export toml_SERVER_CONFIG
+toml_FILE_SERV="nul"
+export toml_FILE_SERV
+toml_EXE_SERV="nul"
+export toml_EXE_SERV
+toml_RM_CACHE="nul"
+export toml_RM_CACHE
+toml_VIREON_MODEL="nul"
+export toml_VIREON_MODEL
+toml_VIREON_BIODATA="nul"
+export toml_VIREON_BIODATA
+toml_VIREON_TOKEN="nul"
+export toml_VIREON_TOKEN
 
 commands_OPAMX=()
 
@@ -314,28 +332,72 @@ else
 function @LOAD_KODO_TOML()
 {
     toml_INCLUDE=$(tomlq -r '.paths.include_paths' kodo.toml)
+    if [ "$toml_INCLUDE" = "nul" ]; then
+        print_red "error:" "failed to load \"include_paths\" from \"toml_INCLUDE\".."
+    fi
+
     toml_ZAPMAN_INCLUDE=$(tomlq -r '.paths.include_dir' kodo.toml)
+    if [ "$toml_ZAPMAN_INCLUDE" = "nul" ]; then
+        print_red "error:" "failed to load \"include_dir\" from \"toml_ZAPMAN_INCLUDE\".."
+    fi
+    
     toml_ZAPMAN_PLUGINS=$(tomlq -r '.paths.plugins_dir' kodo.toml)
+    if [ "$toml_ZAPMAN_PLUGINS" = "nul" ]; then
+        print_red "error:" "failed to load \"plugins_dir\" from \"toml_ZAPMAN_PLUGINS\".."
+    fi
 
     toml_LOG_SERV=$(tomlq -r '.server.log' kodo.toml)
+    if [ "$toml_LOG_SERV" = "nul" ]; then
+        print_red "error:" "failed to load \"log\" from \"toml_LOG_SERV\".."
+    fi
+
     toml_SERVER_CONFIG=$(tomlq -r '.server.config' kodo.toml)
+    if [ "$toml_SERVER_CONFIG" = "nul" ]; then
+        print_red "error:" "failed to load \"config\" from \"toml_SERVER_CONFIG\".."
+    fi
+
     toml_FILE_SERV=$(tomlq -r '.server.init' kodo.toml)
+    if [ "$toml_FILE_SERV" = "nul" ]; then
+        print_red "error:" "failed to load \"init\" from \"toml_FILE_SERV\".."
+    fi
+
     toml_EXE_SERV=$(tomlq -r '.server.executable' kodo.toml)
+    if [ "$toml_EXE_SERV" = "nul" ]; then
+        print_red "error:" "failed to load \"executable\" from \"toml_EXE_SERV\".."
+    fi
+
     toml_RM_CACHE=$(tomlq -r '.server.remcache_auto' kodo.toml)
+    if [ "$toml_RM_CACHE" = "nul" ]; then
+        print_red "error:" "failed to load \"remcache_auto\" from \"toml_RM_CACHE\".."
+    fi
 
     toml_VIREON_MODEL=$(tomlq -r '.vireon.model' kodo.toml)
+    if [ "$toml_VIREON_MODEL" = "nul" ]; then
+        print_red "error:" "failed to load \"include_paths\" from \"toml_VIREON_MODEL\".."
+    fi
+
     toml_VIREON_BIODATA=$(tomlq -r '.vireon.profile' kodo.toml)
+    if [ "$toml_VIREON_BIODATA" = "nul" ]; then
+        print_red "error:" "failed to load \"profile\" from \"toml_VIREON_BIODATA\".."
+    fi
+
     toml_VIREON_TOKEN=$(tomlq -r '.vireon.token' kodo.toml)
+    if [ "$toml_VIREON_TOKEN" = "nul" ]; then
+        print_red "error:" "failed to load \"token\" from \"toml_VIREON_TOKEN\".."
+    fi
 
     toml_EXCLUDE=$(tomlq -r '.compiler.exclude_paths[]' kodo.toml | xargs -I {} echo -n "-i\"{}\" " )
+    if [ "$toml_EXCLUDE" = "nul" ]; then
+        print_red "error:" "failed to load \"exclude_paths\" from \"toml_EXCLUDE\".."
+    fi
+
     toml_AMX_OPT_F=$(tomlq -r '.compiler.amx_flags[]' kodo.toml | xargs)
+    if [ "$toml_AMX_OPT_F" = "nul" ]; then
+        print_red "error:" "failed to load \"include_paths\" from \"toml_AMX_OPT_F\".."
+    fi
 }
 
 function struct_console_main() {
-    #
-    #   @mode.Typeof
-    #
-
     local console_missing_cmds=()
     local console_missing_save_cmds
 
@@ -483,7 +545,7 @@ function typeof() {
         console_TITLE "Kodo Mode"
     fi
     
-    HISTFILE="$HOME/.kodo.txt"
+    HISTFILE="$HOME/kodo/.kodo.txt"
     touch "$HISTFILE"
 
     history -r "$HISTFILE"
@@ -732,37 +794,42 @@ function mode_KODO() {
                         chmod +x "$shell_DIR/.kodo"
 
                         echo "$latest" > "$shell_DIR/.itskodo"
+                    
+                    function Upgrade_Kodo()
+                    {
+                        console_TITLE "Sync | Upgrade"
+
+                        echo "Upgrading.."
+                        
+                        local kodo_modular=(
+                            "Security/security.kd"
+                            "Compat/compat.kd"
+                            "Zapman/zapman.kd"
+                            "Package/samp.kd"
+                            "Package/pawncc.kd"
+                            "Server/server.kd"
+                            "Misc/misc.kd"
+                            "Vireon/vireon.kd"
+                            "Compiler/compiler.kd"
+                        )
+
+                        cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
+
+                        for __file__ in "${kodo_modular[@]}"; do
+                            wget -q --show-progress -O "$(basename "$__file__")" \
+                                "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/$__file__" \
+                                || { touch "$shell_DIR/.sync"; }
+                        done
+
+                        cd "$shell_DIR" || echo ""
+                        wget -q --show-progress -O "$shell_DIR/.kodo/python/wpython" \
+                            "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/wpython"
+                        wget -q --show-progress -O "$shell_DIR/workspace" \
+                            "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace"
+                    }
                         
                         if  [ "$kd_table" = "sync" ]; then
-                            console_TITLE "Sync | Upgrade"
-
-                            echo "Upgrading.."
-                            
-                            local kodo_modular=(
-                                "Security/security.kd"
-                                "Compat/compat.kd"
-                                "Zapman/zapman.kd"
-                                "Package/samp.kd"
-                                "Package/pawncc.kd"
-                                "Server/server.kd"
-                                "Misc/misc.kd"
-                                "Vireon/vireon.kd"
-                                "Compiler/compiler.kd"
-                            )
-
-                            cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
-
-                            for __file__ in "${kodo_modular[@]}"; do
-                                wget -q --show-progress -O "$(basename "$__file__")" \
-                                    "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/$__file__" \
-                                    || { touch "$shell_DIR/.sync"; }
-                            done
-
-                            cd "$shell_DIR" || echo ""
-                            wget -q --show-progress -O "$shell_DIR/.kodo/python/wpython" \
-                                "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/wpython"
-                            wget -q --show-progress -O "$shell_DIR/workspace" \
-                                "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace"
+                            Upgrade_Kodo ""
                         elif [ "$commands_ARGS" = "update" ]; then
                             console_TITLE "Sync | Update"
 
@@ -772,35 +839,7 @@ function mode_KODO() {
                             wget -q --show-progress -O "workspace" \
                                 "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace"
                         else
-                            console_TITLE "Sync | Upgrade"
-
-                            echo "Upgrading.."
-                            
-                            local kodo_modular=(
-                                "Security/security.kd"
-                                "Compat/compat.kd"
-                                "Zapman/zapman.kd"
-                                "Package/samp.kd"
-                                "Package/pawncc.kd"
-                                "Server/server.kd"
-                                "Misc/misc.kd"
-                                "Vireon/vireon.kd"
-                                "Compiler/compiler.kd"
-                            )
-
-                            cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
-
-                            for __file__ in "${kodo_modular[@]}"; do
-                                wget -q --show-progress -O "$(basename "$__file__")" \
-                                    "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/$__file__" \
-                                    || { touch "$shell_DIR/.sync"; }
-                            done
-
-                            cd "$shell_DIR" || echo ""
-                            wget -q --show-progress -O "$shell_DIR/.kodo/python/wpython" \
-                                "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/wpython"
-                            wget -q --show-progress -O "$shell_DIR/workspace" \
-                                "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace"
+                            Upgrade_Kodo ""
                         fi
                         
                         chmod +x "$shell_DIR/workspace"
@@ -863,7 +902,7 @@ function mode_KODO() {
             bash
             ;;
         "vireon"*)
-            console_TITLE "VIREON"
+            console_TITLE "Vireon Chat A.I"
 
             local commands_ARGS="${kd_table#vireon }"
 

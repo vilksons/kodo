@@ -5,7 +5,7 @@ function mode_ZAPMAN() {
     
     rest_var ""
     
-    HISTFILE="$HOME/.kodo.txt"
+    HISTFILE="$HOME/kodo/.kodo.txt"
     touch "$HISTFILE"
 
     history -r "$HISTFILE"

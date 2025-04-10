@@ -3,7 +3,7 @@
 function @ENCRYPTION_CREATE()
 {
     if [ "$console_save_notice" -eq 1 ]; then
-        if [ ! -f "$HOME/.enkodo" ] && [ -n "$RHASH_256" ]; then
+        if [ ! -f "$HOME/kodo/.enkodo" ] && [ -n "$RHASH_256" ]; then
             encryption_content=""
 
             for i in {1..100}; do
@@ -15,12 +15,12 @@ function @ENCRYPTION_CREATE()
                 encryption_content="$encryption_content$rand_base64_text"$'\n'
             done
 
-            echo -n "$encryption_content" > "$HOME/.enkodo"
-            chmod 444 "$HOME/.enkodo"
+            echo -n "$encryption_content" > "$HOME/kodo/.enkodo"
+            chmod 444 "$HOME/kodo/.enkodo"
         fi
             
-        _zapman_decrypt_passphrase_=$(grep -oP '(?<=RHASH_256=).*' "$HOME/.enkodo" || head -n 1 "$HOME/.enkodo")        
-        _zapman_decrypt_passphrase_=$(grep -oP '(?<=RHASH_256=).*' "$HOME/.enkodo" || head -n 1 "$HOME/.enkodo")
+        _zapman_decrypt_passphrase_=$(grep -oP '(?<=RHASH_256=).*' "$HOME/kodo/.enkodo" || head -n 1 "$HOME/kodo/.enkodo")        
+        _zapman_decrypt_passphrase_=$(grep -oP '(?<=RHASH_256=).*' "$HOME/kodo/.enkodo" || head -n 1 "$HOME/kodo/.enkodo")
 
         local _sizeof_rate_token_
         _sizeof_rate_token_=$(jq -r '.vireon_token' kodo.toml)
@@ -31,12 +31,10 @@ function @ENCRYPTION_CREATE()
 function @ENCRYPTION_TOKEN()
 {
     if command -v openssl &> /dev/null; then
-        _zapman_decrypt_passphrase_=$(grep -oP '(?<=RHASH_256=).*' "$HOME/.enkodo" || head -n 1 "$HOME/.enkodo")
-
         __VIREON_TOKEN=$(jq -r '.vireon_token' kodo.toml)
 
         if [[ "$__VIREON_TOKEN" =~ ^gsk_ ]] && [ -n "$__VIREON_TOKEN" ]; then
-            VIREON_token_Encrypt=$(echo "$__VIREON_TOKEN" | openssl enc -aes-256-cbc -salt -pbkdf2 -pass pass:"$_zapman_decrypt_passphrase_" -base64)
+            VIREON_token_Encrypt=$(echo "$__VIREON_TOKEN" | openssl enc -aes-256-cbc -salt -pbkdf2 -pass pass:"$_vireon_decrypt_token_passphrase_" -base64)
             jq --arg token "$VIREON_token_Encrypt" '.vireon_token = $token' kodo.toml > ._ignoreme.json && mv ._ignoreme.json kodo.toml
         fi
     else
@@ -66,8 +64,8 @@ function security_file_rm()
             shred -u ".__ignored,json"
         fi
 
-        if [ -f "$HOME/.kodo" ]; then
-            shred -u "$HOME/.kodo"
+        if [ -f "$HOME/kodo/.kodo" ]; then
+            shred -u "$HOME/kodo/.kodo"
         fi
     fi
 
