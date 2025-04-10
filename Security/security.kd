@@ -3,28 +3,32 @@
 function @ENCRYPTION_CREATE()
 {
     if [ "$kodo_t_save_notice" -eq 1 ]; then
-        if [ ! -f "$HOME/kodo/.enkodo" ] && [ -n "$RHASH_256" ]; then
-            encryption_content=""
+        if [ -n "$RANDOM_HASH_SHA256" ]; then
+            if [ ! -f "$HOME/kodo/.enkodo" ]; then
+                encryption_content=""
 
-            for i in {1..100}; do
-                rand_base64_text=$(openssl rand -base64 1000 | sha256sum | awk '{print $1}')
-                : ' uppercase to lowercase '
-                rand_base64_text=$(echo "$rand_base64_text" | tr '[:upper:]' '[:lower:]')
+                for i in {1..100}; do
+                    rand_base64_text=$(openssl rand -base64 1000 | sha256sum | awk '{print $1}')
+                    : ' uppercase to lowercase '
+                    rand_base64_text=$(echo "$rand_base64_text" | tr '[:upper:]' '[:lower:]')
+                    
+                    encryption_content="$encryption_content$rand_base64_text"$'\n'
+                    encryption_content="$encryption_content$rand_base64_text"$'\n'
+                done
+
+                echo -n "$encryption_content" > "$HOME/kodo/.enkodo"
+                chmod 444 "$HOME/kodo/.enkodo"
+            fi
                 
-                encryption_content="$encryption_content$rand_base64_text"$'\n'
-                encryption_content="$encryption_content$rand_base64_text"$'\n'
-            done
+            _zapman_decrypt_passphrase_=$(grep -oP '(?<=RANDOM_HASH_SHA256=).*' "$HOME/kodo/.enkodo" || head -n 1 "$HOME/kodo/.enkodo")        
+            _zapman_decrypt_passphrase_=$(grep -oP '(?<=RANDOM_HASH_SHA256=).*' "$HOME/kodo/.enkodo" || head -n 1 "$HOME/kodo/.enkodo")
 
-            echo -n "$encryption_content" > "$HOME/kodo/.enkodo"
-            chmod 444 "$HOME/kodo/.enkodo"
+            local _sizeof_rate_token_
+            _sizeof_rate_token_=$(jq -r '.vireon_token' kodo.toml)
+            _vireon_decrypt_token_passphrase_=$(echo "$_sizeof_rate_token_" | openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:"$_zapman_decrypt_passphrase_" -base64)
+        else
+            print_red "error:" "can't create encryption pass.. please see err/warn in your python-(.kodo/python/wpython) scripts!"
         fi
-            
-        _zapman_decrypt_passphrase_=$(grep -oP '(?<=RHASH_256=).*' "$HOME/kodo/.enkodo" || head -n 1 "$HOME/kodo/.enkodo")        
-        _zapman_decrypt_passphrase_=$(grep -oP '(?<=RHASH_256=).*' "$HOME/kodo/.enkodo" || head -n 1 "$HOME/kodo/.enkodo")
-
-        local _sizeof_rate_token_
-        _sizeof_rate_token_=$(jq -r '.vireon_token' kodo.toml)
-        _vireon_decrypt_token_passphrase_=$(echo "$_sizeof_rate_token_" | openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:"$_zapman_decrypt_passphrase_" -base64)
     fi
 }
 

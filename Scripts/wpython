@@ -25,6 +25,8 @@ def wpy_sha256(input_str=None):
 random_word_1 = random_string(20)
 RANDOM_HASH_SHA256, original_1 = wpy_sha256(random_word_1)
 
+print(f"RANDOM_HASH_SHA256: {RANDOM_HASH_SHA256}")
+
 if __name__ == '__main__':
     """ Ensure the script runs only when executed directly, not when imported """
     
