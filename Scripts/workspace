@@ -2,8 +2,11 @@
 
 clear && cd "$(dirname "$(realpath "$0")")" || echo
 
-if [ -d "$HOME/kodo" ]; then
+if [ ! -d "$HOME/kodo" ]; then
     mkdir "$HOME/kodo"
+fi
+if [ ! -f "$HOME/kodo/kodo.txt" ]; then
+    touch "$HOME/kodo/.kodo.txt"
 fi
 
 __OS_NOTICE__=0
@@ -322,8 +325,7 @@ else
         if [ "$console_module_loaded" -eq 1 ]; then
                 print_green "warn:" "err.. need to kill after installing \"succes\".."
                 print_green " killing.."
-                sleep 0.999
-                SIGNAL_KILL ""
+                sleep 0.999 && SIGNAL_KILL "" && typeof ""
             fi
         }
     fi
@@ -455,8 +457,7 @@ function struct_console_main() {
                     if [ "$console_module_loaded" -eq 1 ]; then
                         print_green "warn:" "err.. need to kill after installing \"succes\".."
                         print_green " killing.."
-                        sleep 0.999
-                        SIGNAL_KILL ""
+                        sleep 0.999 && SIGNAL_KILL "" && typeof ""
                     fi
                 else
                     bash_title "Waiting resources.."
@@ -475,7 +476,7 @@ function struct_console_main() {
                         clear && cd "$(dirname "$(realpath "$0")")" || echo
                         print_yellow "install succes!"
                         print_green " killing.."
-                        sleep 0.999 && SIGNAL_KILL ""
+                        sleep 0.999 && SIGNAL_KILL "" && typeof ""
                     fi
                 fi
             }
@@ -603,8 +604,7 @@ function mode_KODO() {
                     if [ "$console_module_loaded" -eq 1 ]; then
                         print_green "warn:" "err.. need to kill after installing \"succes\".."
                         print_green " killing.."
-                        sleep 0.999
-                        SIGNAL_KILL ""
+                        sleep 0.999 && SIGNAL_KILL "" && typeof ""
                     fi
                 }
             else
@@ -612,8 +612,7 @@ function mode_KODO() {
                     if [ "$console_module_loaded" -eq 1 ]; then
                         print_green "warn:" "err.. need to kill after installing \"succes\".."
                         print_green " killing.."
-                        sleep 0.999
-                        SIGNAL_KILL ""
+                        sleep 0.999 && SIGNAL_KILL "" && typeof ""
                     fi
                 }
             fi
@@ -627,8 +626,7 @@ function mode_KODO() {
                 if [ "$console_module_loaded" -eq 1 ]; then
                     print_green "warn:" "err.. need to kill after installing \"succes\".."
                     print_green " killing.."
-                    sleep 0.999
-                    SIGNAL_KILL ""
+                    sleep 0.999 && SIGNAL_KILL "" && typeof ""
                 fi
             }
             ;;
@@ -654,8 +652,7 @@ function mode_KODO() {
                     if [ "$console_module_loaded" -eq 1 ]; then
                         print_green "warn:" "err.. need to kill after installing \"succes\".."
                         print_green " killing.."
-                        sleep 0.999
-                        SIGNAL_KILL ""
+                        sleep 0.999 && SIGNAL_KILL "" && typeof ""
                     fi
                 }
             else
@@ -663,8 +660,7 @@ function mode_KODO() {
                     if [ "$console_module_loaded" -eq 1 ]; then
                         print_green "warn:" "err.. need to kill after installing \"succes\".."
                         print_green " killing.."
-                        sleep 0.999
-                        SIGNAL_KILL ""
+                        sleep 0.999 && SIGNAL_KILL "" && typeof ""
                     fi
                 }
             fi
@@ -694,8 +690,7 @@ function mode_KODO() {
                 if [ "$console_module_loaded" -eq 1 ]; then
                     print_green "warn:" "err.. need to kill after installing \"succes\".."
                     print_green " killing.."
-                    sleep 0.999
-                    SIGNAL_KILL ""
+                    sleep 0.999 && SIGNAL_KILL "" && typeof ""
                 fi
             }
             ;;
@@ -708,8 +703,7 @@ function mode_KODO() {
                 if [ "$console_module_loaded" -eq 1 ]; then
                     print_green "warn:" "err.. need to kill after installing \"succes\".."
                     print_green " killing.."
-                    sleep 0.999
-                    SIGNAL_KILL ""
+                    sleep 0.999 && SIGNAL_KILL "" && typeof ""
                 fi
             }
             ;;
@@ -1009,8 +1003,7 @@ function mode_KODO() {
                 if [ "$console_module_loaded" -eq 1 ]; then
                     print_green "warn:" "err.. need to kill after installing \"succes\".."
                     print_green " killing.."
-                    sleep 0.999
-                    SIGNAL_KILL ""
+                    sleep 0.999 && SIGNAL_KILL "" && typeof ""
                 fi
             }
             ;;
@@ -1150,8 +1143,7 @@ function not_found_kd()
     if [ "$console_module_loaded" -eq 1 ]; then
         print_green "warn:" "err.. need to kill after installing \"succes\".."
         print_green " killing.."
-        sleep 0.999
-        SIGNAL_KILL ""
+        sleep 0.999 && SIGNAL_KILL "" && typeof ""
     else
         struct_console_main ""
     fi
