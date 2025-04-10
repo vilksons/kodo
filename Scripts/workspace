@@ -411,6 +411,9 @@ function struct_kodo_t_main() {
             kodo_t_pack ".kodo/server.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Server/server.kd" "end"
             
             kodo_t_save_notice=1
+
+            ignore_this @KODO_TOML_CREATE "" &&
+            ignore_this @LOAD_KODO_TOML ""
         fi
     fi
     
@@ -433,9 +436,6 @@ function struct_kodo_t_main() {
     fi
 
     ignore_this @ENCRYPTION_CREATE ""
-
-    ignore_this @KODO_TOML_CREATE "" &&
-    ignore_this @LOAD_KODO_TOML ""
 
     rest_var "" && typeof ""
 }
