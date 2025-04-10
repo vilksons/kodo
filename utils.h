@@ -8,6 +8,10 @@
  *
  */
  
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+ 
 #ifndef UTILS_H
 #define UTILS_H
 

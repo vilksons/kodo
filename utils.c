@@ -14,7 +14,6 @@
 #include <stdarg.h>
 #include <unistd.h>
 #include <sys/utsname.h>
-#include <errno.h>
 #include <math.h>
 #include <limits.h>
 #include <ncurses.h>
@@ -34,12 +33,10 @@
 #include <archive_entry.h>
 
 #include "tomlc99/toml.h"
-#include "cJson/cJSON.h"
 
 #include "color.h"
 #include "utils.h"
 #include "kodo.h"
-#include "server.h"
 
 const char
     /* variable (gvar) for kodo os checking */

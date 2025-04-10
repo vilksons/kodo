@@ -53,7 +53,7 @@
 #include <archive_entry.h>
 
 #include "tomlc99/toml.h"
-#include "cJson/cJSON.h"
+
 
 static inline int kd_sys(const char *cmd) {
     return system(cmd);
