@@ -245,7 +245,7 @@ function @KODO_TOML_CREATE() {
     local config=""
 
     if [[ "$__SAMP_SERVER" == "samp" ]]; then
-        log="server.log"
+        log="server_log.txt"
         config="server.cfg"
         executable="samp-server.exe"
         [[ "$__OS__" == "linux" ]] && executable="samp03svr"
@@ -297,7 +297,7 @@ function @LOAD_KODO_TOML()
     [[ "$toml_ZAPMAN_PLUGINS" == "null" ]] && print_red "error:" "failed to load \"plugins_dir\""
 
     # server
-    toml_LOG_SERV=$(echo "$toml_data" | jq -r '.server.log')
+    toml_LOG_SERV=$(echo "$toml_data" | jq -r '.server_log.txt')
     [[ "$toml_LOG_SERV" == "null" ]] && print_red "error:" "failed to load \"log\""
 
     toml_SERVER_CONFIG=$(echo "$toml_data" | jq -r '.server.config')
