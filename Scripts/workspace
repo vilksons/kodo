@@ -441,9 +441,11 @@ function struct_kodo_t_main() {
         fi
     fi
 
-    @ENCRYPTION_CREATE ""
-    @ENCRYPTION_TOKEN ""
-
+    if [ "$kodo_t_save_notice" -eq 1 ]; then
+        @ENCRYPTION_CREATE ""
+        @ENCRYPTION_TOKEN ""
+    fi
+    
     rest_var "" && typeof ""
 }
 export struct_kodo_t_main
