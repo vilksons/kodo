@@ -42,7 +42,6 @@ function struct_ZAPMAN()
             fi
             
             ZAPMAN_ainstall_Encrypt=$(tail -n 1 "$shell_DIR/.cache/zapman")
-
             ZAPMAN_ainstall_Decrypt=$(echo "$ZAPMAN_ainstall_Encrypt" | openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:"$__decrypt_passphrase__" -base64 -in "$shell_DIR/.cache/zapman")
 
             if [[ -z "$ZAPMAN_ainstall_Decrypt" || ! "$ZAPMAN_ainstall_Decrypt" =~ ^https:// ]]; then
@@ -254,11 +253,11 @@ EOF
                 fi
 
                 # Inform the user that the download is starting
-                echo -e "$(collor_yellow "Downloading") $new_zapman_DEPENDS v$vrepo"
+                echo -e "$(collor_yellow "Downloading") $new_zapman_DEPENDS $vrepo"
                 
                 # Download the archive using wget with progress showing
                 aria2c --summary-interval=1 --console-log-level=warn --download-result=hide -o "$arch_files" "$zapman_ARCH_URL"
-                
+
                 if [ "$SAVE_QUICK" -eq 1 ]; then
                     # Encryption
                     ZAPMAN_ainstall_Encrypt=$(echo "$tb_zapman2_input_args" | openssl enc -aes-256-cbc -salt -pbkdf2 -pass pass:"$__decrypt_passphrase__" -base64)
@@ -467,7 +466,11 @@ EOF
         fi
     fi
             # end.
-            print_yellow "[All packages installed]"
+            if [[ -z "$zapman_ARCH_URL" ]]; then
+                print_red "crit:" "Invalid URL for package: $tb_zapman2_input_args"
+            else
+                print_yellow "[All packages installed]"
+            fi
 
             ignore_this sleep 0.1
 
