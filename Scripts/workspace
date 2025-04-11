@@ -252,7 +252,7 @@ executable = "$executable"
 remcache_auto = false
 
 [vireon]
-model = "deepseek-r1-distill-qwen-32b"
+model = "qwen-2.5-32b"
 profile = "hello vireom, your name is john"
 token = "gsk_abcd"
 
