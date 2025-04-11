@@ -102,7 +102,7 @@ toml_VIREON_BIODATA="nul"
 export toml_VIREON_BIODATA
 toml_VIREON_TOKEN="nul"
 export toml_VIREON_TOKEN
-toml_AMX_OPT_F=""
+toml_AMX_OPT_F="nul"
 export toml_AMX_OPT_F
 
 function collor_yellow() {
@@ -288,39 +288,39 @@ function @LOAD_KODO_TOML()
 
     # paths
     toml_INCLUDE=$(echo "$toml_data" | jq -r '.paths.include_paths')
-    [[ "$toml_INCLUDE" == "null" ]] && print_red "error:" "failed to load \"include_paths\""
+    [[ "$toml_INCLUDE" == "nul" ]] && print_red "error:" "failed to load \"include_paths\""
 
     toml_ZAPMAN_INCLUDE=$(echo "$toml_data" | jq -r '.paths.include_dir')
-    [[ "$toml_ZAPMAN_INCLUDE" == "null" ]] && print_red "error:" "failed to load \"include_dir\""
+    [[ "$toml_ZAPMAN_INCLUDE" == "nul" ]] && print_red "error:" "failed to load \"include_dir\""
 
     toml_ZAPMAN_PLUGINS=$(echo "$toml_data" | jq -r '.paths.plugins_dir')
-    [[ "$toml_ZAPMAN_PLUGINS" == "null" ]] && print_red "error:" "failed to load \"plugins_dir\""
+    [[ "$toml_ZAPMAN_PLUGINS" == "nul" ]] && print_red "error:" "failed to load \"plugins_dir\""
 
     # server
     toml_LOG_SERV=$(echo "$toml_data" | jq -r '.server_log.txt')
-    [[ "$toml_LOG_SERV" == "null" ]] && print_red "error:" "failed to load \"log\""
+    [[ "$toml_LOG_SERV" == "nul" ]] && print_red "error:" "failed to load \"log\""
 
     toml_SERVER_CONFIG=$(echo "$toml_data" | jq -r '.server.config')
-    [[ "$toml_SERVER_CONFIG" == "null" ]] && print_red "error:" "failed to load \"config\""
+    [[ "$toml_SERVER_CONFIG" == "nul" ]] && print_red "error:" "failed to load \"config\""
 
     toml_FILE_SERV=$(echo "$toml_data" | jq -r '.server.init')
-    [[ "$toml_FILE_SERV" == "null" ]] && print_red "error:" "failed to load \"init\""
+    [[ "$toml_FILE_SERV" == "nul" ]] && print_red "error:" "failed to load \"init\""
 
     toml_EXE_SERV=$(echo "$toml_data" | jq -r '.server.executable')
-    [[ "$toml_EXE_SERV" == "null" ]] && print_red "error:" "failed to load \"executable\""
+    [[ "$toml_EXE_SERV" == "nul" ]] && print_red "error:" "failed to load \"executable\""
 
     toml_RM_CACHE=$(echo "$toml_data" | jq -r '.server.remcache_auto')
-    [[ "$toml_RM_CACHE" == "null" ]] && print_red "error:" "failed to load \"remcache_auto\""
+    [[ "$toml_RM_CACHE" == "nul" ]] && print_red "error:" "failed to load \"remcache_auto\""
 
     # vireon
     toml_VIREON_MODEL=$(echo "$toml_data" | jq -r '.vireon.model')
-    [[ "$toml_VIREON_MODEL" == "null" ]] && print_red "error:" "failed to load \"model\""
+    [[ "$toml_VIREON_MODEL" == "nul" ]] && print_red "error:" "failed to load \"model\""
 
     toml_VIREON_BIODATA=$(echo "$toml_data" | jq -r '.vireon.profile')
-    [[ "$toml_VIREON_BIODATA" == "null" ]] && print_red "error:" "failed to load \"profile\""
+    [[ "$toml_VIREON_BIODATA" == "nul" ]] && print_red "error:" "failed to load \"profile\""
 
     toml_VIREON_TOKEN=$(echo "$toml_data" | jq -r '.vireon.token')
-    [[ "$toml_VIREON_TOKEN" == "null" ]] && print_red "error:" "failed to load \"token\""
+    [[ "$toml_VIREON_TOKEN" == "nul" ]] && print_red "error:" "failed to load \"token\""
 
     # compiler
     toml_EXCLUDE=$(echo "$toml_data" | jq -r '.compiler.exclude_paths[]?' | xargs -I {} echo -n "-i\"{}\" " )
