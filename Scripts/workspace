@@ -280,7 +280,7 @@ token = "gsk_abcd"
 exclude_paths = ["includes1/", "includes2/", "includes3/"]
 amx_flags = ['-d2', '-;+', '-(+', '-Z+']
 EOF
-fi
+    fi
 }
 
 function @LOAD_KODO_TOML()
