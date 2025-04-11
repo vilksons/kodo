@@ -252,13 +252,13 @@ executable = "$executable"
 remcache_auto = false
 
 [vireon]
-model = "gsk_abcd"
+model = "deepseek-r1-distill-qwen-32b"
 profile = "hello vireom, your name is john"
-token = "VIREON_ABC123-token"
+token = "gsk_abcd"
 
 [compiler]
 exclude_paths = ["includes1/", "includes2/", "includes3/"]
-amx_flags = ["-d2", "-;+", "-(+", "-\\+", "-Z+"]
+amx_flags = ['-d2', '-;+', '-(+', '-\+', '-Z+']
 EOF
 fi
 }
@@ -440,7 +440,8 @@ function struct_kodo_t_main() {
         __SAMP_SERVER="samp"
     fi
 
-    ignore_this @ENCRYPTION_CREATE ""
+    @ENCRYPTION_CREATE ""
+    @ENCRYPTION_TOKEN ""
 
     rest_var "" && typeof ""
 }

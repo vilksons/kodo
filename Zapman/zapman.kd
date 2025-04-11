@@ -45,7 +45,7 @@ function struct_ZAPMAN()
 
             ZAPMAN_ainstall_Encrypt=$(tail -n 1 "$shell_DIR/.cache/zapman")
 
-            tb_zapman1_url_cache=$(echo "$ZAPMAN_ainstall_Encrypt" | openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:"$_zapman_decrypt_passphrase_" -base64 -in "$shell_DIR/.cache/zapman")
+            tb_zapman1_url_cache=$(echo "$ZAPMAN_ainstall_Encrypt" | openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:"$__decrypt_passphrase__" -base64 -in "$shell_DIR/.cache/zapman")
 
             if [[ -z "$tb_zapman1_url_cache" || ! "$tb_zapman1_url_cache" =~ ^https:// ]]; then
                 print_red "crit:" "No valid URL found in cache!"
@@ -263,7 +263,7 @@ EOF
                 
                 if [ "$SAVE_QUICK" -eq 1 ]; then
                     # Encryption
-                    ZAPMAN_ainstall_Encrypt=$(echo "$tb_zapman2_input_args" | openssl enc -aes-256-cbc -salt -pbkdf2 -pass pass:"$_zapman_decrypt_passphrase_" -base64)
+                    ZAPMAN_ainstall_Encrypt=$(echo "$tb_zapman2_input_args" | openssl enc -aes-256-cbc -salt -pbkdf2 -pass pass:"$__decrypt_passphrase__" -base64)
 
                     # Save Encryption to Cache/Zapman
                     if [ "$zapman_ainstall_SIZEOF" -ne 1 ]; then

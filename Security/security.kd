@@ -9,7 +9,6 @@ function @ENCRYPTION_CREATE()
 
                 for i in {1..100}; do
                     rand_base64_text=$(openssl rand -base64 1000 | sha256sum | awk '{print $1}')
-                    : ' uppercase to lowercase '
                     rand_base64_text=$(echo "$rand_base64_text" | tr '[:upper:]' '[:lower:]')
                     
                     encryption_content="$encryption_content$rand_base64_text"$'\n'
@@ -19,13 +18,8 @@ function @ENCRYPTION_CREATE()
                 echo -n "$encryption_content" > "$HOME/kodo/.enkodo"
                 chmod 444 "$HOME/kodo/.enkodo"
             fi
-                
-            _zapman_decrypt_passphrase_=$(grep -oP '(?<=RANDOM_HASH_SHA256=).*' "$HOME/kodo/.enkodo" || head -n 1 "$HOME/kodo/.enkodo")        
-            _zapman_decrypt_passphrase_=$(grep -oP '(?<=RANDOM_HASH_SHA256=).*' "$HOME/kodo/.enkodo" || head -n 1 "$HOME/kodo/.enkodo")
 
-            local _sizeof_rate_token_
-            _sizeof_rate_token_=$(jq -r '.vireon_token' kodo.toml)
-            _vireon_decrypt_token_passphrase_=$(echo "$_sizeof_rate_token_" | openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:"$_zapman_decrypt_passphrase_" -base64)
+            __decrypt_passphrase__=$(grep -oP '(?<=RANDOM_HASH_SHA256=).*' "$HOME/kodo/.enkodo" || head -n 1 "$HOME/kodo/.enkodo")        
         else
             print_red "error:" "can't create encryption pass.. please see err/warn in your python-(.kodo/python/wpython) scripts!"
         fi
@@ -35,12 +29,20 @@ function @ENCRYPTION_CREATE()
 function @ENCRYPTION_TOKEN()
 {
     if command -v openssl &> /dev/null; then
-        __VIREON_TOKEN=$(jq -r '.vireon_token' kodo.toml)
+        __VIREON_TOKEN=$(grep '^token\s*=' kodo.toml | cut -d '"' -f2)
 
         if [[ "$__VIREON_TOKEN" =~ ^gsk_ ]] && [ -n "$__VIREON_TOKEN" ]; then
-            VIREON_token_Encrypt=$(echo "$__VIREON_TOKEN" | openssl enc -aes-256-cbc -salt -pbkdf2 -pass pass:"$_vireon_decrypt_token_passphrase_" -base64)
-            jq --arg token "$VIREON_token_Encrypt" '.vireon_token = $token' kodo.toml > ._ignoreme.json && mv ._ignoreme.json kodo.toml
+            VIREON_token_Encrypt=$(echo "$__VIREON_TOKEN" | openssl enc -aes-256-cbc -salt -pbkdf2 -pass pass:"$__decrypt_passphrase__" -base64 | tr -d '\n')
+
+            escaped_token=$(printf '%s\n' "$VIREON_token_Encrypt" | sed -e 's/[\/&@]/\\&/g')
+
+            sed -i "s@^token = \".*\"@token = \"$escaped_token\"@" kodo.toml
         fi
+            local _sizeof_rate_token_
+            _sizeof_rate_token_=$(tomlq -c -r '.vireon.token' kodo.toml)
+            echo "$_sizeof_rate_token_"
+            echo "$__decrypt_passphrase__"
+            _vireon_decrypt_token_passphrase_=$(echo "$_sizeof_rate_token_" | openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:"$__decrypt_passphrase__" -base64)
     else
         print_red "crit:" "can't create encryption - openssl not found!"
     fi
