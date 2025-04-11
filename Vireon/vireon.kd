@@ -39,23 +39,26 @@ RESET = '\033[0m'
 # define color groups #
 color_groups = {
     GREEN: [
-        'true', 'string', 'int', 'float', 'bool',
-        'double', 'char', 'if', 'else', 'while', 'for', 'do',
-        'switch', 'case', 'class', 'void', 'inline', 'include',
-        'end', 'printf', 'print', 'std', 'const', 'constexpr', 'static',
+        'true', 'string', 'int', 'float', 'bool', 'double', 'char', 'short', 'long',
+        'if', 'else', 'while', 'for', 'do', 'switch', 'case', 'default',
+        'class', 'void', 'inline', 'include', 'import', 'module',
+        'end', 'printf', 'print', 'println', 'std', 'const', 'constexpr', 'static',
         'public', 'private', 'protected', 'struct', 'enum', 'typedef',
-        'new', 'delete', 'sizeof', 'this', 'namespace', 'using', 'template'
+        'new', 'delete', 'sizeof', 'this', 'namespace', 'using', 'template',
+        'var', 'let', 'function', 'fn', 'def', 'pass', 'as', 'in', 'from', 'export'
     ],
     RED: [
         'false', 'return', 'throw', 'break', 'continue', 'foo', 'sudo',
-        'abort', 'exit', 'assert', 'panic', 'fatal', 'fail', 'raise'
+        'abort', 'exit', 'assert', 'panic', 'fatal', 'fail', 'raise',
+        'die', 'trap', 'stop', 'error'
     ],
     ORANGE: [
         'try', 'catch', 'finally', 'goto', 'main', 'except', 'with', 'yield',
-        'await', 'async', 'lambda', 'defer', 'then'
+        'await', 'async', 'lambda', 'defer', 'then', 'promise', 'resolve', 'reject'
     ],
     GRAY: [
-        'gcc', 'clang', 'sudo', 'cmake', 'make', 'g++', 'ld', 'objdump', 'valgrind'
+        'gcc', 'clang', 'sudo', 'cmake', 'make', 'g++', 'ld', 'objdump', 'valgrind',
+        'docker', 'gdb', 'git', 'vim', 'nano', 'bash', 'zsh', 'sh', 'env'
     ],
 }
 
