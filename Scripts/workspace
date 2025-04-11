@@ -693,7 +693,7 @@ function mode_KODO() {
                 case "$PERMISSION_NEED_S" in
                     [Yy])
                         if [[ -d "$shell_DIR/.kodo" ]]; then
-                            rm -rf "$shell_DIR/.kodo"
+                            mv ".kodo" "kodo_old"
                         fi
                         if [ ! -d ".kodo" ]; then
                             mkdir -p ".kodo/python" && chmod +x ".kodo"
