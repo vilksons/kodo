@@ -47,7 +47,9 @@ COMPILATION
  o Specific file compilation:
 	compile yourmode.pwn
  o Compilation with options:
-	compile yourmode.pwn opt1 opt2 opt3
+	compile yourmode.pwn opt1 opt2 opt3 opt4
+        ~ compile bare.pwn -d2
+    - if you add options to the compilation, it will not replace the options from kodo.toml. because the options in the `compile` command are only additional options for compilation.
 
 STARTING & DEBUGGING
 --------------------
