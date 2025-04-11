@@ -153,14 +153,18 @@ function kodo_init_compilers()
 
                         compile_options="-i$toml_INCLUDE $toml_EXCLUDE $__LOOP_COMPILES_FILE -o$_AMX_OUTPUT_"
 
-                        if [ "$toml_AMX_OPT_F" != "nul" ]; then
-                            compile_options="$compile_options $toml_AMX_OPT_F"
-                        fi
-
                         if [ "$COMPILER_NEXT" -eq 1 ]; then
-                            compile_options="$compile_options -d2 -;+ -(+ -\\+ -Z+"
+                            if [ "$toml_AMX_OPT_F" != "nul" ]; then
+                                compile_options="$compile_options $toml_AMX_OPT_F"
+                            else
+                                compile_options="$compile_options -d2 -;+ -(+ -Z+"
+                            fi
                         elif [ "$COMPILER_NEXT" -eq 2 ]; then
-                            compile_options="$compile_options ${commands_OPAMX[@]}"
+                            if [ "$toml_AMX_OPT_F" != "nul" ]; then
+                                compile_options="$compile_options $toml_AMX_OPT_F" "${commands_OPAMX[@]}"
+                            else
+                                compile_options="$compile_options -d2 -;+ -(+ -Z+" "${commands_OPAMX[@]}"
+                            fi
                         fi
 
                         "$COMPILER_PAWNCC" $compile_options > "$__cache_save_compile" 2>&1
@@ -296,7 +300,7 @@ function kodo_compilers() {
                     if [ "$toml_AMX_OPT_F" != "nul" ]; then
                         compile_command="$compile_command $toml_AMX_OPT_F"
                     else
-                        compile_command="$compile_command -d2 -;+ -(+ -\\+ -Z+"
+                        compile_command="$compile_command -d2 -;+ -(+ -Z+"
                     fi
                     
                     $compile_command > "$__cache_save_compile" 2>&1
