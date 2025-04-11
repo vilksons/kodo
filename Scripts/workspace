@@ -9,6 +9,9 @@ if [ ! -f "$HOME/kodo/kodo.txt" ]; then
     touch "$HOME/kodo/.kodo.txt"
 fi
 
+__cache_save_compile=".cache/compiler.log"
+export __cache_save_compile
+
 __OS_NOTICE__=0
 export __OS_NOTICE__
 
@@ -221,6 +224,21 @@ function rest_var() {
 }
 
 function @KODO_TOML_CREATE() {
+    cd "$shell_DIR" >/dev/null 2>&1 || echo ""
+
+    u_openmp=$(find . -maxdepth 1 -type f \( -name "omp-server" -o -name "omp-server.exe" \) | head -n 1)
+    u_samp=$(find . -maxdepth 1 -type f \( -name "samp03svr" -o -name "samp-server.exe" \) | head -n 1)
+
+    if [[ -n "$u_samp" ]] && [[ -n "$u_openmp" ]]; then
+        __SAMP_SERVER="samp"
+    elif [[ -n "$u_samp" ]]; then
+        __SAMP_SERVER="samp"
+    elif [[ -n "$u_openmp" ]]; then
+        __SAMP_SERVER="omp"
+    else
+        __SAMP_SERVER="samp"
+    fi
+
     if [ ! -f "kodo.toml" ]; then
     local executable=""
     local log=""
@@ -416,28 +434,9 @@ function struct_kodo_t_main() {
             kodo_t_save_notice=1
 
             cd "$shell_DIR" >/dev/null 2>&1 || echo ""
-
             ignore_this @KODO_TOML_CREATE "" &&
             ignore_this @LOAD_KODO_TOML ""
         fi
-    fi
-    
-    __cache_save_compile=".cache/compiler.log"
-    export __cache_save_compile
-
-    cd "$shell_DIR" >/dev/null 2>&1 || echo ""
-
-    u_openmp=$(find . -maxdepth 1 -type f \( -name "omp-server" -o -name "omp-server.exe" \) | head -n 1)
-    u_samp=$(find . -maxdepth 1 -type f \( -name "samp03svr" -o -name "samp-server.exe" \) | head -n 1)
-
-    if [[ -n "$u_samp" ]] && [[ -n "$u_openmp" ]]; then
-        __SAMP_SERVER="samp"
-    elif [[ -n "$u_samp" ]]; then
-        __SAMP_SERVER="samp"
-    elif [[ -n "$u_openmp" ]]; then
-        __SAMP_SERVER="omp"
-    else
-        __SAMP_SERVER="samp"
     fi
 
     @ENCRYPTION_CREATE ""
