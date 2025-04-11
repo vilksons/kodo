@@ -3,7 +3,7 @@
 ## Supported Platforms:
 - Linux, Darwin, Windows, macOS, and Android/iPhone via:
   - Docker (Windows/macOS): [https://www.docker.com/](https://www.docker.com/)
-  - WSL/WSL2 (Windows): [https://learn.microsoft.com/en-us/windows/wsl/install](https://learn.microsoft.com/en-us/windows/wsl/install)
+  - WSL2 (Windows): [https://learn.microsoft.com/en-us/windows/wsl/install](https://learn.microsoft.com/en-us/windows/wsl/install)
   - MSYS2 (Windows): [https://www.msys2.org/](https://www.msys2.org/)
   - mingw-w64 (Windows/macOS): [https://www.mingw-w64.org/](https://www.mingw-w64.org/)
   - Cygwin (Windows): [https://www.cygwin.com/](https://www.cygwin.com/)
