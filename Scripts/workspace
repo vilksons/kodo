@@ -61,7 +61,7 @@ LICENSES="MIT Licenses only."
 export LICENSES
 
 # Compiler
-__cache_save_compile=""
+__cache_save_compile=".cache/compiler.log"
 export __cache_save_compile
 
 if [ ! -f "$__cache_save_compile" ]; then
