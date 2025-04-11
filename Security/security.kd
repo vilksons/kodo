@@ -20,12 +20,12 @@ function @ENCRYPTION_CREATE()
             fi
 
             __decrypt_passphrase__=$(grep -oP '(?<=RANDOM_HASH_SHA256=).*' "$HOME/kodo/.enkodo" || head -n 1 "$HOME/kodo/.enkodo")
-            
-            ZAPMAN_ainstall_Encrypt=$(tail -n 1 "$shell_DIR/.cache/zapman")
 
             if [ ! -f "$shell_DIR/.cache/zapman" ]; then
                 touch "$shell_DIR/.cache/zapman"
             fi
+            
+            ZAPMAN_ainstall_Encrypt=$(tail -n 1 "$shell_DIR/.cache/zapman")
 
             ZAPMAN_ainstall_Decrypt=$(echo "$ZAPMAN_ainstall_Encrypt" | openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:"$__decrypt_passphrase__" -base64 -in "$shell_DIR/.cache/zapman")
         else
