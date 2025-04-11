@@ -244,22 +244,25 @@ function @KODO_TOML_CREATE() {
     local executable=""
     local log=""
     local config=""
+    local include=""
 
     if [[ "$__SAMP_SERVER" == "samp" ]]; then
         log="server_log.txt"
         config="server.cfg"
+        include="pawno/include"
         executable="samp-server.exe"
         [[ "$__OS__" == "linux" ]] && executable="samp03svr"
     elif [[ "$__SAMP_SERVER" == "omp" ]]; then
         log="log.txt"
         config="config.json"
+        include="qawno/include"
         executable="omp-server.exe"
         [[ "$__OS__" == "linux" ]] && executable="omp-server"
     fi
 
     cat > kodo.toml <<EOF
 [paths]
-include_paths = "src/includes"
+include_paths = "$include"
 include_dir = "zapman/include"
 plugins_dir = "zapman/plugins"
 
