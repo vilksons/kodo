@@ -19,6 +19,10 @@ WHAT IS KODO?
 ===============
 Kodo is an SA:MP-specific toolchain designed for debugger, runner, compiler, and manager.
 
+Stable of Testing
+-----------------
+use the tag version `https://github.com/vilksons/kodo/tags` if you are looking for a version that has been tested in several cases.
+
 WHAT IS cKODO?
 ===============
 - cKodo https://github.com/vilksons/kodo/tree/ckodo
