@@ -40,6 +40,10 @@ function struct_ZAPMAN()
                 print_red "crit:" "No download history found in cache!"
                 mode_ZAPMAN ""
             fi
+            
+            ZAPMAN_ainstall_Encrypt=$(tail -n 1 "$shell_DIR/.cache/zapman")
+
+            ZAPMAN_ainstall_Decrypt=$(echo "$ZAPMAN_ainstall_Encrypt" | openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:"$__decrypt_passphrase__" -base64 -in "$shell_DIR/.cache/zapman")
 
             if [[ -z "$ZAPMAN_ainstall_Decrypt" || ! "$ZAPMAN_ainstall_Decrypt" =~ ^https:// ]]; then
                 print_red "crit:" "No valid URL found in cache!"
