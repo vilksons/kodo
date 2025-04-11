@@ -41,22 +41,16 @@ function struct_ZAPMAN()
                 mode_ZAPMAN ""
             fi
 
-            local tb_zapman1_url_cache
-
-            ZAPMAN_ainstall_Encrypt=$(tail -n 1 "$shell_DIR/.cache/zapman")
-
-            tb_zapman1_url_cache=$(echo "$ZAPMAN_ainstall_Encrypt" | openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:"$__decrypt_passphrase__" -base64 -in "$shell_DIR/.cache/zapman")
-
-            if [[ -z "$tb_zapman1_url_cache" || ! "$tb_zapman1_url_cache" =~ ^https:// ]]; then
+            if [[ -z "$ZAPMAN_ainstall_Decrypt" || ! "$ZAPMAN_ainstall_Decrypt" =~ ^https:// ]]; then
                 print_red "crit:" "No valid URL found in cache!"
                 mode_ZAPMAN ""
             fi
 
-            print_yellow "dbg:" "Using last history: $tb_zapman1_url_cache"
+            print_yellow "dbg:" "Using last history: $ZAPMAN_ainstall_Decrypt"
 
             zapman_ainstall_SIZEOF=1
 
-            zapman_table="install $tb_zapman1_url_cache"
+            zapman_table="install $ZAPMAN_ainstall_Decrypt"
             struct_ZAPMAN "$zapman_table"
             ;;
         # ------------------------------------------------------------------------------------------------------------------------ #

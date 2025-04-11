@@ -10,6 +10,12 @@ export COMPILER_AMX_FLAGS
 
 function kodo_init_compilers()
 {
+    if [ ! -f "$__cache_save_compile" ]; then
+        cd ".cache" &&
+        touch "compiler.log"
+        cd "$(dirname "$(realpath "$0")")" || echo
+    fi
+
     commands_INPUT=$1
 
     local amx_valid=false

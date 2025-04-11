@@ -33,12 +33,14 @@ ZAPMAN_ainstall_Encrypt=""
 export ZAPMAN_ainstall_Encrypt
 zapman_ainstall_SIZEOF=0
 export zapman_ainstall_SIZEOF
+ZAPMAN_ainstall_Decrypt=""
+export ZAPMAN_ainstall_Decrypt
 
 # Vireon A.I
 VIREON_token_Encrypt=""
 export VIREON_token_Encrypt
-_vireon_decrypt_token_passphrase_=""
-export _vireon_decrypt_token_passphrase_
+VIREON_token_Decrypt=""
+export VIREON_token_Decrypt
 
 # Notice Var
 kodo_t_save_messages=0
@@ -57,16 +59,12 @@ shell_NAME="$(basename "$0")"
 export shell_NAME
 
 # Licenses
-LICENSES="MIT Licenses only."
+LICENSES="MIT Licenses."
 export LICENSES
 
 # Compiler
 __cache_save_compile=".cache/compiler.log"
 export __cache_save_compile
-
-if [ ! -f "$__cache_save_compile" ]; then
-    touch "$__cache_save_compile"
-fi
 
 compiler_MODE="nul"
 export compiler_MODE
@@ -703,7 +701,7 @@ function mode_KODO() {
 
                         echo "$latest" > "$shell_DIR/.itskodo"
                     
-                    function __upgrade_kodo__()
+                    function __modular__()
                     {
                         kodo_t_TITLE "Sync | Upgrade"
 
@@ -738,7 +736,7 @@ function mode_KODO() {
                     }
                         
                         if  [ "$kd_table" = "sync" ]; then
-                            __upgrade_kodo__ ""
+                            __modular__ ""
                         elif [ "$commands_ARGS" = "update" ]; then
                             kodo_t_TITLE "Sync | Update"
 
@@ -748,7 +746,7 @@ function mode_KODO() {
                             wget -q --show-progress -O "workspace" \
                                 "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace"
                         else
-                            __upgrade_kodo__ ""
+                            __modular__ ""
                         fi
                         
                         chmod +x "$shell_DIR/workspace"

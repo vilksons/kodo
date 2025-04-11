@@ -19,7 +19,11 @@ function @ENCRYPTION_CREATE()
                 chmod 444 "$HOME/kodo/.enkodo"
             fi
 
-            __decrypt_passphrase__=$(grep -oP '(?<=RANDOM_HASH_SHA256=).*' "$HOME/kodo/.enkodo" || head -n 1 "$HOME/kodo/.enkodo")        
+            __decrypt_passphrase__=$(grep -oP '(?<=RANDOM_HASH_SHA256=).*' "$HOME/kodo/.enkodo" || head -n 1 "$HOME/kodo/.enkodo")
+            
+            ZAPMAN_ainstall_Encrypt=$(tail -n 1 "$shell_DIR/.cache/zapman")
+
+            ZAPMAN_ainstall_Decrypt=$(echo "$ZAPMAN_ainstall_Encrypt" | openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:"$__decrypt_passphrase__" -base64 -in "$shell_DIR/.cache/zapman")
         else
             print_red "error:" "can't create encryption pass.. please see err/warn in your python-(.kodo/python/wpython) scripts!"
         fi
@@ -41,7 +45,7 @@ function @ENCRYPTION_TOKEN()
         
         local _sizeof_rate_token_
         _sizeof_rate_token_=$(tomlq -c -r '.vireon.token' kodo.toml)
-        _vireon_decrypt_token_passphrase_=$(echo "$_sizeof_rate_token_" | openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:"$__decrypt_passphrase__" -base64)
+        VIREON_token_Decrypt=$(echo "$_sizeof_rate_token_" | openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:"$__decrypt_passphrase__" -base64)
     else
         print_red "crit:" "can't create encryption - openssl not found!"
     fi
