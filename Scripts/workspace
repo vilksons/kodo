@@ -348,12 +348,10 @@ function struct_kodo_t_main() {
 
     if ((${#kodo_t_missing_cmds[@]} > 0)); then
         if [ "$kodo_t_save_notice" -ne 1 ]; then
-            print_red "Can't load Workspace Module."
             print_red " Missing packages:" "${kodo_t_missing_cmds[*]}"
             printf "\e]8;;https://github.com/vilksons/kodo/wiki/Required-Packages\e\\ Please see here for more.\e]8;;\e\\"
             echo
             ignore_this sleep 1.0
-            kodo_t_save_notice=1
         fi
     else
         if [ "$kodo_t_save_notice" -ne 1 ]; then

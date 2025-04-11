@@ -151,23 +151,11 @@ function kodo_init_compilers()
                             toml_EXCLUDE="qawno/include"
                         fi
 
-                        compile_options="-i$toml_INCLUDE $toml_EXCLUDE $__LOOP_COMPILES_FILE -o$_AMX_OUTPUT_"
-
                         if [ "$COMPILER_NEXT" -eq 1 ]; then
-                            if [ "$toml_AMX_OPT_F" != "nul" ]; then
-                                compile_options="$compile_options $toml_AMX_OPT_F"
-                            else
-                                compile_options="$compile_options -d2 -;+ -(+ -Z+"
-                            fi
+                            "$COMPILER_PAWNCC" -i"$toml_INCLUDE" "$toml_EXCLUDE" "$__LOOP_COMPILES_FILE" -o"$_AMX_OUTPUT_" "$toml_AMX_OPT_F" > "$__cache_save_compile" 2>&1
                         elif [ "$COMPILER_NEXT" -eq 2 ]; then
-                            if [ "$toml_AMX_OPT_F" != "nul" ]; then
-                                compile_options="$compile_options $toml_AMX_OPT_F" "${commands_OPAMX[@]}"
-                            else
-                                compile_options="$compile_options -d2 -;+ -(+ -Z+" "${commands_OPAMX[@]}"
-                            fi
+                            "$COMPILER_PAWNCC" -i"$toml_INCLUDE" "$toml_EXCLUDE" "$__LOOP_COMPILES_FILE" -o"$_AMX_OUTPUT_" "$toml_AMX_OPT_F" "${commands_OPAMX[@]}" > "$__cache_save_compile" 2>&1
                         fi
-
-                        "$COMPILER_PAWNCC" $compile_options > "$__cache_save_compile" 2>&1
                     done
 
                 local end_time
@@ -295,15 +283,7 @@ function kodo_compilers() {
                         toml_EXCLUDE="qawno/include"
                     fi
                     
-                    compile_command="$COMPILER_PAWNCC -i$toml_INCLUDE $toml_EXCLUDE $__LOOP_COMPILES_FILE -o$_AMX_OUTPUT_"
-                    
-                    if [ "$toml_AMX_OPT_F" != "nul" ]; then
-                        compile_command="$compile_command $toml_AMX_OPT_F"
-                    else
-                        compile_command="$compile_command -d2 -;+ -(+ -Z+"
-                    fi
-                    
-                    $compile_command > "$__cache_save_compile" 2>&1
+                    "$COMPILER_PAWNCC" -i"$toml_INCLUDE" "$toml_EXCLUDE" "$__LOOP_COMPILES_FILE" -o"$_AMX_OUTPUT_" "$toml_AMX_OPT_F" > "$__cache_save_compile" 2>&1
                 done
 
             local end_time
