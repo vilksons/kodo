@@ -5,7 +5,11 @@ compat_now() {
         local OS_TYPE
         OS_TYPE=$(uname)
 
-        if [[ "$OS_TYPE" == "Linux" ]] || { [ -d "$HOME/bin" ] && [ -d "$PREFIX" ]; }; then
+        if grep -qi microsoft /proc/version; then
+            __OS__="windows"
+            __PAWNCC_NAME__="pawncc.exe"
+            __OS_NOTICE__=1
+        elif [[ "$OS_TYPE" == "Linux" ]] || { [ -d "$HOME/bin" ] && [ -d "$PREFIX" ]; }; then
             cat /etc/os-release &>/dev/null
             __OS__="linux"
             __PAWNCC_NAME__="pawncc"
