@@ -23,6 +23,10 @@ function @ENCRYPTION_CREATE()
             
             ZAPMAN_ainstall_Encrypt=$(tail -n 1 "$shell_DIR/.cache/zapman")
 
+            if [ ! -f "$shell_DIR/.cache/zapman" ]; then
+                touch "$shell_DIR/.cache/zapman"
+            fi
+
             ZAPMAN_ainstall_Decrypt=$(echo "$ZAPMAN_ainstall_Encrypt" | openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:"$__decrypt_passphrase__" -base64 -in "$shell_DIR/.cache/zapman")
         else
             print_red "error:" "can't create encryption pass.. please see err/warn in your python-(.kodo/python/wpython) scripts!"
