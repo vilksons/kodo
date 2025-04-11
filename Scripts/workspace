@@ -297,7 +297,7 @@ function @LOAD_KODO_TOML()
     [[ "$toml_ZAPMAN_PLUGINS" == "nul" ]] && print_red "error:" "failed to load \"plugins_dir\""
 
     # server
-    toml_LOG_SERV=$(echo "$toml_data" | jq -r '.server_log.txt')
+    toml_LOG_SERV=$(echo "$toml_data" | jq -r '.server.log')
     [[ "$toml_LOG_SERV" == "nul" ]] && print_red "error:" "failed to load \"log\""
 
     toml_SERVER_CONFIG=$(echo "$toml_data" | jq -r '.server.config')
