@@ -1,14 +1,19 @@
 KODO TOOLCHAIN
 ================
 
-WIKI GUIDE
+WIKI | KODO Media
 ==========
 Essential references to understand and use Kodo:
   - Compiler Options https://github.com/vilksons/kodo/wiki/Compiler-Option) 
   - Required Packages https://github.com/vilksons/kodo/wiki/Required-Packages 
   - PawnCC Installation https://github.com/vilksons/kodo/wiki/PawnCC-Installation
   - CODE OF CONDUCT https://github.com/vilksons/kodo/wiki/CODE-OF-CONDUCT
-
+Media of Repository:
+  - GitHub: https://github.com/vilksons/kodo
+  - Gitea: https://gitea.com/vilksons/kodo
+  - Sourceforge: https://sourceforge.net/projects/kodo/
+  - Replit: https://replit.com/@hotmenparis/kodo
+  
 WHAT IS KODO?
 ===============
 Kodo is an SA:MP-specific toolchain designed for debugger, runner, compiler, and manager.
