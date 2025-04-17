@@ -11,7 +11,7 @@
     "import", "include", "require", "from", "export", "module", "package", "use", "using", "namespace", "with", "yield", "await", "async",
     "get", "set", "init", "main", "end", "pass", "next", "step", "range",
     "printf", "print", "println", "echo", "log", "debug", "trace",
-    "map", "filter", "reduce", "fold", "flatMap", "zip", "unzip", "sort", "reverse", "slice"
+    "map", "filter", "reduce", "fold", "flatMap", "zip", "unzip", "sort", "reverse", "slice", "std", "cout", "endl"
   ],
   "red": [
     "return", "break", "continue", "throw", "raise", "panic", "assert", "error", "fail", "fatal", "abort", "exit", "die", "trap", "retry", "revert",
@@ -21,7 +21,7 @@
     "try", "catch", "finally", "except", "ensure", "rescue", "defer",
     "then", "promise", "resolve", "reject", "await", "async",
     "future", "task", "result", "option", "maybe", "ok", "err", "left", "right",
-    "callback", "event", "signal", "listener", "handler", "subscriber", "observe", "watch"
+    "callback", "event", "signal", "listener", "handler", "subscriber", "observe", "watch", "awk", "grep", "jq", "yq", "tomlq"
   ],
   "gray": [
     "gcc", "g++", "clang", "ld", "as", "make", "cmake", "ninja", "configure", "autoconf", "automake",

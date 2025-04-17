@@ -34,7 +34,7 @@ def load_color_groups_from_url(url):
 
         return {color_map[k]: v for k, v in raw.items() if k in color_map}
     except Exception as e:
-        print(f"Can't get text from: {e}", flush=True)
+        print(f"Can't Get Request of: {e}", flush=True)
         return {}
 
 RAW_KEYWORDS_JSON = 'https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/keywords.json'
@@ -104,7 +104,8 @@ def main():
         vireon_response = data.get('choices', [{}])[0].get('message', {}).get('content')
 
         if not vireon_response:
-            raise ValueError('Error: Response API Failed. Token/Model/Profiles invalid.')
+            print('Error: Response API Failed. Token/Model/Profiles invalid.', flush=True)
+            raise SystemExit(111)
 
         processed_response = process_text(vireon_response)
 
@@ -114,9 +115,11 @@ def main():
         print()
 
     except json.JSONDecodeError:
-        print('Error: Invalid JSON', flush=True)
+        print('Error POST to application/json', flush=True)
+        raise SystemExit(222)
     except ValueError as e:
         print(e, flush=True)
+        raise SystemExit(333)
     except KeyboardInterrupt:
         print(' Cancelled', end='', flush=True)
         sys.exit(130)

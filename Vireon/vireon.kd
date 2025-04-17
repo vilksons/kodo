@@ -12,69 +12,47 @@ function kodo_vireon()
         kodo_t_TITLE "Vireon Chat A.I | A.I Model: $toml_VIREON_AI_MODEL | Chat Model: $toml_VIREON_MODEL"
         
         : ' send a post request to the vireon rest api with user input and system message '
-        vireon_response=$(curl -s -X POST "$toml_VIREON_REST_API" \
-            -H "Authorization: Bearer $VIREON_token_Decrypt" \
-            -H "Content-Type: application/json" \
-            -d "{
-                \"model\": \"$toml_VIREON_MODEL\",
-                \"messages\": [
-                    {
-                    \"role\": \"system\",
-                    \"content\": \"$toml_VIREON_BIODATA\"
-                    },
-                    {
-                    \"role\": \"user\",
-                    \"content\": \"$commands_INPUT\"
-                    }
+        vireon_response=$(jq -n \
+            --arg model "$toml_VIREON_MODEL" \
+            --arg system "$toml_VIREON_BIODATA" \
+            --arg user "$commands_INPUT" \
+            '{
+                model: $model,
+                messages: [
+                { role: "system", content: $system },
+                { role: "user", content: $user }
                 ],
-                \"temperature\": 1,
-                \"max_tokens\": 8192,
-                \"top_p\": 1,
-                \"stop\": null
-            }")
+                temperature: 1,
+                max_tokens: 8192,
+                top_p: 1,
+                stop: null
+            }' | curl -s -X POST "$toml_VIREON_REST_API" \
+                -H "Authorization: Bearer $VIREON_token_Decrypt" \
+                -H "Content-Type: application/json" \
+                -d @-)
     fi
     
     : ' check if the vpython script exists '
     if [ -f ".kodo/python/vpython" ]; then
         : ' parse the response using vpython script '
         echo "$vireon_response" | python3 ".kodo/python/vpython"
-        
-        if command -v jq &>/dev/null; then
-            ai_messages=$(echo "$vireon_response" | jq -r '.choices[].message.content') 
+        vpython_exit_code=$?
+
+        local ai_msg_lenght=""
+
+        if [ "$vpython_exit_code" -eq 111 ] || [ "$vpython_exit_code" -eq 222 ] || [ "$vpython_exit_code" -eq 333 ]; then
+            print_red "Error: API response contains 'failed', 'error', or 'invalid':"
+            echo "$vireon_response"
+        else
+            ai_messages=$(echo "$vireon_response" | jq -r '.choices[].message.content' 2>/dev/null)
             ai_msg_lenght=$(echo -n "$ai_messages" | wc -c)
+        fi
 
-            if echo "$vireon_response" | grep -iqE 'failed|error|invalid' && ! echo "$commands_INPUT" | grep -iqE 'failed|error|invalid' ; then
-                print_red "Error: API response contains 'failed' or 'error':"
-                echo "$vireon_response"
-            else
-                ai_msg_lenght=$(echo -n "$ai_messages" | wc -c)
-            fi
-
-            if [ "$ai_msg_lenght" -gt 8192 ]; then
-                print_green "warning:" "messages is large of limit - 8192 characters!"
-            fi
+        if [ "$ai_msg_lenght" -gt 8192 ]; then
+            print_green "warning:" "messages is large of limit - 8192 characters!"
         fi
     else
-        : ' if vpython not found, print normal response '
-        print_green "can't found vpython.."
-        
-        if command -v jq &>/dev/null; then
-            ai_messages=$(echo "$vireon_response" | jq -r '.choices[].message.content') 
-
-            if echo "$vireon_response" | grep -iqE 'failed|error|invalid' && ! echo "$commands_INPUT" | grep -iqE 'failed|error|invalid' ; then
-                print_red "Error: API response contains 'failed' or 'error':"
-                echo "$vireon_response"
-            else
-                ai_msg_lenght=$(echo -n "$ai_messages" | wc -c)
-                echo "$ai_messages"
-            fi
-
-            if [ "$ai_msg_lenght" -gt 8192 ]; then
-                print_green "warning:" "messages is large of limit - 8192 characters!"
-            fi
-        else
-            echo "$vireon_response"
-        fi
+        print_red "crit:" "failed POST to application/json. needed vpython files." 
     fi
 
     : ' end '
