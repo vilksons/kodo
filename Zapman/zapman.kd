@@ -462,7 +462,7 @@ EOF
                     Prints a final completion message.
                     Displays installed package names and repository version information.
                 '
-                echo -e "$(collor_yellow "complete!.") packages: $new_zapman_DEPENDS | $new_vrepo"
+                echo -e "$(collor_yellow "Complete!.") packages: $new_zapman_DEPENDS | $new_vrepo"
             done
 
             if [[ ! -f "$shell_DIR/gamemodes/$toml_FILE_SERV" ]]; then

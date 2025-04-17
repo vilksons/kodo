@@ -340,7 +340,7 @@ function kodo_compilers() {
     if [[ "$compiler_INSTATUS" == "true" || "$compiler_INSTATUS" == "nul" || "$compiler_INSTATUS" == "" ]]; then
         end_kodo_t_main ""
     elif [[ "$compiler_INSTATUS" == "false" ]]; then
-        space_servers ""
+        workspace_servers ""
     fi
 }
 export kodo_compilers

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function space_servers() {
+function workspace_servers() {
     if [ -f "$shell_DIR/$toml_LOG_SERV" ]; then
         rm -rf "$toml_LOG_SERV"
     fi
@@ -36,13 +36,13 @@ function space_servers() {
     echo "Starting.."
     sleep 2 > /dev/null
 
-    local pid_status=0
+    local server_pid=0
 
     if ! kill -0 $pid 2>/dev/null; then
-        pid_status=1
+        server_pid=1
     fi
 
-    if [ "$pid_status" -ne 0 ]; then
+    if [ "$server_pid" -ne 0 ]; then
         shell_TITLE="running - failed"
         bash_title "$shell_TITLE"
 
@@ -78,9 +78,9 @@ function space_servers() {
         fi
     fi
 }
-export space_servers
+export workspace_servers
 
-function space_wargs_servers() {
+function workspace_wargs_servers() {
     if [ -f "$shell_DIR/$toml_LOG_SERV" ]; then
         rm -rf "$toml_LOG_SERV"
     fi
@@ -143,10 +143,10 @@ with open(kodo_conf_json, 'w') as file:
         echo "Starting.."
         sleep 2 > /dev/null
 
-        local pid_status=0
+        local server_pid=0
         
         if ! kill -0 $pid 2>/dev/null; then
-            pid_status=1
+            server_pid=1
         fi
 
         if [ -f "$toml_SERVER_CONFIG" ]; then
@@ -154,7 +154,7 @@ with open(kodo_conf_json, 'w') as file:
             mv ".$toml_SERVER_CONFIG.bak" "$toml_SERVER_CONFIG"
         fi
 
-        if [ "$pid_status" -ne 0 ]; then
+        if [ "$server_pid" -ne 0 ]; then
             shell_TITLE="running - failed"
             bash_title "$shell_TITLE"
             
@@ -191,7 +191,7 @@ with open(kodo_conf_json, 'w') as file:
         fi
     fi
 }
-export space_wargs_servers
+export workspace_wargs_servers
 
 function start_true() {
     : '
@@ -310,6 +310,6 @@ function ok_next() {
     echo -e "$(collor_yellow "Press any key to running.")"
     echo
     read -r -n 1 -s
-    space_servers ""
+    workspace_servers ""
 }
 export ok_next

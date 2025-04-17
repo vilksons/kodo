@@ -494,7 +494,7 @@ function goto_mode_KODO() {
                 commands_INPUT="$commands_ARGS"
 
                 if [[ "$commands_INPUT" == "." ]]; then
-                    space_servers "" || {
+                    workspace_servers "" || {
                         if [ "$terminal_MODULAR_LOADED" -eq 1 ]; then
                             print_green "warn:" "err.. need to kill after installing \"succes\".."
                             print_green " killing.."
@@ -502,7 +502,7 @@ function goto_mode_KODO() {
                         fi
                     }
                 else
-                    space_wargs_servers "$commands_INPUT" || {
+                    workspace_wargs_servers "$commands_INPUT" || {
                         if [ "$terminal_MODULAR_LOADED" -eq 1 ]; then
                             print_green "warn:" "err.. need to kill after installing \"succes\".."
                             print_green " killing.."
@@ -511,7 +511,7 @@ function goto_mode_KODO() {
                     }
                 fi
             else
-                space_servers ""
+                workspace_servers ""
             fi
             ;;
         "irunn")
@@ -538,7 +538,7 @@ function goto_mode_KODO() {
                 commands_INPUT="$commands_ARGS"
 
                 if [[ "$commands_INPUT" == "." ]]; then
-                    space_servers "" || {
+                    workspace_servers "" || {
                         if [ "$terminal_MODULAR_LOADED" -eq 1 ]; then
                             print_green "warn:" "err.. need to kill after installing \"succes\".."
                             print_green " killing.."
@@ -546,7 +546,7 @@ function goto_mode_KODO() {
                         fi
                     }
                 else
-                    space_wargs_servers "$commands_INPUT" || {
+                    workspace_wargs_servers "$commands_INPUT" || {
                         if [ "$terminal_MODULAR_LOADED" -eq 1 ]; then
                             print_green "warn:" "err.. need to kill after installing \"succes\".."
                             print_green " killing.."
@@ -570,7 +570,7 @@ function goto_mode_KODO() {
         "restart")
             kodo_t_TITLE "Restart"
             ignore_this pkill -15 -f "$toml_EXE_SERV"
-            space_servers ""
+            workspace_servers ""
             ;;
         "gamemode")
             kodo_t_TITLE "Downloads | GameMode"
