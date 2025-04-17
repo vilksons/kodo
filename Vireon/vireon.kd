@@ -58,7 +58,7 @@ function kodo_vireon()
             message_lenght=$(echo -n "$message_detection" | wc -c)
         fi
 
-        if [ "$message_lenght" -gt 8192 ]; then
+        if [[ -n "$message_length" ]] && (( message_length > 8192 )); then
             print_green "warning:" "messages is large of limit - 8192 characters!"
         fi
     else

@@ -10,7 +10,7 @@ By assigning various functions from everything that exists—both shell/Bash mod
 
 The *workspace* is the core file of Kodo and serves as the connector and central hub for all modules. It works by calling various modules using either the `source` command or `python3` execution.
 
-**Py-Workspace** is a part of the Python module in the *workspace*, and stands for **Workspace Python**. Py-Workspace is a module that contains various exports from Python scripts—functions that either cannot be executed in shell/Bash or require more advanced capabilities not available in shell/Bash.
+**Workspace-Python** is a part of the Python module in the *workspace*, and stands for **Workspace Python**. Workspace-Python is a module that contains various exports from Python scripts—functions that either cannot be executed in shell/Bash or require more advanced capabilities not available in shell/Bash.
 
 **Vi-Python** is another part of the Python module in the *workspace*, and stands for **Vireon Python**. Vi-Python is a component of Vireon A.I. that enhances the A.I.’s responses by adding more advanced features, such as syntax highlighting and other enhancements to improve the output.
 

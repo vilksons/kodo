@@ -43,7 +43,7 @@ function __encryption_create__()
                 touch "$shell_DIR/.cache/zapman"
             fi
         else
-            print_red "error:" "can't create encryption pass.. please see err/warn in your python-(.kodo/python/pyworkspace) scripts!"
+            print_red "error:" "can't create encryption pass.. please see err/warn in your python-(.kodo/python/wpython) scripts!"
         fi
     fi
 }
@@ -103,7 +103,7 @@ function security_file_rm()
     if [ -f "$shell_DIR/.cache/.cache.json" ]; then
         shred -u "$shell_DIR/.cache/.cache.json"
     fi
-    
+
     if [ "$toml_RM_CACHE" = "true" ]; then
         if [ -f "$HOME/kodo/.kodo.txt" ]; then
             shred -u "$HOME/kodo/.kodo.txt"

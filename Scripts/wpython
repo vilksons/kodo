@@ -15,7 +15,7 @@ def random_string(length=16):
     """
     return base64.urlsafe_b64encode(os.urandom(length)).decode()[:length]
 
-def pyw_sha256(input_str=None):
+def wpy_sha256(input_str=None):
     """ 
         Creates a double SHA-256 hash.
         If no input is provided, generates a random string.
@@ -51,7 +51,7 @@ if __name__ == '__main__':
 
     try:
         random_word_1 = random_string(20)
-        RAND_TEXT_SHA256, original_1 = pyw_sha256(random_word_1)
+        RAND_TEXT_SHA256, original_1 = wpy_sha256(random_word_1)
         print(f'export RAND_TEXT_SHA256="{RAND_TEXT_SHA256}"')
     except BrokenPipeError:
         """ 
