@@ -7,7 +7,6 @@ import time
 import signal
 import requests
 
-# ANSI color codes
 GREEN = '\033[32m'
 RED = '\033[31m'
 ORANGE = '\033[33m'
@@ -15,11 +14,21 @@ GRAY = '\033[37m'
 RESET = '\033[0m'
 
 def sigterm_handler(signum, frame):
+    """ 
+        Handles termination signals.
+        Ensures clean exit when receiving SIGTERM.
+        Prevents unexpected process interruption.
+    """
     sys.exit(0)
 
 signal.signal(signal.SIGTERM, sigterm_handler)
 
 def load_color_groups_from_url(url):
+    """ 
+        Fetches color keyword mappings from a given URL.
+        Converts keyword categories into ANSI color formats.
+        Returns dictionary of keywords associated with colors.
+    """
     try:
         response = requests.get(url)
         response.raise_for_status()
@@ -37,68 +46,56 @@ def load_color_groups_from_url(url):
         print(f"Can't Get Request of: {e}", flush=True)
         return {}
 
-RAW_KEYWORDS_JSON = 'https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/keywords.json'
+KEYWORDS_JSON_GET = 'https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/keywords.json'
 
-color_groups = load_color_groups_from_url(RAW_KEYWORDS_JSON)
+color_groups = load_color_groups_from_url(KEYWORDS_JSON_GET)
 COLORS = {kw: color for color, keywords in color_groups.items() for kw in keywords}
 
 def highlight_comments_in_codeblock(text):
-    comment_placeholders = {}
-    comment_id = 0
+    """ 
+        Detects and highlights single-line and multi-line comments in code blocks.
+        Replaces detected comments with ANSI gray color for visibility.
+        Returns modified text along with placeholder dictionary.
+    """
+    mm_placeholders = {}
+    mm_id = 0
 
     def repl_single(match):
-        nonlocal comment_id
+        nonlocal mm_id
         comment = match.group(0)
-        key = f"__COMMENT_{comment_id}__"
-        comment_placeholders[key] = f"{GRAY}{comment}{RESET}"
-        comment_id += 1
+        key = f"__mm_{mm_id}__"
+        mm_placeholders[key] = f"{GRAY}{comment}{RESET}"
+        mm_id += 1
         return key
 
     def repl_multi(match):
-        nonlocal comment_id
+        nonlocal mm_id
         comment = match.group(0)
-        key = f"__COMMENT_{comment_id}__"
-        comment_placeholders[key] = f"{GRAY}{comment}{RESET}"
-        comment_id += 1
+        key = f"__mm_{mm_id}__"
+        mm_placeholders[key] = f"{GRAY}{comment}{RESET}"
+        mm_id += 1
         return key
 
     text = re.sub(r'//.*', repl_single, text)
     text = re.sub(r'/\*[\s\S]*?\*/', repl_multi, text)
-    return text, comment_placeholders
+    return text, mm_placeholders
 
 def highlight(match):
+    """ 
+        Applies color highlighting to matched keywords.
+        Uses predefined ANSI color mappings for emphasis.
+        Returns formatted output.
+    """
     word = match.group(0)
     color = COLORS.get(word.lower())
     return f'{color}{word}{RESET}' if color else word
 
-def process_text(text):
-    parts = re.split(r'(```.*?\n.*?```|`.*?`)', text, flags=re.DOTALL)
-    result = []
-
-    for i, part in enumerate(parts):
-        if i % 2 == 1:
-            if part.startswith('```'):
-                code_content = part[3:-3]
-                code_content, comment_placeholders = highlight_comments_in_codeblock(code_content)
-
-                pattern = r'\b(' + '|'.join(re.escape(k) for k in COLORS.keys()) + r')\b'
-                highlighted_code = re.sub(pattern, highlight, code_content, flags=re.IGNORECASE)
-
-                for key, comment in comment_placeholders.items():
-                    highlighted_code = highlighted_code.replace(key, comment)
-
-                result.append(f'```{highlighted_code}```')
-            else:
-                code_content = part[1:-1]
-                pattern = r'\b(' + '|'.join(re.escape(k) for k in COLORS.keys()) + r')\b'
-                highlighted_code = re.sub(pattern, highlight, code_content, flags=re.IGNORECASE)
-                result.append(f'`{highlighted_code}`')
-        else:
-            result.append(part)
-    
-    return ''.join(result)
-
 def main():
+    """ 
+        Reads JSON input from standard input stream.
+        Processes and colorizes text response dynamically.
+        Displays formatted output character by character for effect.
+    """
     try:
         data = json.load(sys.stdin)
         vireon_response = data.get('choices', [{}])[0].get('message', {}).get('content')

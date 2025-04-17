@@ -7,30 +7,56 @@ import base64
 import signal
 
 def random_string(length=16):
-    """Generate a random string from random bytes."""
+    """ 
+        Generates a random string of specified length.
+        Uses base64 encoding for safe URL usage.
+        Ensures randomness by utilizing OS-level entropy.
+        Returns a truncated base64-encoded string.
+    """
     return base64.urlsafe_b64encode(os.urandom(length)).decode()[:length]
 
-def wpy_sha256(input_str=None):
-    """Double SHA256 hashing."""
+def pyw_sha256(input_str=None):
+    """ 
+        Creates a double SHA-256 hash.
+        If no input is provided, generates a random string.
+        Ensures secure hashing with digest conversion.
+        Returns both the hashed value and original input.
+    """
     if input_str is None:
         input_str = random_string()
-    hash1 = hashlib.sha256(input_str.encode()).digest()
-    hash2 = hashlib.sha256(hash1).hexdigest()
-    return hash2, input_str
+    hash_one = hashlib.sha256(input_str.encode()).digest()
+    hash_two = hashlib.sha256(hash_one).hexdigest()
+    return hash_two, input_str
 
 def sigterm_handler(signum, frame):
-    """Handle SIGTERM to exit cleanly"""
+    """ 
+        Handles termination signals received by the script.
+        Ensures a clean shutdown process without errors.
+        Prevents unwanted disruptions from external signals.
+        Calls system exit for proper termination behavior.
+    """
     sys.exit(0)
 
 signal.signal(signal.SIGTERM, sigterm_handler)
 
 if __name__ == '__main__':
+    """ 
+        Entry point of the script.
+        Checks if arguments are passed; exits if they are.
+        Generates a random string and hashes it.
+        Prints the result in a predefined export format.
+    """
     if len(sys.argv) != 1:
         sys.exit(0)
 
     try:
         random_word_1 = random_string(20)
-        RANDOM_HASH_SHA256, original_1 = wpy_sha256(random_word_1)
-        print(f'export RANDOM_HASH_SHA256="{RANDOM_HASH_SHA256}"')
+        RAND_TEXT_SHA256, original_1 = pyw_sha256(random_word_1)
+        print(f'export RAND_TEXT_SHA256="{RAND_TEXT_SHA256}"')
     except BrokenPipeError:
+        """ 
+            Handles broken pipe errors gracefully.
+            Ensures the script exits without unnecessary logs.
+            Prevents issues when piping output to another process.
+        """
         sys.exit(0)

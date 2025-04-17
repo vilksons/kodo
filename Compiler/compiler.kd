@@ -1,12 +1,12 @@
 #!/bin/bash
 
 : ' compiler option '
-COMPILER_AMX_FLAGS=(
+compiler_AMX_FLAGS=(
     "-A" "-a" "-C+" "-C-" "-c" "-D" "-d0" "-d1" "-d2" "-d3" "-e" "-H" 
     "-i" "-l" "-O" "-p" "-R+" "-R-" "-r" "-S" "-s" "-t" "-v0" "-v1" "-v2"
     "-W" "-X" "-XD" "-Z+" "-Z-" "-E+" "-E-" "-^" "-;+" "-;-" "-(+" "-(-" "sym=" "sym=val"
 )
-export COMPILER_AMX_FLAGS
+export compiler_AMX_FLAGS
 
 function kodo_init_compilers()
 {
@@ -19,9 +19,9 @@ function kodo_init_compilers()
     local amx_valid=false
 
     if [[ "$kd_table" == "compile" ]]; then
-        COMPILER_INSTATUS="true"
+        compiler_INSTATUS="true"
         kodo_compilers "" || {
-            if [ "$kodo_t_module_loaded" -eq 1 ]; then
+            if [ "$terminal_MODULAR_LOADED" -eq 1 ]; then
                 print_green "warn:" "err.. need to kill after installing \"succes\".."
                 print_green " killing.."
                 sleep 0.999
@@ -31,9 +31,9 @@ function kodo_init_compilers()
     else
         if [[ -n "$commands_INPUT" ]]; then
             if [[ "$commands_INPUT" == "." ]]; then
-                COMPILER_INSTATUS="true"
+                compiler_INSTATUS="true"
                 kodo_compilers "" || {
-                    if [ "$kodo_t_module_loaded" -eq 1 ]; then
+                    if [ "$terminal_MODULAR_LOADED" -eq 1 ]; then
                         print_green "warn:" "err.. need to kill after installing \"succes\".."
                         print_green " killing.."
                         sleep 0.999
@@ -42,17 +42,17 @@ function kodo_init_compilers()
                 }
             else
                 if [[ "${#commands_OPAMX[@]}" -eq 0 ]]; then
-                    COMPILER_MODE=1
+                    compiler_MODE=1
                 else
                     local amx_valid=true
 
                     for option in "${commands_OPAMX[@]}"; do
                         # option checking
-                        if [[ " ${COMPILER_AMX_FLAGS[*]} " != *" $option "* ]]; then
+                        if [[ " ${compiler_AMX_FLAGS[*]} " != *" $option "* ]]; then
                             # not valid
                             print_red "crit:" "compiler option \`$option\` not found!"
                             print_yellow "usage:"
-                            printf "\"%s\" " "${COMPILER_AMX_FLAGS[@]}"
+                            printf "\"%s\" " "${compiler_AMX_FLAGS[@]}"
                             echo
                             printf "\e]8;;https://github.com/vilksons/kodo/wiki/Compiler-Option\e\\ or see here for more.\e]8;;\e\\"
                             echo
@@ -62,7 +62,7 @@ function kodo_init_compilers()
                     done
 
                     if $amx_valid; then
-                        COMPILER_MODE=2
+                        compiler_MODE=2
                     fi
                 fi
             fi
@@ -70,13 +70,13 @@ function kodo_init_compilers()
 
         while IFS= read -r -d '' pawncc; do
             if [ -f "$pawncc" ]; then
-                COMPILER_PAWNCC="$pawncc"
+                compiler_PAWNCC="$pawncc"
                 break
             fi
-        done < <(find "$shell_DIR" -type f -iname "$__PAWNCC_NAME__" -print0)
+        done < <(find "$shell_DIR" -type f -iname "$PAWNCC_NAME" -print0)
 
-        if [ -z "$COMPILER_PAWNCC" ]; then
-            print_red "crit:" "$__PAWNCC_NAME__ not found!. You can get this in \`pawncc\`"
+        if [ -z "$compiler_PAWNCC" ]; then
+            print_red "crit:" "$PAWNCC_NAME not found!. You can get this in \`pawncc\`"
             echo
             read -r -p "install now? [y/n] " INSTALL_NOW
 
@@ -84,7 +84,7 @@ function kodo_init_compilers()
                 case "$INSTALL_NOW" in
                     [Yy])
                         struct_choice_pawncc "" || {
-                            if [ "$kodo_t_module_loaded" -eq 1 ]; then
+                            if [ "$terminal_MODULAR_LOADED" -eq 1 ]; then
                                 print_green "warn:" "err.. need to kill after installing \"succes\".."
                                 print_green " killing.."
                                 sleep 0.999
@@ -94,7 +94,7 @@ function kodo_init_compilers()
                         ;;
                     [Nn])
                         struct_kodo_t_main "" || {
-                            if [ "$kodo_t_module_loaded" -eq 1 ]; then
+                            if [ "$terminal_MODULAR_LOADED" -eq 1 ]; then
                                 print_green "warn:" "err.. need to kill after installing \"succes\".."
                                 print_green " killing.."
                                 sleep 0.999
@@ -104,7 +104,7 @@ function kodo_init_compilers()
                         ;;
                     *)
                         struct_choice_pawncc "" || {
-                            if [ "$kodo_t_module_loaded" -eq 1 ]; then
+                            if [ "$terminal_MODULAR_LOADED" -eq 1 ]; then
                                 print_green "warn:" "err.. need to kill after installing \"succes\".."
                                 print_green " killing.."
                                 sleep 0.999
@@ -156,10 +156,10 @@ function kodo_init_compilers()
                         if [ -z "$toml_AMX_OPT_F" ] || [[ "$toml_AMX_OPT_F" == "['']" ]] || [[ "$toml_AMX_OPT_F" == "[]" ]] || [ "$toml_AMX_OPT_F" = "nul" ]; then 
                             toml_AMX_OPT_F="-d3 -;+ -(+ -Z+"
                         fi
-                        if [ "$COMPILER_MODE" -eq 1 ]; then
-                            "$COMPILER_PAWNCC" -i"$toml_INCLUDE" "$toml_EXCLUDE" "$__LOOP_COMPILES_FILE" -o"$_AMX_OUTPUT_" "$toml_AMX_OPT_F" > "$__cache_save_compile" 2>&1
-                        elif [ "$COMPILER_MODE" -eq 2 ]; then
-                            "$COMPILER_PAWNCC" -i"$toml_INCLUDE" "$toml_EXCLUDE" "$__LOOP_COMPILES_FILE" -o"$_AMX_OUTPUT_" "$toml_AMX_OPT_F" "${commands_OPAMX[@]}" > "$__cache_save_compile" 2>&1
+                        if [ "$compiler_MODE" -eq 1 ]; then
+                            "$compiler_PAWNCC" -i"$toml_INCLUDE" "$toml_EXCLUDE" "$__LOOP_COMPILES_FILE" -o"$_AMX_OUTPUT_" "$toml_AMX_OPT_F" > "$CACHE_COMPILERS" 2>&1
+                        elif [ "$compiler_MODE" -eq 2 ]; then
+                            "$compiler_PAWNCC" -i"$toml_INCLUDE" "$toml_EXCLUDE" "$__LOOP_COMPILES_FILE" -o"$_AMX_OUTPUT_" "$toml_AMX_OPT_F" "${commands_OPAMX[@]}" > "$CACHE_COMPILERS" 2>&1
                         fi
                     done
 
@@ -169,7 +169,7 @@ function kodo_init_compilers()
                 local elapsed=$((end_time - start_time))
                 
                 bash_cache_compiler "" || {
-                    if [ "$kodo_t_module_loaded" -eq 1 ]; then
+                    if [ "$terminal_MODULAR_LOADED" -eq 1 ]; then
                         print_green "warn:" "err.. need to kill after installing \"succes\".."
                         print_green " killing.."
                         sleep 0.999
@@ -177,7 +177,7 @@ function kodo_init_compilers()
                     fi
                 }
                 ignore_this sleep 0.1
-                cat "$__cache_save_compile"
+                cat "$CACHE_COMPILERS"
                 ignore_this sleep 0.1
 
                 if [[ "$toml_RM_CACHE" == "true" ]]; then
@@ -191,14 +191,14 @@ function kodo_init_compilers()
                     echo
                     echo -e "$(collor_green " Finished: $_AMX_OUTPUT_")"
                     
-                    if [[ "$COMPILER_INSTATUS" == "true" ]]; then
+                    if [[ "$compiler_INSTATUS" == "true" ]]; then
                         kodo_t_TITLE "compilers"
-                    elif [[ "$COMPILER_INSTATUS" == "false" ]]; then
+                    elif [[ "$compiler_INSTATUS" == "false" ]]; then
                         kodo_t_TITLE "compiler - running"
                     fi
                     echo
                     echo "total size: $(stat -c%s "$_AMX_OUTPUT_") bytes"
-                    if [ "$COMPILER_MODE" == 2 ]; then
+                    if [ "$compiler_MODE" == 2 ]; then
                         echo -n "with +option compiler: "
                         echo "${commands_OPAMX[@]}"
                     fi
@@ -214,13 +214,13 @@ function kodo_compilers() {
     local SHFILE="false"
     while IFS= read -r -d '' pawncc; do
         if [ -f "$pawncc" ]; then
-            COMPILER_PAWNCC="$pawncc"
+            compiler_PAWNCC="$pawncc"
             break
         fi
-    done < <(find "$shell_DIR" -type f -iname "$__PAWNCC_NAME__" -print0)
+    done < <(find "$shell_DIR" -type f -iname "$PAWNCC_NAME" -print0)
 
-    if [ -z "$COMPILER_PAWNCC" ]; then
-        print_red "crit:" "$__PAWNCC_NAME__ not found!. You can get this in \`pawncc\`"
+    if [ -z "$compiler_PAWNCC" ]; then
+        print_red "crit:" "$PAWNCC_NAME not found!. You can get this in \`pawncc\`"
         echo
         read -r -p "install now? [y/n] " INSTALL_NOW
 
@@ -264,11 +264,11 @@ function kodo_compilers() {
             '
             for option in $toml_AMX_OPT_F; do
                 # option checking
-                if [[ " ${COMPILER_AMX_FLAGS[*]} " != *" $option "* ]]; then
+                if [[ " ${compiler_AMX_FLAGS[*]} " != *" $option "* ]]; then
                     # not valid
                     print_red "crit:" "compiler option \`$option\` not found!"
                     print_yellow "usage:"
-                    printf "\"%s\" " "${COMPILER_AMX_FLAGS[@]}"
+                    printf "\"%s\" " "${compiler_AMX_FLAGS[@]}"
                     echo
                     printf "\e]8;;https://github.com/vilksons/kodo/wiki/Compiler-Option\e\\ or see here for more.\e]8;;\e\\"
                     echo
@@ -289,7 +289,7 @@ function kodo_compilers() {
                     if [ -z "$toml_AMX_OPT_F" ] || [[ "$toml_AMX_OPT_F" == "['']" ]] || [[ "$toml_AMX_OPT_F" == "[]" ]] || [ "$toml_AMX_OPT_F" = "nul" ]; then 
                         toml_AMX_OPT_F="-d3 -;+ -(+ -Z+"
                     fi
-                    "$COMPILER_PAWNCC" -i"$toml_INCLUDE" "$toml_EXCLUDE" "$__LOOP_COMPILES_FILE" -o"$_AMX_OUTPUT_" "$toml_AMX_OPT_F" > "$__cache_save_compile" 2>&1
+                    "$compiler_PAWNCC" -i"$toml_INCLUDE" "$toml_EXCLUDE" "$__LOOP_COMPILES_FILE" -o"$_AMX_OUTPUT_" "$toml_AMX_OPT_F" > "$CACHE_COMPILERS" 2>&1
                 done
 
             local end_time
@@ -299,7 +299,7 @@ function kodo_compilers() {
 
             bash_cache_compiler ""
             sleep 0.1
-            cat "$__cache_save_compile"
+            cat "$CACHE_COMPILERS"
 
             if [[ "$toml_RM_CACHE" == "true" ]]; then
                 cache_compiler=".cache/compiler.log"
@@ -312,9 +312,9 @@ function kodo_compilers() {
                 echo
                 echo -e "$(collor_green " Finished: $_AMX_OUTPUT_")"
 
-                if [[ "$COMPILER_INSTATUS" == "true" ]]; then
+                if [[ "$compiler_INSTATUS" == "true" ]]; then
                     kodo_t_TITLE "compilers"
-                elif [[ "$COMPILER_INSTATUS" == "false" ]]; then
+                elif [[ "$compiler_INSTATUS" == "false" ]]; then
                     kodo_t_TITLE "compiler - running"
                 fi
                 echo
@@ -329,9 +329,9 @@ function kodo_compilers() {
         echo
         end_kodo_t_main ""
     fi
-    if [[ "$COMPILER_INSTATUS" == "true" || "$COMPILER_INSTATUS" == "nul" || "$COMPILER_INSTATUS" == "" ]]; then
+    if [[ "$compiler_INSTATUS" == "true" || "$compiler_INSTATUS" == "nul" || "$compiler_INSTATUS" == "" ]]; then
         end_kodo_t_main ""
-    elif [[ "$COMPILER_INSTATUS" == "false" ]]; then
+    elif [[ "$compiler_INSTATUS" == "false" ]]; then
         space_servers ""
     fi
 }

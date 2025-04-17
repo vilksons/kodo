@@ -1,17 +1,23 @@
 #!/bin/bash
 
-: ' define a function named kodo_vireon that takes one argument '
+: ' 
+    This function processes user input through the Vireon AI model.
+    It constructs a request payload using JSON formatting.
+    Sends the request to the predefined API endpoint.
+    Receives and handles the AI response accordingly.
+ ' 
 function kodo_vireon()
 {
-    : ' store the first argument in a local variable '
     local commands_INPUT=$1
     
-    : ' check if the ai model is set to groq '
     if [ "$toml_VIREON_AI_MODEL" = "groq" ]; then
-        : ' print the vireon chat ai title with model info '
         kodo_t_TITLE "Vireon Chat A.I | A.I Model: $toml_VIREON_AI_MODEL | Chat Model: $toml_VIREON_MODEL"
-        
-        : ' send a post request to the vireon rest api with user input and system message '
+
+        : ' 
+            Creates a JSON payload with chat details.
+            Specifies model, system message, and user input.
+            Sends request using curl with authentication.
+        ' 
         vireon_response=$(jq -n \
             --arg model "$toml_VIREON_MODEL" \
             --arg system "$toml_VIREON_BIODATA" \
@@ -27,34 +33,46 @@ function kodo_vireon()
                 top_p: 1,
                 stop: null
             }' | curl -s -X POST "$toml_VIREON_REST_API" \
-                -H "Authorization: Bearer $VIREON_token_Decrypt" \
+                -H "Authorization: Bearer $vireon_TOKEN_DECRYPT" \
                 -H "Content-Type: application/json" \
                 -d @-)
     fi
     
-    : ' check if the vipython script exists '
     if [ -f ".kodo/python/vipython" ]; then
-        : ' parse the response using vipython script '
+        : ' 
+            Parses the received response using the vipython script.
+            Evaluates error codes for failure detection.
+            Extracts message content and calculates its length.
+            Provides warnings if the message exceeds the limit.
+        ' 
         echo "$vireon_response" | python3 ".kodo/python/vipython"
         vipython_exit_code=$?
 
-        local ai_msg_lenght=""
+        local message_lenght=""
 
         if [ "$vipython_exit_code" -eq 111 ] || [ "$vipython_exit_code" -eq 222 ] || [ "$vipython_exit_code" -eq 333 ]; then
             print_red "Error: API response contains 'failed', 'error', or 'invalid':"
             echo "$vireon_response"
         else
-            ai_messages=$(echo "$vireon_response" | jq -r '.choices[].message.content' 2>/dev/null)
-            ai_msg_lenght=$(echo -n "$ai_messages" | wc -c)
+            message_detection=$(echo "$vireon_response" | jq -r '.choices[].message.content' 2>/dev/null)
+            message_lenght=$(echo -n "$message_detection" | wc -c)
         fi
 
-        if [ "$ai_msg_lenght" -gt 8192 ]; then
+        if [ "$message_lenght" -gt 8192 ]; then
             print_green "warning:" "messages is large of limit - 8192 characters!"
         fi
     else
+        : ' 
+            Displays critical error when required script is missing.
+            Ensures proper dependency handling before execution.
+        ' 
         print_red "crit:" "failed POST to application/json. needed vipython files." 
     fi
 
-    : ' end '
+    : ' 
+        Ends the function execution cleanly.
+        Calls the predefined end function for cleanup.
+        Prepares for returning control to the end-main script.
+    ' 
     end_kodo_t_main ""
 }

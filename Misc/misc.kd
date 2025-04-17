@@ -64,8 +64,8 @@ function fetch_now()
     echo "Kodo Licenses: $LICENSES"
 
     find_PLATFORM=""
-    if [[ "$__OS__" == "linux" ]]; then find_PLATFORM="Linux"; fi
-    if [[ "$__OS__" == "windows" ]]; then find_PLATFORM="${find_PLATFORM:+$find_PLATFORM & }Windows"; fi
+    if [[ "$OS_NAME" == "linux" ]]; then find_PLATFORM="Linux"; fi
+    if [[ "$OS_NAME" == "windows" ]]; then find_PLATFORM="${find_PLATFORM:+$find_PLATFORM & }Windows"; fi
 
     if [ -n "$find_PLATFORM" ]; then
         echo "Kodo Platform: $find_PLATFORM"

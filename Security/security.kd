@@ -2,8 +2,13 @@
 
 function __encryption_create__()
 {
-    if [ "$kodo_t_save_notice" -eq 1 ]; then
-        if [ -n "$RANDOM_HASH_SHA256" ]; then
+    : '
+        Creates an encrypted passphrase for secure storage.
+        Uses SHA-256 hashing and OpenSSL for strong encryption.
+        Saves the encrypted content into a file with restricted access.
+    '
+    if [ "$terminal_SAVE_NOTICE" -eq 1 ]; then
+        if [ -n "$RAND_TEXT_SHA256" ]; then
             if [ ! -f "$HOME/kodo/.enkodo" ]; then
                 kodo_encryption_c=""
 
@@ -15,7 +20,7 @@ function __encryption_create__()
                     )
                     rand_base64_text=$(
                         echo "$rand_base64_text" |
-                        : ' uppercase to lowercase '
+                        : ' Converts uppercase characters to lowercase for consistency. '
                             tr '[:upper:]' '[:lower:]'
                     )
                     
@@ -23,15 +28,17 @@ function __encryption_create__()
                     kodo_encryption_c="$kodo_encryption_c$rand_base64_text"$'\n'
                 done
 
+                : ' Saves the generated encryption data to the file and secures permissions. '
                 echo -n "$kodo_encryption_c" > "$HOME/kodo/.enkodo"
                 chmod 444 "$HOME/kodo/.enkodo"
             fi
 
             __decrypt_passphrase__=$(
-                grep -oP '(?<=RANDOM_HASH_SHA256=).*' "$HOME/kodo/.enkodo" ||
+                grep -oP '(?<=RAND_TEXT_SHA256=).*' "$HOME/kodo/.enkodo" ||
                     head -n 1 "$HOME/kodo/.enkodo"
             )
 
+            : ' Ensures the cache file exists for future encryption handling. '
             if [ ! -f "$shell_DIR/.cache/zapman" ]; then
                 touch "$shell_DIR/.cache/zapman"
             fi
@@ -43,22 +50,28 @@ function __encryption_create__()
 
 function __encryption_token__()
 {
+    : '
+        Encrypts or decrypts the API token securely.
+        Utilizes AES-256 encryption for improved security.
+        Stores encrypted tokens back into the config file.
+    '
     if command -v openssl &> /dev/null; then
         __VIREON_TOKEN=$(grep '^token\s*=' kodo.toml | cut -d '"' -f2)
 
         if [ "$__VIREON_TOKEN" != "your_token" ]; then
-            if [[ "$__VIREON_TOKEN" =~ ^gsk ]] || [[ "$__VIREON_TOKEN" =~ ^sk ]] || [[ "$__VIREON_TOKEN" =~ ^ds ]] || [[ "$__VIREON_TOKEN" =~ ^ya29 ]] || [[ "$__VIREON_TOKEN" =~ ^AI ]] ||
-                [[ "$__VIREON_TOKEN" =~ ^gsk- ]] || [[ "$__VIREON_TOKEN" =~ ^sk- ]] || [[ "$__VIREON_TOKEN" =~ ^ds- ]] || [[ "$__VIREON_TOKEN" =~ ^ya29- ]] ||
-                [[ "$__VIREON_TOKEN" =~ ^gsk_ ]] || [[ "$__VIREON_TOKEN" =~ ^sk_ ]] || [[ "$__VIREON_TOKEN" =~ ^ds_ ]] || [[ "$__VIREON_TOKEN" =~ ^ya29_ ]] && [ -n "$__VIREON_TOKEN" ]; then
+            if [[ "$__VIREON_TOKEN" =~ ^gsk ]] ||
+                [[ "$__VIREON_TOKEN" =~ ^gsk- ]] ||
+                [[ "$__VIREON_TOKEN" =~ ^gsk_ ]]; then
 
-                VIREON_token_Encrypt=$(
+                : ' Encrypts the token using AES-256-CBC and stores it securely. '
+                vireon_TOKEN_ENCRYPT=$(
                     echo "$__VIREON_TOKEN" |
                     openssl enc -aes-256-cbc -pbkdf2 -pass pass:"$__decrypt_passphrase__" -base64 |
                     tr -d '\n'
                 )
 
                 escaped_token=$(
-                    printf '%s\n' "$VIREON_token_Encrypt" |
+                    printf '%s\n' "$vireon_TOKEN_ENCRYPT" |
                         sed -e 's/[\/&@]/\\&/g'
                 )
 
@@ -67,7 +80,7 @@ function __encryption_token__()
                 SIGNAL_KILL ""
             else
                 local _sizeof_rate_token_
-                VIREON_token_Decrypt=$(
+                vireon_TOKEN_DECRYPT=$(
                     echo "$toml_VIREON_TOKEN" |
                     openssl enc -aes-256-cbc -d -pbkdf2 -pass pass:"$__decrypt_passphrase__" -base64
                 )
@@ -92,6 +105,7 @@ function security_file_rm()
     fi
 
     if [ -f ".cach" ]; then
+        : ' Securely deletes cached files to prevent leakage. '
         ignore_this shred -u ".cach"
     fi
 
@@ -103,13 +117,14 @@ function security_file_rm()
 }
 
 security_cleanup() {
+    : ' Calls the cleanup function to remove security-related files. '
     security_file_rm ""
     ignore_this pkill -9 -f "$shell_NAME"
 }
 
 : '
     @cleanup
-    Trap cleanup function for termination signals
+    Defines a trap function to handle termination signals gracefully.
 
     @list security_cleanup
         SIGTERM: Signal Terminate
