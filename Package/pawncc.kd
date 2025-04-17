@@ -1,13 +1,13 @@
 #!/bin/bash
 
 function AGEN_pawncc_linux() {
-    SE_libpawncc__=$(
+    SEF_libpawncc__=$(
         find "$shell_DIR" -type f -name "libpawnc.so" | head -n 1
     )
-    SE_pawncc__=$(
+    SEF_pawncc__=$(
         find "$shell_DIR" -type f -name "pawncc" | head -n 1
     )
-    SE_pawndisasm__=$(
+    SEF_pawndisasm__=$(
         find "$shell_DIR" -type f -name "pawndisasm" | head -n 1
     )
 
@@ -23,39 +23,39 @@ function AGEN_pawncc_linux() {
     local path_of_termux
     path_of_termux="/data/data/com.termux/files/usr/local/lib/"
 
-    if [[ -n "$SE_pawncc__" ]]; then
+    if [[ -n "$SEF_pawncc__" ]]; then
         print_yellow "Auto-GEN:" "Copying pawncc.. to /..$toml_INCLUDE_FIRST"
 
         if [ ! -d "$toml_INCLUDE_FIRST" ]; then
             mkdir "$toml_INCLUDE_FIRST"
         fi
 
-        cp "$SE_pawncc__" "$toml_INCLUDE_FIRST"
+        cp "$SEF_pawncc__" "$toml_INCLUDE_FIRST"
     fi
-    if [[ -n "$SE_pawndisasm__" ]]; then
+    if [[ -n "$SEF_pawndisasm__" ]]; then
         print_yellow "Auto-GEN:" "Copying pawndisasm.. to /..$toml_INCLUDE_FIRST"
 
         if [ ! -d "$toml_INCLUDE_FIRST" ]; then
             mkdir "$toml_INCLUDE_FIRST"
         fi
         
-        cp "$SE_pawncc__" "$toml_INCLUDE_FIRST"
+        cp "$SEF_pawncc__" "$toml_INCLUDE_FIRST"
     fi
-    if [[ -n "$SE_libpawncc__" ]]; then
+    if [[ -n "$SEF_libpawncc__" ]]; then
         print_yellow "Auto-GEN:" "Copying libpawnc.so.. to /../usr/local/lib.."
         if [ -d "$path_of_termux" ]; then
             if command -v sudo &> /dev/null; then
-                sudo cp "$SE_libpawncc__" "$path_of_termux"
+                sudo cp "$SEF_libpawncc__" "$path_of_termux"
             else
-                cp "$SE_libpawncc__" "$path_of_termux"
+                cp "$SEF_libpawncc__" "$path_of_termux"
             fi
 
             _termux_=1
         elif [ -d "/usr/local/lib/" ]; then
             if command -v sudo &> /dev/null; then
-                sudo cp "$SE_libpawncc__" "/usr/local/lib/"
+                sudo cp "$SEF_libpawncc__" "/usr/local/lib/"
             else
-                cp "$SE_libpawncc__" "/usr/local/lib/"
+                cp "$SEF_libpawncc__" "/usr/local/lib/"
             fi
             if command -v sudo &> /dev/null; then
                 sudo ldconfig
@@ -174,22 +174,22 @@ function AGEN_pawncc_32bit() {
 }
 
 function AGEN_pawncc_win() {
-    SE_pawncdll__=$(
+    SEF_pawncdll__=$(
         find "$shell_DIR" -type f -name "pawnc.dll" | head -n 1
     )
-    SE_pawncc__=$(
+    SEF_pawncc__=$(
         find "$shell_DIR" -type f -name "pawncc.exe" | head -n 1
     )
-    SE_pawncpdb__=$(
+    SEF_pawncpdb__=$(
         find "$shell_DIR" -type f -name "pawnc.pdb" | head -n 1
     )
-    SE_pawnccpdb__=$(
+    SEF_pawnccpdb__=$(
         find "$shell_DIR" -type f -name "pawncc.pdb" | head -n 1
     )
-    SE_pawndisasm__=$(
+    SEF_pawndisasm__=$(
         find "$shell_DIR" -type f -name "pawndisasm.exe" | head -n 1
     )
-    SE_pawndisasmpdb__=$(
+    SEF_pawndisasmpdb__=$(
         find "$shell_DIR" -type f -name "pawndisasm.pdb" | head -n 1
     )
 
@@ -197,63 +197,63 @@ function AGEN_pawncc_win() {
         toml_INCLUDE_FIRST="pawno/include"
     fi
 
-    if [[ -n "$SE_pawncdll__" ]]; then
+    if [[ -n "$SEF_pawncdll__" ]]; then
         print_yellow "Auto-GEN:" "Copying pawnc.dll.. to /..$toml_INCLUDE_FIRST"
 
         if [ ! -d "$toml_INCLUDE_FIRST" ]; then
             mkdir "$toml_INCLUDE_FIRST"
         fi
 
-        cp "$SE_pawncdll__" "$toml_INCLUDE_FIRST"
+        cp "$SEF_pawncdll__" "$toml_INCLUDE_FIRST"
     else
         print_red "InPawncCC:" "Installing PawnCC failed.. pawnc.dll not found!"
     fi
-    if [[ -n "$SE_pawncc__" ]]; then
+    if [[ -n "$SEF_pawncc__" ]]; then
         print_yellow "Auto-GEN:" "Copying pawncc.exe.. to /..$toml_INCLUDE_FIRST"
 
         if [ ! -d "$toml_INCLUDE_FIRST" ]; then
             mkdir "$toml_INCLUDE_FIRST"
         fi
         
-        cp "$SE_pawncc__" "$toml_INCLUDE_FIRST"
+        cp "$SEF_pawncc__" "$toml_INCLUDE_FIRST"
     else
         print_red "InPawncCC:" "Installing PawnCC failed.. pawncc.exe not found!"
     fi
-    if [[ -n "$SE_pawncpdb__" ]]; then
+    if [[ -n "$SEF_pawncpdb__" ]]; then
         print_yellow "Auto-GEN:" "Copying pawnc.pdb.. to /..$toml_INCLUDE_FIRST"
 
         if [ ! -d "$toml_INCLUDE_FIRST" ]; then
             mkdir "$toml_INCLUDE_FIRST"
         fi
 
-        cp "$SE_pawncpdb__" "$toml_INCLUDE_FIRST"
+        cp "$SEF_pawncpdb__" "$toml_INCLUDE_FIRST"
     fi
-    if [[ -n "$SE_pawnccpdb__" ]]; then
+    if [[ -n "$SEF_pawnccpdb__" ]]; then
         print_yellow "Auto-GEN:" "Copying pawncc.pdb.. to /..$toml_INCLUDE_FIRST"
 
         if [ ! -d "$toml_INCLUDE_FIRST" ]; then
             mkdir "$toml_INCLUDE_FIRST"
         fi
         
-        cp "$SE_pawnccpdb__" "$toml_INCLUDE_FIRST"
+        cp "$SEF_pawnccpdb__" "$toml_INCLUDE_FIRST"
     fi
-    if [[ -n "$SE_pawndisasm__" ]]; then
+    if [[ -n "$SEF_pawndisasm__" ]]; then
         print_yellow "Auto-GEN:" "Copying pawndisasm.exe.. to /..$toml_INCLUDE_FIRST"
 
         if [ ! -d "$toml_INCLUDE_FIRST" ]; then
             mkdir "$toml_INCLUDE_FIRST"
         fi
 
-        cp "$SE_pawndisasm__" "$toml_INCLUDE_FIRST"
+        cp "$SEF_pawndisasm__" "$toml_INCLUDE_FIRST"
     fi
-    if [[ -n "$SE_pawndisasmpdb__" ]]; then
+    if [[ -n "$SEF_pawndisasmpdb__" ]]; then
         print_yellow "Auto-GEN:" "Copying pawndisasm.pdb.. to /..$toml_INCLUDE_FIRST"
 
         if [ ! -d "$toml_INCLUDE_FIRST" ]; then
             mkdir "$toml_INCLUDE_FIRST"
         fi
         
-        cp "$SE_pawndisasmpdb__" "$toml_INCLUDE_FIRST"
+        cp "$SEF_pawndisasmpdb__" "$toml_INCLUDE_FIRST"
     fi
 
     print_yellow "Auto-GEN:" "Installation pawncc Succes!"

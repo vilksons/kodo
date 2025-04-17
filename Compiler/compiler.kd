@@ -20,26 +20,12 @@ function kodo_init_compilers()
 
     if [[ "$kd_table" == "compile" ]]; then
         compiler_INSTATUS="true"
-        kodo_compilers "" || {
-            if [ "$terminal_MODULAR_LOADED" -eq 1 ]; then
-                print_green "warn:" "err.. need to kill after installing \"succes\".."
-                print_green " killing.."
-                sleep 0.999
-                SIGNAL_KILL ""
-            fi
-        }
+        kodo_compilers ""
     else
         if [[ -n "$commands_INPUT" ]]; then
             if [[ "$commands_INPUT" == "." ]]; then
                 compiler_INSTATUS="true"
-                kodo_compilers "" || {
-                    if [ "$terminal_MODULAR_LOADED" -eq 1 ]; then
-                        print_green "warn:" "err.. need to kill after installing \"succes\".."
-                        print_green " killing.."
-                        sleep 0.999
-                        SIGNAL_KILL ""
-                    fi
-                }
+                kodo_compilers ""
             else
                 if [[ "${#commands_OPAMX[@]}" -eq 0 ]]; then
                     compiler_MODE=1
@@ -83,34 +69,13 @@ function kodo_init_compilers()
             while true; do
                 case "$INSTALL_NOW" in
                     [Yy])
-                        struct_choice_pawncc "" || {
-                            if [ "$terminal_MODULAR_LOADED" -eq 1 ]; then
-                                print_green "warn:" "err.. need to kill after installing \"succes\".."
-                                print_green " killing.."
-                                sleep 0.999
-                                SIGNAL_KILL ""
-                            fi
-                        }
+                        struct_choice_pawncc ""
                         ;;
                     [Nn])
-                        struct_kodo_t_main "" || {
-                            if [ "$terminal_MODULAR_LOADED" -eq 1 ]; then
-                                print_green "warn:" "err.. need to kill after installing \"succes\".."
-                                print_green " killing.."
-                                sleep 0.999
-                                SIGNAL_KILL ""
-                            fi
-                        }
+                        struct_kodo_t_main ""
                         ;;
                     *)
-                        struct_choice_pawncc "" || {
-                            if [ "$terminal_MODULAR_LOADED" -eq 1 ]; then
-                                print_green "warn:" "err.. need to kill after installing \"succes\".."
-                                print_green " killing.."
-                                sleep 0.999
-                                SIGNAL_KILL ""
-                            fi
-                        }
+                        struct_choice_pawncc ""
                         ;;
                 esac
             done
@@ -168,14 +133,7 @@ function kodo_init_compilers()
 
                 local elapsed=$((end_time - start_time))
                 
-                bash_cache_compiler "" || {
-                    if [ "$terminal_MODULAR_LOADED" -eq 1 ]; then
-                        print_green "warn:" "err.. need to kill after installing \"succes\".."
-                        print_green " killing.."
-                        sleep 0.999
-                        SIGNAL_KILL ""
-                    fi
-                }
+                bash_cache_compiler ""
                 
                 cat "$CACHE_COMPILERS"
                 IGNORE_ME sleep 0.1
@@ -297,14 +255,7 @@ function kodo_compilers() {
 
             local elapsed=$((end_time - start_time))
 
-            bash_cache_compiler "" || {
-                if [ "$terminal_MODULAR_LOADED" -eq 1 ]; then
-                    print_green "warn:" "err.. need to kill after installing \"succes\".."
-                    print_green " killing.."
-                    sleep 0.999
-                    SIGNAL_KILL ""
-                fi
-            }
+            bash_cache_compiler ""
             
             cat "$CACHE_COMPILERS"
             IGNORE_ME sleep 0.1
