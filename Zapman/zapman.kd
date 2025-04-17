@@ -348,12 +348,12 @@ EOF
                             Ensures proper cleanup before proceeding.
                         '
                         if [ -f "$arch_files" ]; then
-                            print_yellow "[ok]" "removing invalid archive: $arch_files"
+                            print_yellow "[OK]" "removing invalid archive: $arch_files"
                             shred -u "$arch_files"
                         fi
 
                         if [ -d "$zapman_extract_dirs" ]; then
-                            print_yellow "[ok]" "removing extracted directory: $zapman_extract_dirs"
+                            print_yellow "[OK]" "removing extracted directory: $zapman_extract_dirs"
                             rm -rf "$zapman_extract_dirs"
                         fi
 
@@ -671,7 +671,8 @@ EOF
             regex_to_remove() {
                 while read -r __file; do
                     _file=$(basename "$__file")
-                    if [[ "$_file" =~ ^$$1([0-9]{1,4})?(\.[a-z]+)?$ || "$_file" =~ .*-?$$1([0-9]{1,4})?(\.[a-z]+)?$ ]]; then
+                    if [[ "$_file" =~ ^$$1([0-9]{1,4})?(\.[a-z]+)?$ ||
+                        "$_file" =~ .*-?$$1([0-9]{1,4})?(\.[a-z]+)?$ ]]; then
                         echo "$__file"
                     fi
                 done
@@ -722,15 +723,15 @@ EOF
                     continue
                 fi
 
-                escaped_plugins=$(echo "$__packages__" | sed 's/[&/\]/\\&/g')
+                esc_plugins=$(echo "$__packages__" | sed 's/[&/\]/\\&/g')
                 file_path="$shell_DIR/gamemodes/$toml_FILE_SERV"
 
                 if [[ -f "$file_path" ]]; then
-                    if grep -q "#include <$escaped_plugins>" "$file_path"; then
-                        print_yellow "dbg:" "removing #include <$escaped_plugins> from $file_path"
-                        sed -i "/#include <$escaped_plugins>/d" "$file_path"
+                    if grep -q "#include <$esc_plugins>" "$file_path"; then
+                        print_yellow "dbg:" "removing #include <$esc_plugins> from $file_path"
+                        sed -i "/#include <$esc_plugins>/d" "$file_path"
                     else
-                        print_yellow "dbg:" "#include <$escaped_plugins> not found in $file_path"
+                        print_yellow "dbg:" "#include <$esc_plugins> not found in $file_path"
                     fi
                 else
                     print_yellow "dbg:" "$file_path not found."
