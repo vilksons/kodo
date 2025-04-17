@@ -210,6 +210,8 @@ EOF
                     fi
                 fi
 
+                ignore_this sleep 0.1
+
                 : '
                     Initializes the cache extraction directory.
                     If an existing extraction directory is found, it is removed.
@@ -374,6 +376,8 @@ EOF
                 '
                 mapfile -t _zapman_include < <(find "$zapman_extract_dirs" -type f -name "*.inc" -exec basename {} \;)
                 
+                ignore_this sleep 0.1
+
                 if [ -d "$toml_ZAPMAN_INCLUDE" ]; then
                     : '
                         Searches for .inc files within extracted directories.
@@ -449,6 +453,8 @@ EOF
                     fi
                 fi
 
+                ignore_this sleep 0.1
+
                 : '
                     Performs cleanup by removing extracted archives and directories.
                     Uses secure deletion before removing residual files.
@@ -511,6 +517,8 @@ EOF
                 done
             fi
 
+            ignore_this sleep 0.1
+                
             if [ -f "$shell_DIR/$toml_SERVER_CONFIG" ]; then
                 : '
                     Checks if the server configuration file exists.
@@ -714,6 +722,8 @@ EOF
                 print_green "warn:" "$toml_ZAPMAN_PLUGINS not found"
             fi
 
+            ignore_this sleep 0.1
+            
             : '
                 Iterates through packages for removal from game mode configuration.
                 Ensures that #include statements related to plugins are deleted.
@@ -738,6 +748,8 @@ EOF
                 fi
             done
 
+            ignore_this sleep 0.1
+            
             : '
                 Removes plugin entries from SAMP or OMP configurations.
                 Applies modifications using sed or jq based on the server type.

@@ -720,8 +720,7 @@ function goto_mode_KODO() {
 
                         echo "$latest" > "$shell_DIR/.itskodo"
 
-                    __modular__()
-                    {
+                    __modular__() {
                         kodo_t_TITLE "Sync | Upgrade"
 
                         echo "Upgrading.."
