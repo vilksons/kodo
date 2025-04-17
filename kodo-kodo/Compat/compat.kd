@@ -1,0 +1,47 @@
+#!/bin/bash
+
+compat_now() {
+    if [ "$__OS_NOTICE__" -ne 1 ]; then
+        local OS_TYPE
+        OS_TYPE=$(uname)
+        
+        if [[ "$OS_TYPE" == "Linux" ]] || [[ -f "/.dockerenv" ]] || { [ -d "$HOME/bin" ] && [ -d "$PREFIX" ]; }; then
+            __OS__="linux"
+            __PAWNCC_NAME__="pawncc"
+            __OS_NOTICE__=1
+
+        elif [[ "$__OS_NOTICE__" != 1 ]]; then
+            if [ -d "/c/windows/System32" ] || [ -d "/mnt/c/windows/System32" ] || [ -d "/windows/System32" ]; then
+                __OS__="windows"
+                __PAWNCC_NAME__="pawncc.exe"
+                __OS_NOTICE__=1
+            fi
+        fi
+
+        if [[ "$__OS__" == "windows" ]] && [[ "$__OS__" == "linux" ]]; then
+            echo -e "$(collor_gray ":: System detected both windows and Linux. Which one will you choose?")"
+            read -r -p "Choose OS for Kodo Y) windows, B) GNU/Linux" PERMISSION_NEED_OS
+
+            while true; do
+                case "$PERMISSION_NEED_OS" in
+                    [Yy]) 
+                        __PAWNCC_NAME__="pawncc.exe"
+                        __OS__="windows"
+                        __OS_NOTICE__=1
+                        break 
+                        ;;
+                    [Bb]) 
+                        __PAWNCC_NAME__="pawncc"
+                        __OS__="linux"
+                        __OS_NOTICE__=1
+                        break 
+                        ;;
+                    *) 
+                        echo -e "$(collor_red "err:") Invalid selection. Please enter the correct option!"
+                        read -r -p "Choose OS for Kodo Y) windows, B) GNU/Linux: " PERMISSION_NEED_OS 
+                        ;;
+                esac
+            done
+        fi
+    fi
+}

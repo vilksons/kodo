@@ -1,0 +1,204 @@
+KODO TOOLCHAIN
+=====================
+
+INTRODUCTION 
+#####################
+
+WIKI | MEDIA MAP
+=====================
+Essential references to understand and use Kodo:
+  - Compiler Options https://github.com/vilksons/kodo/wiki/Compiler-Option
+  - Required Packages https://github.com/vilksons/kodo/wiki/Required-Packages 
+  - PawnCC Installation https://github.com/vilksons/kodo/wiki/PawnCC-Installation
+  - CODE OF CONDUCT https://github.com/vilksons/kodo/wiki/CODE-OF-CONDUCT
+Media of Repository:
+  - GitHub: https://github.com/vilksons/kodo
+  - Gitlab: https://gitlab.com/vilksons/kodo
+  - Gitea: https://gitea.com/vilksons/kodo
+  - SourceForge: https://sourceforge.net/projects/kodo/
+  - Replit: https://replit.com/@hotmenparis/kodo
+
+WHAT IS KODO?
+=====================
+Kodo is an SA:MP-specific toolchain designed for debugger, runner, compiler, and depends manager.
+
+WHAT IS cKODO?
+=====================
+- cKodo https://github.com/vilksons/kodo/tree/ckodo
+cKodo is a Kodo Toolchain built on C without any connection to Shell/Bash. and also simpler because it prioritizes devs who don't quite understand the Bash shell language. and more needed feature coverage.
+
+WHAT IS Vireon A.I?
+=====================
+Vireon A.I is an Artificial Intelligence created for Chat A.I dedicated to Kodo Toolchain. Kodo relies on the use of Data Managers such as cURL and Python as its integration of the json API response. which allows full management of users and freedom of modification with Python. and Vireon A.I has Encryption on Bot Token so that no one can copy and see your Bot Token other than in Vireon A.I with a complicated decrypt Pass.
+
+STABLE VERSION
+=====================
+use the tag version `https://github.com/vilksons/kodo/tags` if you are looking for a version that has been tested in several cases.
+
+KEEPING UP-TO-DATE
+=====================
+Always update using:
+    `sync` or `sync update` to updated `workspace` only.
+
+STARTING 
+#####################
+
+INSTALLATION
+=====================
+Please See: https://github.com/vilksons/kodo/blob/kodo/INSTALL
+
+FILE RENAMING (OPTIONAL)
+=====================
+You can rename `yourmode.pwn` files to a project-appropriate format (e.g., `yourmode.io.pwn`) for consistency.
+
+BASIC OPERATION
+=====================
+Usage: kodo <flags> | help | -h | --h | [<commands>] [<args>]
+Help Usage: <commands> | help compile | help running
+Tip: use CTRL+C to exit and use CTRL+D to goto main
+Commands:
+ | Kodo |
+ compile (compile project)
+ running (running project)
+ irunn (compile-run project)
+ debug (debugging project)
+ stop (stopped project)
+ restart (restart project)
+ gamemode (download gamemode)
+ pawncc (download pawncc)
+ clear (clear-screen)
+ checksums (checksums of workspace)
+ cat (cat file to terminal)
+ kill (kill/restart terminal)
+ sync (update/upgrade)
+ modular (module checking)
+ directory (change/display current directory)
+ exit (exit from terminal)
+ remcac (remove cache ~/.cache/)
+ vireon (Vireon, A.I Chat)
+ toml (rebuild kodo.toml)
+ fetch (fetch of workspace)
+ nano (run nano editor from terminal)
+ | Zapman |
+ zapman (enter Zapman)
+ autoinstall (install packages from cache)
+ install (install packages)
+ remove (remove packages)
+ exit (exit Zapman)
+
+COMPILATION
+=====================
+NOTED
+*********************
+Before you compile, please read the PawnCC installation documentation from Kodo Wiki. see https://github.com/vilksons/kodo/wiki/PawnCC-Installation
+
+Ready to Compilation?..
+---------------------
+ o Default compilation:
+	`compile .`
+ o Specific file compilation:
+	`compile yourmode.pwn`
+ o Compilation with options:
+	`compile yourmode.pwn opt1 opt2 opt3 opt4`
+        ~ `compile bare.pwn -d3`
+    - if you add options to the compilation, it will not replace the options from kodo.toml. because the options in the `compile` command are only additional options for compilation.
+
+STARTING & DEBUGGING
+=====================
+ o Run a compiled script:
+	`running yourmode.pwn`
+ o Debug a script:
+	`debug yourmode.pwn`
+
+CONFIGURATION `kodo.toml`
+=====================
+NOTED
+*********************
+Almost all are equipped with Hashing, Hashing SHA256 Double. including Bot Token Encryption when there is a bot token that is automatically detected in Ecnryption and its Pass uses Hashing Double SHA256 again. but for speed there is no need to worry because all are balanced, efficient.
+
+CONFIGURATION DETAILS
+----------------------
+| Key            | Description                                                                          |
+|----------------|--------------------------------------------------------------------------------------|
+| amx_flags      | Compiler option flags. See https://github.com/vilksons/kodo/wiki/Compiler-Option     |
+| include_paths  | Directory path for additional includes used in compilation.                          |
+| exclude_paths  | Paths to exclude from compilation.                                                   |
+| log            | SA-MP server log file path.                                                          |
+| config         | SA-MP configuration file (for Zapman).                                               |
+| init           | SA-MP main server file (for Zapman).                                                 |
+| executable     | Path to the SA-MP server executable.                                                 |
+| include_dir    | Directory for includes managed by the package manager (Zapman).                      |
+| plugins_dir    | Directory where .dll and .so plugin files are stored (Zapman).                       |
+| ai_model       | AI model of Kodo Toolchain. `groq`                                                   |
+| rest_api       | Rest API of Post Request                                                             |
+| token          | API key of your A.I - groq, openai (chatgpt), deepseek, gemini                       |
+| model          | AI variant of your A.I - groq, openai (chatgpt), deepseek, gemini                    |
+| profile        | Additional Vireon configuration info.                                                |
+| remcache_auto  | Automatically remove .cache, table history, etc. (true/false).                       |
+
+A.I Model
+----------------------
+Groq: https://groq.com/
+    ^ rest api docs: https://console.groq.com/docs/api-reference
+    ^ rest api basic: `https://api.groq.com/openai/v1/chat/completions`
+ChatGPT (required build by yourself.): https://platform.openai.com/
+    ^ rest api docs: https://platform.openai.com/docs/api-reference/debugging-requests
+    ^ rest api basic: `https://api.openai.com/v1/chat/completions`
+DeepSeek (required build by yourself.): https://www.deepseek.com/
+    ^ rest api docs: https://api-docs.deepseek.com/api/deepseek-api
+    ^ rest api basic: `https://api.deepseek.com/chat/completions`
+Gemini (required build by yourself.): https://ai.google.dev/
+    ^ rest api docs: https://ai.google.dev/gemini-api/docs
+    ^ rest api basic: `https://generativelanguage.googleapis.com/v1beta/models/`
+Claude (required build by yourself.): https://www.anthropic.com/
+    ^ rest api docs: https://docs.anthropic.com/en/docs/welcome
+    ^ rest api basic: `https://api.anthropic.com/v1/messages`
+
+DEPENDS MANAGER - ZAPMAN
+=====================
+Security
+*********************
+Security on Zapman is very well maintained, in addition to the Zapman cache which only has a history of taking one URL, Zapman also provides hashing and encryption on its cache, and also Zapman only reads the installed ".so", ".dll", and ".inc" files, otherwise it will be ignored and the installation folder/archive will be deleted quickly. In addition, Zapman uses cURL to manage the download process in a safer and more efficient way. cURL ensures that every downloaded file is verified for its authenticity by combining various protocols and transfer methods that can mitigate the potential risk of attacks from unauthorized or corrupted files. By using cURL, Zapman can increase download speeds while maintaining data integrity during the download process.
+
+Features
+*********************
+Features in Zapman
+Zapman includes several features, such as automatic installation to the specified folder location from the kodo.toml file. For instance, Zapman will automatically install any .dll or .so files to the plugins_dir specified in the [paths] section of kodo.toml. Additionally, any .inc files from the extraction process will be placed according to the include_dir specified in the [paths] section of kodo.toml. It doesn't matter if the .inc files are located in a folder from the installed dependency repository.
+Zapman will also automatically add the include directive #include <incname.inc> to the location specified in the init section of the [server] part of kodo.toml.
+Furthermore, Zapman will automatically install the plugin name to the appropriate file locations, such as adding it to the legacy_plugins section of config.json for "pawn" in Open.mp, and to the plugins section in the server.cfg file for SA-MP.
+
+PACKAGE MANAGEMENT
+=====================
+ o Switch to Zapman Mode
+    `zapman`
+ o Exit from Zapman Mode
+    `exit`
+ o Installing Packages:
+    `install github/samp-incognito/samp-streamer-plugin`
+ o Removing Packages:
+    `remove streamer`
+ o If you previously used args in the installation, the URL is applied to the Zapman cache. and you can reinstall with `autoinstall`
+    `autoinstall`
+  
+ZAPMAN CONFIGURATION
+----------------------
+Zapman uses `zapman.toml` or `zapman.json`.
+
+Example `zapman.toml`:
+    [package]
+    urls = [
+      "github/user/repository",
+      "gitlab/user/repository",
+      "sourceforge/user/repository"
+    ]
+
+Example `zapman.json`:
+    {
+        "package": [
+            "github/user/repository",
+            "gitlab/user/repository",
+            "sourceforge/user/repository"
+        ]
+    }
+
+Good bye, Thank you to Read! :)

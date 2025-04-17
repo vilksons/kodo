@@ -1,0 +1,116 @@
+#!/bin/bash
+
+function __encryption_create__()
+{
+    if [ "$kodo_t_save_notice" -eq 1 ]; then
+        if [ -n "$RANDOM_HASH_SHA256" ]; then
+            if [ ! -f "$HOME/kodo/.enkodo" ]; then
+                kodo_encryption_c=""
+
+                for i in {1..100}; do
+                    rand_base64_text=$(
+                        openssl rand -base64 1000 | sha256sum | awk '{print $1}'
+                    )
+                    rand_base64_text=$(
+                        echo "$rand_base64_text" | tr '[:upper:]' '[:lower:]'
+                    )
+                    
+                    kodo_encryption_c="$kodo_encryption_c$rand_base64_text"$'\n'
+                    kodo_encryption_c="$kodo_encryption_c$rand_base64_text"$'\n'
+                done
+
+                echo -n "$kodo_encryption_c" > "$HOME/kodo/.enkodo"
+                chmod 444 "$HOME/kodo/.enkodo"
+            fi
+
+            __decrypt_passphrase__=$(
+                grep -oP '(?<=RANDOM_HASH_SHA256=).*' "$HOME/kodo/.enkodo" ||
+                    head -n 1 "$HOME/kodo/.enkodo"
+            )
+
+            if [ ! -f "$shell_DIR/.cache/zapman" ]; then
+                touch "$shell_DIR/.cache/zapman"
+            fi
+        else
+            print_red "error:" "can't create encryption pass.. please see err/warn in your python-(.kodo/python/wpython) scripts!"
+        fi
+    fi
+}
+
+function __encryption_token__()
+{
+    if command -v openssl &> /dev/null; then
+        __VIREON_TOKEN=$(grep '^token\s*=' kodo.toml | cut -d '"' -f2)
+
+        if [ "$__VIREON_TOKEN" != "your_token" ]; then
+            if [[ "$__VIREON_TOKEN" =~ ^gsk ]] || [[ "$__VIREON_TOKEN" =~ ^sk ]] || [[ "$__VIREON_TOKEN" =~ ^ds ]] || [[ "$__VIREON_TOKEN" =~ ^ya29 ]] || [[ "$__VIREON_TOKEN" =~ ^AI ]] ||
+                [[ "$__VIREON_TOKEN" =~ ^gsk- ]] || [[ "$__VIREON_TOKEN" =~ ^sk- ]] || [[ "$__VIREON_TOKEN" =~ ^ds- ]] || [[ "$__VIREON_TOKEN" =~ ^ya29- ]] ||
+                [[ "$__VIREON_TOKEN" =~ ^gsk_ ]] || [[ "$__VIREON_TOKEN" =~ ^sk_ ]] || [[ "$__VIREON_TOKEN" =~ ^ds_ ]] || [[ "$__VIREON_TOKEN" =~ ^ya29_ ]] && [ -n "$__VIREON_TOKEN" ]; then
+
+                VIREON_token_Encrypt=$(
+                    echo "$__VIREON_TOKEN" |
+                        openssl enc -aes-256-cbc -salt -pbkdf2 -pass pass:"$__decrypt_passphrase__" -base64 |
+                            tr -d '\n'
+                )
+
+                escaped_token=$(
+                    printf '%s\n' "$VIREON_token_Encrypt" |
+                        sed -e 's/[\/&@]/\\&/g'
+                )
+
+                sed -i "s@^token = \".*\"@token = \"$escaped_token\"@" kodo.toml
+
+                SIGNAL_KILL ""
+            else
+                local _sizeof_rate_token_
+                VIREON_token_Decrypt=$(
+                    echo "$toml_VIREON_TOKEN" |
+                        openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:"$__decrypt_passphrase__" -base64
+                )
+            fi
+        fi
+    else
+        print_red "crit:" "can't create encryption - openssl not found!"
+    fi
+}
+
+function security_file_rm()
+{
+    : ' Remove File Logs '
+    cd "$shell_DIR" >/dev/null 2>&1 || echo "" &&
+
+    if [ -f ".cache_tmp" ]; then
+        shred -u ".cache_tmp"
+    fi
+
+    if [ -f ".__ignored.json" ]; then
+        shred -u ".__ignored.json"
+    fi
+
+    if [ -f ".cach" ]; then
+        ignore_this shred -u ".cach"
+    fi
+
+    if [ "$toml_RM_CACHE" = "true" ]; then
+        if [ -f "$HOME/kodo/.kodo.txt" ]; then
+            shred -u "$HOME/kodo/.kodo.txt"
+        fi
+    fi
+}
+
+security_cleanup() {
+    security_file_rm ""
+    ignore_this pkill -9 -f "$shell_NAME"
+}
+
+: '
+    @cleanup
+    Trap cleanup function for termination signals
+
+    @list security_cleanup
+        SIGTERM: Signal Terminate
+        SIGQUIT: Signal Quit
+        SIGHUP: Signal Hangup
+        SIGINT: Signal Interrupt
+'
+trap security_cleanup SIGTERM SIGQUIT SIGHUP SIGINT

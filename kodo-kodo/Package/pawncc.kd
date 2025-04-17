@@ -1,0 +1,408 @@
+#!/bin/bash
+
+PM=""
+
+function ainstall_pawncc_linux() {
+    __find_libpawncc__=$(
+        find "$shell_DIR" -type f -name "libpawnc.so" | head -n 1
+    )
+    __find_pawncc__=$(
+        find "$shell_DIR" -type f -name "pawncc" | head -n 1
+    )
+    __find_pawndisasm__=$(
+        find "$shell_DIR" -type f -name "pawndisasm" | head -n 1
+    )
+
+    if [ -z "$toml_INCLUDE_FIRST" ] ||
+        [[ "$toml_INCLUDE_FIRST" == "['']" ]] ||
+        [[ "$toml_INCLUDE_FIRST" == "[]" ]] ||
+        [ "$toml_INCLUDE_FIRST" = "nul" ]; then
+        toml_INCLUDE_FIRST="pawno/include"
+    fi
+
+    local _termux_=0
+    : ' path from Termux. if needed, please change. '
+    local path_of_termux
+    path_of_termux="/data/data/com.termux/files/usr/local/lib/"
+
+    if [[ -n "$__find_pawncc__" ]]; then
+        print_yellow "InPawnCC:" "Copying pawncc.. to /..$toml_INCLUDE_FIRST"
+
+        if [ ! -d "$toml_INCLUDE_FIRST" ]; then
+            mkdir "$toml_INCLUDE_FIRST"
+        fi
+
+        cp "$__find_pawncc__" "$toml_INCLUDE_FIRST"
+    fi
+    if [[ -n "$__find_pawndisasm__" ]]; then
+        print_yellow "InPawnCC:" "Copying pawndisasm.. to /..$toml_INCLUDE_FIRST"
+
+        if [ ! -d "$toml_INCLUDE_FIRST" ]; then
+            mkdir "$toml_INCLUDE_FIRST"
+        fi
+        
+        cp "$__find_pawncc__" "$toml_INCLUDE_FIRST"
+    fi
+    if [[ -n "$__find_libpawncc__" ]]; then
+        print_yellow "InPawnCC:" "Copying libpawnc.so.. to /../usr/local/lib.."
+        if [ -d "$path_of_termux" ]; then
+            if command -v sudo &> /dev/null; then
+                sudo cp "$__find_libpawncc__" "$path_of_termux"
+            else
+                cp "$__find_libpawncc__" "$path_of_termux"
+            fi
+
+            _termux_=1
+        elif [ -d "/usr/local/lib/" ]; then
+            if command -v sudo &> /dev/null; then
+                sudo cp "$__find_libpawncc__" "/usr/local/lib/"
+            else
+                cp "$__find_libpawncc__" "/usr/local/lib/"
+            fi
+            if command -v sudo &> /dev/null; then
+                sudo ldconfig
+            else
+                ldconfig
+            fi
+        else
+            print_red "error:" "Can't found /../usr/local/lib.."
+            end_kodo_t_main ""
+        fi
+        
+        if [ -n "$ZSH_VERSION" ]; then
+            RC=~/.zshrc
+        else
+            RC=~/.bashrc
+        fi
+
+        if [ -d "$path_of_termux" ]; then
+            echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/usr/local/lib" >> "$RC"
+        elif [ -d "/usr/local/lib/" ]; then
+            echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:$path_of_termux" >> "$RC"
+        fi
+
+        source "$RC"
+
+        if [ "$_termux_" -ne 1 ]; then
+            if ! ldconfig -p | grep -q libpawnc.so; then
+                print_red "InPawnCC:" "libpawnc.so not found in /usr/local/lib .. moving to /usr/local/lib32.."
+
+                if [ -d "/usr/local/lib32/" ]; then
+                    if command -v sudo &> /dev/null; then
+                        sudo mv "/usr/local/lib/libpawnc.so" "/usr/local/lib32/"
+                    else
+                        mv "/usr/local/lib/libpawnc.so" "/usr/local/lib32/"
+                    fi
+
+                    echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib32" >> ~/.bashrc && source ~/.bashrc
+                else
+                    print_red "error:" "Can't found /../usr/local/lib32.."
+                    end_kodo_t_main ""
+                fi
+            fi
+        fi
+        
+        print_yellow "InPawnCC:" "Installation pawncc Succes!"
+    else
+        print_red "InPawncCC:" "Installing PawnCC failed.. libpawnc.so not found!"
+    fi
+}
+
+function ainstall_pawncc_detectpkg() {
+    if command -v apt &>/dev/null; then
+        PM="apt"
+        INSTALL="apt install -y"
+        ARCH_ADD="dpkg --add-architecture i386"
+    elif command -v pacman &>/dev/null; then
+        PM="pacman"
+        INSTALL="pacman -S --needed"
+    elif command -v zypper &>/dev/null; then
+        PM="zypper"
+        INSTALL="zypper install -y"
+    elif command -v dnf &>/dev/null; then
+        PM="dnf"
+        INSTALL="dnf install -y"
+    elif command -v yum &>/dev/null; then
+        PM="yum"
+        INSTALL="yum install -y"
+    else
+        print_red "error:" "Can't found Package Manager. only apt/pacman/dnf/yum.."
+        end_kodo_t_main ""
+    fi
+}
+
+function ainstall_pawncc_32bit() {
+    print_yellow "InPawnCC:" "Installing x86 (32bit) Support for x64"
+    case "$PM" in
+    apt)
+        if command -v sudo &> /dev/null; then
+            sudo apt update
+        else
+            apt update
+        fi
+        if command -v sudo &> /dev/null; then
+            sudo "$ARCH_ADD"
+            sudo "$INSTALL" libc6:i386 libstdc++6:i386
+        else
+            "$ARCH_ADD"
+            "$INSTALL" libc6:i386 libstdc++6:i386
+        fi
+        ;;
+    pacman)
+        if command -v sudo &> /dev/null; then
+            sudo "$INSTALL" lib32-glibc lib32-gcc-libs
+        else
+            "$INSTALL" lib32-glibc lib32-gcc-libs
+        fi
+        ;;
+    zypper)
+        if command -v sudo &> /dev/null; then
+            sudo "$INSTALL" glibc-32bit libstdc++6-32bit
+        else
+            "$INSTALL" glibc-32bit libstdc++6-32bit
+        fi
+        ;;
+    dnf | yum)
+        if command -v sudo &> /dev/null; then
+            sudo "$INSTALL" glibc.i686 libstdc++.i686
+        else
+            "$INSTALL" glibc.i686 libstdc++.i686
+        fi
+        ;;
+    esac
+}
+
+function ainstall_pawncc_win() {
+    __find_pawncdll__=$(
+        find "$shell_DIR" -type f -name "pawnc.dll" | head -n 1
+    )
+    __find_pawncc__=$(
+        find "$shell_DIR" -type f -name "pawncc.exe" | head -n 1
+    )
+    __find_pawncpdb__=$(
+        find "$shell_DIR" -type f -name "pawnc.pdb" | head -n 1
+    )
+    __find_pawnccpdb__=$(
+        find "$shell_DIR" -type f -name "pawncc.pdb" | head -n 1
+    )
+    __find_pawndisasm__=$(
+        find "$shell_DIR" -type f -name "pawndisasm.exe" | head -n 1
+    )
+    __find_pawndisasmpdb__=$(
+        find "$shell_DIR" -type f -name "pawndisasm.pdb" | head -n 1
+    )
+
+    if [ -z "$toml_INCLUDE_FIRST" ] || [[ "$toml_INCLUDE_FIRST" == "['']" ]] || [[ "$toml_INCLUDE_FIRST" == "[]" ]] || [ "$toml_INCLUDE_FIRST" = "nul" ]; then
+        toml_INCLUDE_FIRST="pawno/include"
+    fi
+
+    if [[ -n "$__find_pawncdll__" ]]; then
+        print_yellow "InPawnCC:" "Copying pawnc.dll.. to /..$toml_INCLUDE_FIRST"
+
+        if [ ! -d "$toml_INCLUDE_FIRST" ]; then
+            mkdir "$toml_INCLUDE_FIRST"
+        fi
+
+        cp "$__find_pawncdll__" "$toml_INCLUDE_FIRST"
+    else
+        print_red "InPawncCC:" "Installing PawnCC failed.. pawnc.dll not found!"
+    fi
+    if [[ -n "$__find_pawncc__" ]]; then
+        print_yellow "InPawnCC:" "Copying pawncc.exe.. to /..$toml_INCLUDE_FIRST"
+
+        if [ ! -d "$toml_INCLUDE_FIRST" ]; then
+            mkdir "$toml_INCLUDE_FIRST"
+        fi
+        
+        cp "$__find_pawncc__" "$toml_INCLUDE_FIRST"
+    else
+        print_red "InPawncCC:" "Installing PawnCC failed.. pawncc.exe not found!"
+    fi
+    if [[ -n "$__find_pawncpdb__" ]]; then
+        print_yellow "InPawnCC:" "Copying pawnc.pdb.. to /..$toml_INCLUDE_FIRST"
+
+        if [ ! -d "$toml_INCLUDE_FIRST" ]; then
+            mkdir "$toml_INCLUDE_FIRST"
+        fi
+
+        cp "$__find_pawncpdb__" "$toml_INCLUDE_FIRST"
+    fi
+    if [[ -n "$__find_pawnccpdb__" ]]; then
+        print_yellow "InPawnCC:" "Copying pawncc.pdb.. to /..$toml_INCLUDE_FIRST"
+
+        if [ ! -d "$toml_INCLUDE_FIRST" ]; then
+            mkdir "$toml_INCLUDE_FIRST"
+        fi
+        
+        cp "$__find_pawnccpdb__" "$toml_INCLUDE_FIRST"
+    fi
+    if [[ -n "$__find_pawndisasm__" ]]; then
+        print_yellow "InPawnCC:" "Copying pawndisasm.exe.. to /..$toml_INCLUDE_FIRST"
+
+        if [ ! -d "$toml_INCLUDE_FIRST" ]; then
+            mkdir "$toml_INCLUDE_FIRST"
+        fi
+
+        cp "$__find_pawndisasm__" "$toml_INCLUDE_FIRST"
+    fi
+    if [[ -n "$__find_pawndisasmpdb__" ]]; then
+        print_yellow "InPawnCC:" "Copying pawndisasm.pdb.. to /..$toml_INCLUDE_FIRST"
+
+        if [ ! -d "$toml_INCLUDE_FIRST" ]; then
+            mkdir "$toml_INCLUDE_FIRST"
+        fi
+        
+        cp "$__find_pawndisasmpdb__" "$toml_INCLUDE_FIRST"
+    fi
+
+    print_yellow "InPawnCC:" "Installation pawncc Succes!"
+    end_kodo_t_main ""
+}
+
+function struct_compilers_linux() {
+    echo ":: Do you want to continue downloading PawnCC? (Yy/Nn)"
+    read -r -p ">> " SEL_C
+
+    if [[ -z "$SEL_C" || "$SEL_C" =~ ^[Yy]$ ]]; then
+        shell_DIR=$(pwd)
+        cd "$shell_DIR" || end_kodo_t_main ""
+        echo "Select the PawnCC version to download:"
+        echo "[A] v3.10.10"
+        echo "[B] v3.10.9"
+        echo "[C] v3.10.8"
+        echo "[D] v3.10.7"
+        echo "[E] v3.10.6"
+        echo "[F] v3.10.5"
+        echo "[G] v3.10.4"
+        echo "[H] v3.10.3"
+        echo "[I] v3.10.2"
+        echo "[J] v3.10.1"
+
+        read -r -p ">> " VERSION_NEED
+
+        while true; do
+            case "${VERSION_NEED,,}" in
+                a) VER="3.10.10"; break ;;
+                b) VER="3.10.9"; break ;;
+                c) VER="3.10.8"; break ;;
+                d) VER="3.10.7"; break ;;
+                e) VER="3.10.6"; break ;;
+                f) VER="3.10.5"; break ;;
+                g) VER="3.10.4"; break ;;
+                h) VER="3.10.3"; break ;;
+                i) VER="3.10.2"; break ;;
+                j) VER="3.10.1"; break ;;
+                *)
+                    echo -e "$(collor_red "err:") Invalid selection. Please enter the Number!"
+                    read -r -p ">> " VERSION_NEED
+                    ;;
+            esac
+        done
+
+        DOWNLOAD_FILE_CURL="pawnc-$VER-linux.tar.gz"
+        DOWNLOAD_URL_CURL="https://github.com/pawn-lang/compiler/releases/download/v$VER/$DOWNLOAD_FILE_CURL"
+
+        echo -e "\nDownloading: $DOWNLOAD_URL_CURL -> $call_download_file_CURL"
+        curl -L --progress-bar -o "$DOWNLOAD_FILE_CURL" "$DOWNLOAD_URL_CURL"
+
+        wait
+        tar -xzvf "$DOWNLOAD_FILE_CURL" -C "$shell_DIR"
+
+        echo ":: Processed PawnCC with Auto-Installing? [y/n]"
+        read -r -p ">> " NEEDED_RES_AINSTALL
+
+        if [[ "$NEEDED_RES_AINSTALL" == "Y" ]] || [[ "$NEEDED_RES_AINSTALL" == "y" ]]; then
+            auto_install_pawncc=1
+        fi
+
+        if [ "$auto_install_pawncc" -eq 1 ]; then
+            print_yellow "info:" "Processed Auto Installed PawnCC.."
+            ainstall_pawncc_detectpkg ""
+            ainstall_pawncc_32bit ""
+            ainstall_pawncc_linux ""
+        fi
+
+        echo
+        echo -e "$(collor_yellow "Download completed successfully.")"
+        echo
+
+        end_kodo_t_main ""
+    else
+        end_kodo_t_main ""
+    fi
+}
+export struct_compilers_linux
+
+function struct_compilers_win()
+{
+    echo ":: Do you want to continue downloading PawnCC? (Yy/Nn)"
+    read -r -p ">> " SEL_C
+
+    if [[ -z "$SEL_C" || "$SEL_C" =~ ^[Yy]$ ]]; then
+        shell_DIR=$(pwd)
+        cd "$shell_DIR" || end_kodo_t_main ""
+        echo "Select the PawnCC version to download:"
+        echo "[A] v3.10.10"
+        echo "[B] v3.10.9"
+        echo "[C] v3.10.8"
+        echo "[D] v3.10.7"
+        echo "[E] v3.10.6"
+        echo "[F] v3.10.5"
+        echo "[G] v3.10.4"
+        echo "[H] v3.10.3"
+        echo "[I] v3.10.2"
+        echo "[J] v3.10.1"
+
+        read -r -p ">> " VERSION_NEED
+
+        while true; do
+            case "${VERSION_NEED,,}" in
+                a) VER="3.10.10"; break ;;
+                b) VER="3.10.9"; break ;;
+                c) VER="3.10.8"; break ;;
+                d) VER="3.10.7"; break ;;
+                e) VER="3.10.6"; break ;;
+                f) VER="3.10.5"; break ;;
+                g) VER="3.10.4"; break ;;
+                h) VER="3.10.3"; break ;;
+                i) VER="3.10.2"; break ;;
+                j) VER="3.10.1"; break ;;
+                *)
+                    echo -e "$(collor_red "err:") Invalid selection. Please enter the Number!"
+                    read -r -p ">> " VERSION_NEED
+                    ;;
+            esac
+        done
+
+        DOWNLOAD_FILE_CURL="pawnc-$VER-windows.zip"
+        DOWNLOAD_URL_CURL="https://github.com/pawn-lang/compiler/releases/download/v$VER/$DOWNLOAD_FILE_CURL"
+
+        echo -e "\nDownloading: $DOWNLOAD_URL_CURL -> $call_download_file_CURL"
+        curl -L --progress-bar -o "$DOWNLOAD_FILE_CURL" "$DOWNLOAD_URL_CURL"
+
+        wait
+        unzip -q "$DOWNLOAD_FILE_CURL" -d "$shell_DIR"
+        
+        echo ":: Processed PawnCC with Auto-Installing? [y/n]"
+        read -r -p ">> " NEEDED_RES_AINSTALL
+
+        if [[ "$NEEDED_RES_AINSTALL" == "Y" ]] || [[ "$NEEDED_RES_AINSTALL" == "y" ]]; then
+            auto_install_pawncc=1
+        fi
+
+        if [ "$auto_install_pawncc" -eq 1 ]; then
+            print_yellow "info:" "Processed Auto Installed PawnCC.."
+            ainstall_pawncc_win ""
+        fi
+
+        echo
+        echo -e "$(collor_yellow "Download completed successfully.")"
+        echo
+
+        end_kodo_t_main ""
+    else
+        end_kodo_t_main ""
+    fi
+}
+export struct_compilers_win
+

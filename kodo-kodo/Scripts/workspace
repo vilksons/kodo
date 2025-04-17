@@ -1,0 +1,1172 @@
+#!/bin/bash
+
+clear && cd "$(dirname "$(realpath "$0")")" || exit 1
+
+mkdir -p "$HOME/kodo"
+touch "$HOME/kodo/.kodo.txt"
+
+declare shell_DIR
+declare shell_NAME
+
+shell_DIR="$(dirname "$(realpath "$0")")"
+shell_NAME="$(basename "$0")"
+
+export __OS_NOTICE__=0
+export __OS__="nul"
+export SERVERS_INSTATUS=0
+export __PAWNCC_NAME__="nul"
+export __SAMP_SERVER=""
+export ZAPMAN_ainstall_Encrypt=""
+export zapman_ainstall_SIZEOF=0
+export ZAPMAN_ainstall_Decrypt=""
+export VIREON_token_Encrypt=""
+export VIREON_token_Decrypt=""
+export kodo_t_save_messages=0
+export kodo_t_save_notice=0
+export kodo_t_module_loaded=0
+export auto_install_pawncc=0
+export LICENSES="MIT Licenses."
+export __cache_save_compile=".cache/compiler.log"
+export COMPILER_INSTATUS="nul"
+export COMPILER_PAWNCC=""
+export COMPILER_MODE=0
+export commands_OPAMX=()
+export toml_INCLUDE="nul"
+export toml_INCLUDE_FIRST="nul"
+export toml_EXCLUDE="nul"
+export toml_ZAPMAN_INCLUDE="nul"
+export toml_ZAPMAN_PLUGINS="nul"
+export toml_LOG_SERV="nul"
+export toml_SERVER_CONFIG="nul"
+export toml_FILE_SERV="nul"
+export toml_EXE_SERV="nul"
+export toml_RM_CACHE="nul"
+export toml_VIREON_AI_MODEL="nul"
+export toml_VIREON_REST_API="nul"
+export toml_VIREON_MODEL="nul"
+export toml_VIREON_BIODATA="nul"
+export toml_VIREON_TOKEN="nul"
+export toml_AMX_OPT_F="nul"
+
+color_output() {
+    local color="$1"
+    local label="$2"
+    echo -e "${color}${label}\e[0m"
+}
+
+print_color() {
+    local color_func="$1"
+    local label="$2"
+    local content="$3"
+    
+    if [ -n "$content" ]; then
+        echo -e "$(color_output "$color_func" "$label") $content"
+    else
+        echo -e "$(color_output "$color_func" "$label")"
+    fi
+}
+
+COLOR_Y="\e[33m"  # Yellow
+COLOR_G="\e[32m"  # Green
+COLOR_R="\e[91m"  # Red
+COLOR_A="\e[97m"  # Gray
+
+collor_yellow() { color_output "$COLOR_Y" "$1"; }
+collor_green() { color_output "$COLOR_G" "$1"; }
+collor_red() { color_output "$COLOR_R" "$1"; }
+collor_gray() { color_output "$COLOR_A" "$1"; }
+
+print_yellow() { print_color "$COLOR_Y" "$1" "$2"; }
+print_green() { print_color "$COLOR_G" "$1" "$2"; }
+print_red() { print_color "$COLOR_R" "$1" "$2"; }
+print_gray() { print_color "$COLOR_A" "$1" "$2"; }
+
+bash_title() {
+    echo -ne "\033]0;$1\007"
+}
+
+kodo_t_TITLE() {
+    local title=$1
+    shell_TITLE="$title"
+    bash_title "$shell_TITLE"
+}
+
+export collor_yellow collor_green collor_red collor_gray print_yellow print_green print_red print_gray kodo_t_TITLE
+
+if [ ! -d ".cache" ]; then
+    mkdir ".cache" && chmod +x ".cache"
+fi
+
+function SIGNAL_KILL()
+{
+    kd_table="kill"
+    mode_KODO "$kd_table"
+}
+
+function ignore_this() {
+    # ignore succes/error/warning to null
+    "$@" > /dev/null 2>&1
+}
+export ignore_this
+
+function rest_var() {
+    # Reset Variables #
+
+    : ' Checking before unset '
+    [ -n "${COMPILER_INSTATUS+x}" ] && unset COMPILER_INSTATUS
+    [ -n "${COMPILER_PAWNCC+x}" ] && unset COMPILER_PAWNCC
+    [ -n "${COMPILER_MODE+x}" ] && unset COMPILER_MODE
+    [ -n "${SERVERS_INSTATUS+x}" ] && unset SERVERS_INSTATUS
+    [ -n "${auto_install_pawncc+x}" ] && unset auto_install_pawncc
+
+    COMPILER_INSTATUS="nul"
+    COMPILER_PAWNCC=""
+    COMPILER_MODE=0
+    SERVERS_INSTATUS=0
+    zapman_ainstall_SIZEOF=0
+    auto_install_pawncc=0
+}
+
+function __kodo_toml_create__() {
+    cd "$shell_DIR" >/dev/null 2>&1 || echo ""
+
+    u_openmp=$(find . -maxdepth 1 -type f \( -name "omp-server" -o -name "omp-server.exe" \) | head -n 1)
+    u_samp=$(find . -maxdepth 1 -type f \( -name "samp03svr" -o -name "samp-server.exe" \) | head -n 1)
+
+    if [[ -n "$u_samp" ]] && [[ -n "$u_openmp" ]]; then
+        __SAMP_SERVER="samp"
+    elif [[ -n "$u_samp" ]]; then
+        __SAMP_SERVER="samp"
+    elif [[ -n "$u_openmp" ]]; then
+        __SAMP_SERVER="omp"
+    else
+        __SAMP_SERVER="samp"
+    fi
+
+    if [ ! -f "kodo.toml" ]; then
+        local kodo_toml_log=""
+        local kodo_toml_config=""
+        local kodo_toml_include=""
+        local kodo_toml_exec=""
+
+        if [[ "$__SAMP_SERVER" == "samp" ]]; then
+            kodo_toml_log="server_log.txt"
+            kodo_toml_config="server.cfg"
+            kodo_toml_include="pawno/include"
+            kodo_toml_exec="samp-server.exe"
+            [[ "$__OS__" == "linux" ]] && kodo_toml_exec="samp03svr"
+        elif [[ "$__SAMP_SERVER" == "omp" ]]; then
+            kodo_toml_log="log.txt"
+            kodo_toml_config="config.json"
+            kodo_toml_include="qawno/include"
+            kodo_toml_exec="omp-server.exe"
+            [[ "$__OS__" == "linux" ]] && kodo_toml_exec="omp-server"
+        fi
+
+        cat > kodo.toml <<EOF
+[paths]
+include_paths = "$kodo_toml_include"
+include_dir = "zapman/include"
+plugins_dir = "zapman/plugins"
+
+[server]
+log = "$kodo_toml_log"
+config = "$kodo_toml_config"
+init = "main.pwn"
+executable = "$kodo_toml_exec"
+remcache_auto = false
+
+[vireon]
+ai_model = "groq"
+rest_api = "https://api.groq.com/openai/v1/chat/completions"
+token = "your_token"
+model = "qwen-2.5-32b"
+profile = "hello vireom, your name is john"
+
+[compiler]
+exclude_paths = ["includes1/", "includes2/", "includes3/"]
+amx_flags = ['-d2', '-;+', '-(+', '-Z+']
+EOF
+    fi
+}
+
+function __kodo_toml_load__() {
+    local yq_cmd="yq eval -I=0 -o=json"
+
+    # paths
+    toml_INCLUDE=$($yq_cmd '.paths.include_paths' kodo.toml | jq -r '.')
+    [[ "$toml_INCLUDE" == "null" ]] && print_red "error:" "failed to load \"include_paths\""
+
+    toml_INCLUDE_FIRST=$(echo "$toml_INCLUDE" | cut -d'/' -f1)
+
+    toml_ZAPMAN_INCLUDE=$($yq_cmd '.paths.include_dir' kodo.toml | jq -r '.')
+    [[ "$toml_ZAPMAN_INCLUDE" == "null" ]] && print_red "error:" "failed to load \"include_dir\""
+
+    toml_ZAPMAN_PLUGINS=$($yq_cmd '.paths.plugins_dir' kodo.toml | jq -r '.')
+    [[ "$toml_ZAPMAN_PLUGINS" == "null" ]] && print_red "error:" "failed to load \"plugins_dir\""
+
+    # server
+    toml_LOG_SERV=$($yq_cmd '.server.log' kodo.toml | jq -r '.')
+    [[ "$toml_LOG_SERV" == "null" ]] && print_red "error:" "failed to load \"log\""
+
+    toml_SERVER_CONFIG=$($yq_cmd '.server.config' kodo.toml | jq -r '.')
+    [[ "$toml_SERVER_CONFIG" == "null" ]] && print_red "error:" "failed to load \"config\""
+
+    toml_FILE_SERV=$($yq_cmd '.server.init' kodo.toml | jq -r '.')
+    [[ "$toml_FILE_SERV" == "null" ]] && print_red "error:" "failed to load \"init\""
+
+    toml_EXE_SERV=$($yq_cmd '.server.executable' kodo.toml | jq -r '.')
+    [[ "$toml_EXE_SERV" == "null" ]] && print_red "error:" "failed to load \"executable\""
+
+    toml_RM_CACHE=$($yq_cmd '.server.remcache_auto' kodo.toml | jq -r '.')
+    [[ "$toml_RM_CACHE" == "null" ]] && print_red "error:" "failed to load \"remcache_auto\""
+
+    # vireon
+    toml_VIREON_AI_MODEL=$($yq_cmd '.vireon.ai_model' kodo.toml | jq -r '.')
+    [[ "$toml_VIREON_AI_MODEL" == "null" ]] && print_red "error:" "failed to load \"ai_model\""
+
+    toml_VIREON_REST_API=$($yq_cmd '.vireon.rest_api' kodo.toml | jq -r '.')
+    [[ "$toml_VIREON_REST_API" == "null" ]] && print_red "error:" "failed to load \"rest_api\""
+
+    toml_VIREON_MODEL=$($yq_cmd '.vireon.model' kodo.toml | jq -r '.')
+    [[ "$toml_VIREON_MODEL" == "null" ]] && print_red "error:" "failed to load \"model\""
+
+    toml_VIREON_BIODATA=$($yq_cmd '.vireon.profile' kodo.toml | jq -r '.')
+    [[ "$toml_VIREON_BIODATA" == "null" ]] && print_red "error:" "failed to load \"profile\""
+
+    toml_VIREON_TOKEN=$($yq_cmd '.vireon.token' kodo.toml | jq -r '.')
+    [[ "$toml_VIREON_TOKEN" == "null" ]] && print_red "error:" "failed to load \"token\""
+
+    # compiler
+    toml_EXCLUDE=$($yq_cmd '.compiler.exclude_paths[]?' kodo.toml | jq -r '.' | xargs -I {} echo -n "-i\"{}\" ")
+    [[ -z "$toml_EXCLUDE" ]] && print_red "error:" "failed to load \"exclude_paths\""
+
+    toml_AMX_OPT_F=$($yq_cmd '.compiler.amx_flags[]?' kodo.toml | jq -r '.' | xargs)
+    [[ -z "$toml_AMX_OPT_F" ]] && print_red "error:" "failed to load \"amx_flags\""
+}
+
+function struct_kodo_t_main() {
+    kodo_t_missing_save_cmds=(python3 unzip tar curl grep awk sed tr jq yq openssl)
+    kodo_t_missing_cmds=()
+    missing_cmds=()
+
+    for cmd in "${kodo_t_missing_save_cmds[@]}"; do
+        if ! command -v "$cmd" &>/dev/null; then
+            if command -v apt &>/dev/null || command -v pkg &>/dev/null; then
+                if [ "$cmd" = "awk" ]; then
+                    kodo_t_missing_cmds+=("gawk")
+                    missing_cmds+=("gawk")
+                elif [ "$cmd" = "tr" ]; then
+                    kodo_t_missing_cmds+=("coreutils")
+                    missing_cmds+=("coreutils")
+                else
+                    kodo_t_missing_cmds+=("$cmd")
+                    missing_cmds+=("$cmd")
+                fi
+            else
+                if [ "$cmd" = "tr" ]; then
+                    kodo_t_missing_cmds+=("coreutils")
+                    missing_cmds+=("coreutils")
+                else
+                    kodo_t_missing_cmds+=("$cmd")
+                    missing_cmds+=("$cmd")
+                fi
+            fi
+        fi
+    done
+
+    if [ ${#kodo_t_missing_cmds[@]} -ne 0 ]; then
+        print_green "missing packages: ${missing_cmds[*]} not found, installing.."
+    fi
+
+    pkg_manager=""
+
+    if command -v apt &>/dev/null; then
+        pkg_manager="apt"
+    elif command -v pkg &>/dev/null; then
+        pkg_manager="pkg"
+    elif command -v dnf &>/dev/null; then
+        pkg_manager="dnf"
+    elif command -v pacman &>/dev/null; then
+        pkg_manager="pacman"
+    elif command -v zypper &>/dev/null; then
+        pkg_manager="zypper"
+    elif command -v yum &>/dev/null; then
+        pkg_manager="yum"
+    fi
+
+    for cmd in "${kodo_t_missing_cmds[@]}"; do
+        case "$pkg_manager" in
+            apt)
+                if command -v sudo &>/dev/null; then
+                    sudo apt install -y "$cmd"
+                else
+                    apt install -y "$cmd"
+                fi
+                ;;
+            pkg)
+                if command -v sudo &>/dev/null; then
+                    sudo pkg install -y "$cmd"
+                else
+                    pkg install -y "$cmd"
+                fi
+                ;;
+            dnf)
+                if command -v sudo &>/dev/null; then
+                    sudo dnf install -y "$cmd"
+                else
+                    dnf install -y "$cmd"
+                fi
+                ;;
+            pacman)
+                if command -v sudo &>/dev/null; then
+                    sudo pacman -S --noconfirm "$cmd"
+                else
+                    pacman -S --needed "$cmd"
+                fi
+                ;;
+            zypper)
+                if command -v sudo &>/dev/null; then
+                    sudo zypper install -y "$cmd"
+                else
+                    zypper install -y "$cmd"
+                fi
+                ;;
+            yum)
+                if command -v sudo &>/dev/null; then
+                    sudo yum install -y "$cmd"
+                else
+                    yum install -y "$cmd"
+                fi
+                ;;
+            *)
+                print_red "error:" "Can't found Package Manager. only apt/pkg/dnf/pacman/zypper/yum.."
+                print_red " Missing packages:" "${kodo_t_missing_cmds[*]}"
+                printf "\e]8;;https://github.com/vilksons/kodo/wiki/Required-Packages\e\\ Please see here for more.\e]8;;\e\\"
+                echo
+                ignore_this sleep 1.0
+                kodo_t_save_notice=2
+                ;;
+        esac
+    done
+
+    if [[ " ${kodo_t_missing_cmds[*]} " == *" yq "* ]]; then
+        if ! command -v yq &>/dev/null; then
+            if command -v sudo &>/dev/null; then
+                sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
+                sudo chmod +x /usr/bin/yq
+            else
+                wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
+                chmod +x /usr/bin/yq
+            fi
+        fi
+
+    fi
+
+    if [ "$kodo_t_save_notice" -eq 0 ]; then
+        if [ -f ".sync" ]; then
+            shred -u .sync
+            if [ -d "$shell_DIR/.kodo" ]; then
+                rm -rf ".kodo"
+            fi
+        fi
+
+        if [ ! -d ".kodo" ]; then
+            mkdir -p ".kodo/python" && chmod +x ".kodo"
+        fi
+
+        function kodo_t_pack() {
+            : ' Install or Load modules '
+            if [ -f "$shell_DIR/$1" ] && [ "$kodo_t_module_loaded" -ne 1 ]; then
+                chmod +x "$shell_DIR/$1"
+                if [ "$1" != ".kodo/python/vpython" ]; then
+                    if [[ "$1" == ".kodo/python/wpython" ]]; then
+                        source <(python3 .kodo/python/wpython) || sleep 1.0
+                    else
+                        if [[ "$1" == ".kodo/compat.kd" ]]; then
+                            source "$shell_DIR/$1" || sleep 1.0
+                            compat_now ""
+                        else
+                            source "$shell_DIR/$1" || sleep 1.0
+                        fi
+                    fi
+                fi
+
+                if [ "$kodo_t_module_loaded" -eq 1 ]; then
+                    print_green "warn:" "err.. need to kill after installing \"succes\".."
+                    print_green " killing.."
+                    sleep 0.999 && SIGNAL_KILL "" && typeof ""
+                fi
+            else
+                bash_title "Waiting resources.."
+
+                if [ "$3" != "silent" ]; then
+                    curl -L -o "$shell_DIR/$1" "$2" &>/dev/null
+                else
+                    curl -L -o "$shell_DIR/$1" "$2" &>/dev/null &
+                fi
+
+                if [ "$3" = "end" ]; then
+                    kodo_t_module_loaded=1
+                    curl -L -o "$shell_DIR/$1" "$2" &>/dev/null &
+                    clear && cd "$(dirname "$(realpath "$0")")" || echo
+                    print_yellow "install succes!"
+                    print_green " killing.."
+                    sleep 0.999 && SIGNAL_KILL "" && typeof ""
+                fi
+            fi
+        }
+
+        kodo_t_pack ".kodo/python/wpython" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/wpython" ""
+        kodo_t_pack ".kodo/python/vpython" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/vpython" ""
+        kodo_t_pack ".kodo/compat.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compat/compat.kd" "compat" 
+        kodo_t_pack ".kodo/compiler.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compiler/compiler.kd" "silent" 
+        kodo_t_pack ".kodo/zapman.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Zapman/zapman.kd" "silent" 
+        kodo_t_pack ".kodo/samp.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/samp.kd" "silent" 
+        kodo_t_pack ".kodo/pawncc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/pawncc.kd" "silent" 
+        kodo_t_pack ".kodo/misc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Misc/misc.kd" "silent"
+        kodo_t_pack ".kodo/vireon.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Vireon/vireon.kd" "silent" 
+        kodo_t_pack ".kodo/server.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Server/server.kd" "silent"
+        kodo_t_pack ".kodo/security.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Security/security.kd" "end" 
+        
+        kodo_t_save_notice=1
+
+        cd "$shell_DIR" >/dev/null 2>&1 || echo ""
+
+        __kodo_toml_create__ ""
+        __kodo_toml_load__ "" 
+    fi
+
+    if [ -f ".kodo/security.kd" ]; then
+        __encryption_create__ ""
+        __encryption_token__ ""
+    fi
+    
+    rest_var "" && typeof ""
+}
+export struct_kodo_t_main
+
+function typeof() {
+    if [ "$kodo_t_save_messages" -ne 1 ]; then
+        kodo_t_save_messages=1
+        printf "Welcome to Kodo!"
+        echo
+    fi
+    
+    if [ "$kodo_t_module_loaded" != 1 ]; then
+        kodo_t_TITLE "Kodo Mode"
+    fi
+    
+    HISTFILE="$HOME/kodo/.kodo.txt"
+    touch "$HISTFILE"
+
+    history -r "$HISTFILE"
+
+    read -e -r -p "kodo:~$ " kd_table
+    
+    if [ -n "$kd_table" ]; then
+        echo "$kd_table" >> "$HISTFILE"
+    fi
+
+    mode_KODO "$kd_table"
+}
+export typeof
+
+function mode_KODO() {
+    : ' WARNING '
+    #   always remember to end use 'end_kodo_t_main' or 'struct_kodo_t_main' so it doesn't crash or exit Kodo
+    
+    local trigger_kd="kodo"
+
+    case "$kd_table" in
+        "compile"*)
+            kodo_t_TITLE "Compiler"
+
+            local commands_ARGS="${kd_table#compile }"
+            local commands_INPUT=""
+
+            for arg in $commands_ARGS; do
+                if [ -z "$commands_INPUT" ]; then
+                    commands_INPUT="$arg"
+                else
+                    commands_OPAMX+=("$arg")
+                fi
+            done
+
+            kodo_init_compilers "$commands_INPUT"
+            ;;
+        "running"*)
+            kodo_t_TITLE "Running"
+            
+            local commands_ARGS="${kd_table#running }"
+
+            SERVERS_INSTATUS=1
+            
+            if [[ -n "$commands_ARGS" && "$commands_ARGS" != "$kd_table" ]]; then
+                commands_INPUT="$commands_ARGS"
+
+                if [[ "$commands_INPUT" == "." ]]; then
+                    space_servers "" || {
+                        if [ "$kodo_t_module_loaded" -eq 1 ]; then
+                            print_green "warn:" "err.. need to kill after installing \"succes\".."
+                            print_green " killing.."
+                            sleep 0.999 && SIGNAL_KILL "" && typeof ""
+                        fi
+                    }
+                else
+                    space_wargs_servers "$commands_INPUT" || {
+                        if [ "$kodo_t_module_loaded" -eq 1 ]; then
+                            print_green "warn:" "err.. need to kill after installing \"succes\".."
+                            print_green " killing.."
+                            sleep 0.999 && SIGNAL_KILL "" && typeof ""
+                        fi
+                    }
+                fi
+            else
+                space_servers ""
+            fi
+            ;;
+        "irunn")
+            kodo_t_TITLE "Compile & Running"
+
+            COMPILER_INSTATUS="false"
+            
+            kodo_compilers "" || {
+                if [ "$kodo_t_module_loaded" -eq 1 ]; then
+                    print_green "warn:" "err.. need to kill after installing \"succes\".."
+                    print_green " killing.."
+                    sleep 0.999 && SIGNAL_KILL "" && typeof ""
+                fi
+            }
+            ;;
+        "debug"*)
+            kodo_t_TITLE "Debugging"
+
+            local commands_ARGS="${kd_table#debug }"
+
+            SERVERS_INSTATUS=2
+            
+            if [[ -n "$commands_ARGS" && "$commands_ARGS" != "$kd_table" ]]; then
+                commands_INPUT="$commands_ARGS"
+
+                if [[ "$commands_INPUT" == "." ]]; then
+                    space_servers "" || {
+                        if [ "$kodo_t_module_loaded" -eq 1 ]; then
+                            print_green "warn:" "err.. need to kill after installing \"succes\".."
+                            print_green " killing.."
+                            sleep 0.999 && SIGNAL_KILL "" && typeof ""
+                        fi
+                    }
+                else
+                    space_wargs_servers "$commands_INPUT" || {
+                        if [ "$kodo_t_module_loaded" -eq 1 ]; then
+                            print_green "warn:" "err.. need to kill after installing \"succes\".."
+                            print_green " killing.."
+                            sleep 0.999 && SIGNAL_KILL "" && typeof ""
+                        fi
+                    }
+                fi
+            else
+                print_gray ":: Enter GM Name:"
+                while true; do
+                    read -r -p ">>> " commands_INPUT
+                    [[ -n "$commands_INPUT" ]] && break
+                done
+            fi
+            ;;
+        "stop")
+            kodo_t_TITLE "Stop"
+            ignore_this pkill -15 -f "$toml_EXE_SERV"
+            end_kodo_t_main ""
+            ;;
+        "restart")
+            kodo_t_TITLE "Restart"
+            ignore_this pkill -15 -f "$toml_EXE_SERV"
+            space_servers ""
+            ;;
+        "gamemode")
+            kodo_t_TITLE "Downloads | GameMode"
+
+            struct_choice_samp "" || {
+                if [ "$kodo_t_module_loaded" -eq 1 ]; then
+                    print_green "warn:" "err.. need to kill after installing \"succes\".."
+                    print_green " killing.."
+                    sleep 0.999 && SIGNAL_KILL "" && typeof ""
+                fi
+            }
+            ;;
+        "pawncc")
+            kodo_t_TITLE "Downloads | PawnCC"
+
+            struct_choice_pawncc || {
+                if [ "$kodo_t_module_loaded" -eq 1 ]; then
+                    print_green "warn:" "err.. need to kill after installing \"succes\".."
+                    print_green " killing.."
+                    sleep 0.999 && SIGNAL_KILL "" && typeof ""
+                fi
+            }
+            ;;
+        "cat"*)
+            kodo_t_TITLE "Cat Files"
+
+            local commands_ARGS="${kd_table#cat }"
+            
+            if [[ -n "$commands_ARGS" && "$commands_ARGS" != "$kd_table" ]]; then
+                commands_INPUT="$commands_ARGS"
+                echo
+                cat "$commands_INPUT"
+            else
+                print_gray ":: Enter File Name:"
+                while true; do
+                    read -r -p ">>> " commands_INPUT
+                    [[ -n "$commands_INPUT" ]] && break
+                done
+            fi
+            
+            end_kodo_t_main ""
+            ;;
+        "directory"* | "cd"*)
+            kodo_t_TITLE "Directory - $shell_DIR"
+
+            local commands_ARGS="${kd_table#directory }"
+            local commands_ARGS="${kd_table#cd }"
+            
+            if [[ -n "$commands_ARGS" && "$commands_ARGS" != "$kd_table" ]]; then
+                commands_INPUT="$commands_ARGS"
+
+                if [ -d "$commands_INPUT" ]; then
+                    if [ -f "kodo.toml" ]; then
+                        print_yellow "copy the \"kodo.toml\" folder too? [y/n]"
+                        read -r -p ">> " NEEDED_RES_MVKD
+
+                        if [ "$NEEDED_RES_MVKD" == "Y" ] || [ "$NEEDED_RES_MVKD" == "y" ]; then
+                            cp "kodo.toml" "$commands_INPUT/kodo.toml"
+                        fi
+                    fi
+                    if [ -d ".kodo" ]; then
+                        print_yellow "copy the \".kodo\" folder too? [y/n]"
+                        read -r -p ">> " NEEDED_RES_MVKD
+
+                        if [ "$NEEDED_RES_MVKD" == "Y" ] || [ "$NEEDED_RES_MVKD" == "y" ]; then
+                            cp -r ".kodo" "$commands_INPUT/.kodo"
+                        fi
+                    fi
+                        
+                    ignore_this cd "$commands_INPUT"
+                    ls -a &&
+                        shell_TITLE="directory - $shell_DIR" &&
+                            bash_title "$shell_TITLE" || echo && end_kodo_t_main ""
+                else
+                    print_red "error:" "Can't found directory \"$commands_INPUT\" please verify first!."
+                fi
+            else
+                if [ "$kd_table" == "ls" ]; then
+                    ls -a
+                else
+                    cd "$shell_DIR" || echo
+                fi
+            fi
+
+            end_kodo_t_main ""
+            ;;
+        "ls")
+            ls -a
+            struct_kodo_t_main ""
+            ;;
+        "kill")
+            kodo_t_save_notice=0
+            kodo_t_save_messages=0
+            ignore_this clear
+            cd "$shell_DIR" || echo
+            exec bash ./"$shell_NAME"
+            ;;
+        "sync"*)
+            if [[ "$kd_table" == "sync" ]]; then
+                kodo_t_TITLE "Sync"
+            fi
+
+            local commands_ARGS="${kd_table#sync }"
+
+            local latest=""
+            local current=""
+            latest=$(
+                curl -s "https://api.github.com/repos/vilksons/kodo/commits/kodo" |
+                    grep -o '"sha": "[^"]*' | awk -F': "' '{print $2}'
+            )
+            if [ -f "$shell_DIR/.itskodo" ]; then
+                current=$(
+                    cat "$shell_DIR/.itskodo" 2>/dev/null
+                )
+            else
+                current="444"
+            fi
+            
+            if [[ "$latest" == "$current" ]]; then
+                echo "warning: $shell_NAME is up to date, Nothing to do."
+                end_kodo_t_main ""
+            else
+                print_gray ":: New Commits Found..: Commits (SHA1): "
+                echo "$latest"
+                echo
+                curl -I "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace?nocache=$(date +%s)"
+
+                print_green " Make sure you have seen the latest commits that have been pushed from 20 minutes ago for stability and re-verify and sync what has been published."
+                read -r -n1 -p ":: Do you want to continue Sync Kodo? [y/n] " PERMISSION_NEED_S
+                echo
+                [[ -z "$PERMISSION_NEED_S" ]] && PERMISSION_NEED_S="Y"
+
+                case "$PERMISSION_NEED_S" in
+                    [Yy])
+                        if [[ -d "$shell_DIR/.kodo" ]]; then
+                            dest="kodo_modules_old"
+                            i=1
+                            while [[ -e "$dest" ]]; do
+                                dest="kodo_modules_old_$i"
+                                ((i++))
+                            done
+                            mv "$shell_DIR/.kodo" "$dest"
+                        fi
+
+                        if [ ! -d ".kodo" ]; then
+                            mkdir -p ".kodo/python" && chmod +x ".kodo"
+                        fi
+
+                        echo "$latest" > "$shell_DIR/.itskodo"
+
+                        __modular__()
+                        {
+                            kodo_t_TITLE "Sync | Upgrade"
+
+                            echo "Upgrading.."
+
+                            local __kodo_modular__=(
+                                "Security/security.kd"
+                                "Compat/compat.kd"
+                                "Zapman/zapman.kd"
+                                "Package/samp.kd"
+                                "Package/pawncc.kd"
+                                "Server/server.kd"
+                                "Misc/misc.kd"
+                                "Vireon/vireon.kd"
+                                "Compiler/compiler.kd"
+                            )
+
+                            cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
+
+                            for __file__ in "${__kodo_modular__[@]}"; do
+                                curl -L -o "$(basename "$__file__")" \
+                                    "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/$__file__" \
+                                    || { touch "$shell_DIR/.sync"; }
+                            done
+
+                            cd "$shell_DIR/.kodo/python" >/dev/null 2>&1 || echo ""
+                            curl -L -o "wpython" \
+                                "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/wpython" &&
+                            curl -L -o "vpython" \
+                                "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/vpython" &&
+                            cd "$shell_DIR" >/dev/null 2>&1 || echo ""
+                            curl -L -o "workspace" \
+                                "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace"
+                        }
+
+                        if [ "$kd_table" = "sync" ]; then
+                            __modular__ ""
+                        elif [ "$commands_ARGS" = "update" ]; then
+                            kodo_t_TITLE "Sync | Update"
+
+                            echo "Updating.."
+
+                            cd "$shell_DIR" || echo ""
+                            curl -L -o "workspace" \
+                                "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace"
+                        else
+                            __modular__ ""
+                        fi
+
+                        chmod +x "$shell_DIR/$shell_NAME"
+                        bash "$shell_DIR/$shell_NAME"
+                        ;;
+                    *)
+                        end_kodo_t_main ""
+                        ;;
+                esac
+            fi
+            ;;
+        "toml")
+            if [ -f "$shell_DIR/kodo.toml" ]; then
+                mv kodo.toml kodo.toml.old.txt
+            fi
+
+            kodo_t_module_loaded=0
+            __kodo_toml_create__ ""
+            struct_kodo_t_main ""
+            ;;
+        "checksums"*)
+            kodo_t_TITLE "Checksums"
+
+            local commands_ARGS="${kd_table#checksums }"
+
+            ignore_this cd "$shell_DIR" || echo ""
+
+            if [[ -n "$commands_ARGS" && "$commands_ARGS" != "$kd_table" ]]; then
+                commands_INPUT="$commands_ARGS"
+            else
+                echo "sha1:" && sha1sum "$shell_NAME" && echo "sha256:" && sha256sum "$shell_NAME" && echo "md5:" && md5sum "$shell_NAME"
+            fi
+
+            for algo in $commands_INPUT; do
+                if [[ "$algo" == "sha1" ]]; then
+                    echo "sha1:" && sha1sum "$shell_NAME"
+                elif [[ "$algo" == "sha256" ]]; then
+                    echo "sha256:" && sha256sum "$shell_NAME"
+                elif [[ "$algo" == "md5" ]]; then
+                    echo "md5:" && md5sum "$shell_NAME"
+                else
+                    echo "Invalid option: $algo (use sha1, sha256, md5)"
+                fi
+            done
+
+            end_kodo_t_main ""
+            ;;
+        "exit")
+            ignore_this pkill -9 -f "$shell_NAME"
+            ;;
+        "vireon"*)
+            kodo_t_TITLE "Vireon Chat A.I"
+
+            local commands_ARGS="${kd_table#vireon }"
+
+            if [[ -n "$commands_ARGS" && "$commands_ARGS" != "$kd_table" ]]; then
+                commands_INPUT="$commands_ARGS"
+            else
+                print_gray ":: Enter Question:"
+                while true; do
+                    read -r -p ">>> " commands_INPUT
+                    [[ -n "$commands_INPUT" ]] && break
+                done
+            fi
+            
+            kodo_vireon "$commands_INPUT"
+            ;;
+        "nano"*)
+            if ! command -v nano &> /dev/null; then
+                print_red "crit:" "nano not found!, install first."
+                end_kodo_t_main ""
+            fi
+            
+            kodo_t_TITLE "GNU/Nano"
+            
+            local commands_ARGS="${kd_table#nano }"
+
+            if [[ -n "$commands_ARGS" && "$commands_ARGS" != "$kd_table" ]]; then
+                commands_INPUT="$commands_ARGS"
+            else
+                print_gray ":: Enter Names:"
+                while true; do
+                    read -r -p ">>> " commands_INPUT
+                    [[ -n "$commands_INPUT" ]] && break
+                done
+            fi
+
+            nano "$commands_INPUT"
+            end_kodo_t_main ""
+            ;;
+        "remcac")
+            kodo_t_TITLE "Remove Cache"
+
+            if [ "$COMPILER_INSTATUS" != "nul" ]; then
+                print_red "crit:" "can't remove cache!."
+                end_kodo_t_main ""
+            fi
+
+            if [ ! -f "$shell_DIR/.cache/zapman" ] && [ ! -f "$shell_DIR/.cache/compiler.log" ]; then
+                echo "no cache found."
+                end_kodo_t_main ""
+            fi
+
+            if [ -f "$shell_DIR/.cache/zapman" ]; then
+                print_gray ":: Cache Dir: $shell_DIR/.cache/tlizapmangpac"
+                read -r -p ":: Do you want to remove ALL files from $shell_DIR/.cache/zapman? [y/n] " PERMISSION_NEED_RC
+                echo
+                [[ -z "$PERMISSION_NEED_RC" ]] && PERMISSION_NEED_RC="Y"
+
+                while true; do
+                    case "$PERMISSION_NEED_RC" in
+                        [Yy])
+                            cd "$shell_DIR" || echo
+                            shred -u ".cache/zapman" && print_yellow " successfully"
+                            sleep 1
+                            break
+                            ;;
+                        *)
+                            echo "Operation cancelled"
+                            break
+                            ;;
+                    esac
+                done
+            fi
+
+            if [ -f "$shell_DIR/.cache/compiler.log" ]; then
+                print_gray ":: Cache Dir: $shell_DIR/.cache/compiler.log"
+                read -r -p ":: Do you want to remove ALL files from $shell_DIR/.cache/compiler.log? [y/n] " PERMISSION_NEED_RC
+                echo
+                [[ -z "$PERMISSION_NEED_RC" ]] && PERMISSION_NEED_RC="Y"
+
+                while true; do
+                    case "$PERMISSION_NEED_RC" in
+                        [Yy])
+                            cd "$shell_DIR" || echo
+                            shred -u ".cache/compiler.log" && print_yellow " successfully"
+                            sleep 1
+                            end_kodo_t_main ""
+                            ;;
+                        *)
+                            echo "Operation cancelled"
+                            end_kodo_t_main ""
+                            ;;
+                    esac
+                done
+            else
+                end_kodo_t_main ""
+            fi
+            ;;
+        "fetch")
+            fetch_now ""
+            ;;
+        "zapman")
+            mode_ZAPMAN "" || {
+                if [ "$kodo_t_module_loaded" -eq 1 ]; then
+                    print_green "warn:" "err.. need to kill after installing \"succes\".."
+                    print_green " killing.."
+                    sleep 0.999 && SIGNAL_KILL "" && typeof ""
+                fi
+            }
+            ;;
+        "clear" | "c" | "C" | "cc")
+            kodo_t_save_messages=0
+            clear; echo -ne "\033[3J"
+            struct_kodo_t_main ""
+            ;;
+        "modular"*)
+            kodo_t_TITLE "Modular Checking | Debugging"
+
+            function kodo_t_modular_load() {
+                : ' Install or Load modules '
+                if [ -f "$shell_DIR/$1" ]; then
+                    chmod +x "$shell_DIR/$1"
+
+                    echo "[DEBUG]: $1"
+
+                    if [[ "$1" == ".kodo/python/wpython" ]]; then
+                        python3 .kodo/python/wpython && print_yellow "Succes"
+                    else
+                        source "$shell_DIR/$1" && print_yellow "Succes"
+                    fi
+                fi
+            }
+
+            local commands_ARGS="${kd_table#modular }"
+
+            if [[ -n "$commands_ARGS" && "$commands_ARGS" != "$kd_table" ]]; then
+                commands_INPUT="$commands_ARGS"
+
+                if [ -f "$commands_INPUT" ]; then
+                    printf_red "error:" "$commands_INPUT not found!."
+                fi
+
+                kodo_t_modular_load "$commands_INPUT" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/$commands_INPUT" ""
+            else
+                kodo_t_modular_load ".kodo/python/wpython" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/wpython" ""
+
+                cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
+                
+                kodo_t_modular_load ".kodo/security.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Security/security.kd" "silent" 
+                kodo_t_modular_load ".kodo/compat.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compat/compat.kd" "compat" 
+                kodo_t_modular_load ".kodo/compiler.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compiler/compiler.kd" "silent" 
+                kodo_t_modular_load ".kodo/zapman.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Zapman/zapman.kd" "silent" 
+                kodo_t_modular_load ".kodo/samp.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/samp.kd" "silent" 
+                kodo_t_modular_load ".kodo/pawncc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/pawncc.kd" "silent" 
+                kodo_t_modular_load ".kodo/misc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Misc/misc.kd" "silent"
+                kodo_t_modular_load ".kodo/vireon.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Vireon/vireon.kd" "silent" 
+                kodo_t_modular_load ".kodo/server.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Server/server.kd" "end"
+            fi
+
+            struct_kodo_t_main ""
+            ;;
+        "help"* | "$trigger_kd -h"* | "$trigger_kd --h"*)
+            local commands_ARGS="${kd_table#"$trigger_kd -h "}"
+            local commands_ARGS="${commands_ARGS#help }"
+            local commands_ARGS="${commands_ARGS#"$trigger_kd --h "}"
+
+            declare -A descriptions=(
+                ["compile"]=":: Compile a project - Usage: compile | (+) [<args>] [target]"
+                ["running"]=":: Running a project - Usage: running | (+) [<args>] [target]"
+                ["irunn"]=":: Compile & Running a project - Usage: irunn"
+                ["debug"]=":: Debug a project - Usage: debug | (+) [<args>] [target]"
+                ["stop"]=":: stop all running project progress - Usage: stop"
+                ["restart"]=":: Restart all Server - Usage: restart"
+                ["gamemode"]=":: Download GameModes SA-MP with Selection - Usage: gamemode"
+                ["pawncc"]=":: Download PawnCC SA-MP with Selection - Usage: pawncc"
+                ["clear"]=":: Clear Screen Terminal - Usage: clear"
+                ["checksums"]=":: Checksums of Kodo - Usage: checksums"
+                ["cat"]=":: Display a files to Kodo Terminal - Usage: cat"
+                ["kill"]=":: Kill a Kodo Terminal - Usage: kill"
+                ["exit"]=":: Exit/End Kodo Terminal - Usage: exit"
+                ["toml"]=":: Rebuild kodo.toml - Usage: toml"
+                ["directory"]=":: Display or Change Terminal Directory - Usage: directory | cd | ls"
+                ["remcac"]=":: Remove cache \".cache\" Kodo - Usage: remcac"
+                ["vireon"]=":: Vireon Chat - Usage: vireon"
+                ["nano"]=":: GNU/Nano Editor - Usage: nano"
+                ["zapman"]=":: Kodo Mode to Zapman Mode - Usage: zapman"
+                ["autoinstall"]=":: Zapman Mode | AutoInstall Package -> Usage: autoinstall"
+                ["install"]=":: Zapman Mode | Install Package -> Usage: install | (+) [<args>] [url]"
+                ["remove"]=":: Zapman Mode | Remove Package -> Usage: remove | (+) [<args>] [target]"
+                ["sync"]=":: Sync (Upgrade) - Usage: sync | (+) [<args>] [update - only workspace]"
+                ["modular"]=":: Modular Checking - Usage: modular | (+) [<args>] [target]"
+                ["fetch"]=":: Fetch Kodo -> Usage: fetch"
+            )
+            
+            if [[ -n "$commands_ARGS" && "$commands_ARGS" != "$kd_table" ]]; then
+                if [[ -n "${descriptions[$commands_ARGS]}" ]]; then
+                    if [[ "$commands_ARGS" == "nano" ]]; then
+                        if ! command -v nano &> /dev/null; then
+                            help_dialog_kd "invalid"
+                        else
+                            echo "${descriptions[$commands_ARGS]}"
+                        fi
+                    elif [[ "$commands_ARGS" == "compile" ]]; then
+                        echo "${descriptions[$commands_ARGS]}"
+                        echo " Example: compile bare.pwn +option_amx"
+                        echo " For Option. Please See: github.com/vilksons/kodo/wiki/Compiler-Option"
+                    else
+                        echo "${descriptions[$commands_ARGS]}"
+                    fi
+                else
+                    help_dialog_kd "invalid"
+                fi
+            else
+                help_dialog_kd ""
+            fi
+
+            struct_kodo_t_main ""
+            ;;
+        "$trigger_kd" | "user:~$:" | " ")
+            struct_kodo_t_main ""
+            ;;
+        "")
+            struct_kodo_t_main ""
+            ;;
+        *)
+            not_found_kd ""
+
+            __commands__=(
+                help
+                compile
+                running
+                irunn
+                debug
+                stop
+                restart
+                gamemode
+                pawncc
+                clear
+                checksums
+                cat
+                kill
+                sync
+                modular
+                directory
+                exit
+                remcac
+                vireon
+                toml
+                fetch
+                nano
+                zapman
+            )
+
+            for val in "${__commands__[@]}"; do
+                if [[ "$kd_table" == "$val" ]]; then
+                    echo "did you mean '$val'?"
+                elif [[ "$kd_table" == *"$val"* ]] || [[ "$val" == *"$kd_table"* ]]; then
+                    echo "did you mean '$val'?"
+                fi
+            done
+
+            struct_kodo_t_main ""
+            ;;
+    esac
+}
+export mode_KODO
+
+function not_found_kd()
+{
+    echo "error: $kd_table: command not found"
+}
+
+function help_dialog_kd()
+{
+    local _param_=$1
+
+    if [[ "$_param_" == "invalid" ]]; then
+        echo "Invalid!.. Please Use:"
+    fi
+
+    echo "Usage: kodo <flags> | help | -h | --h | [<commands>] [<args>]"
+    echo "Help Usage: <commands> | help compile | help running"
+    echo "Tip: use CTRL+C to exit and use CTRL+D to goto main"
+    echo "Commands:"
+    echo " | Kodo |"
+    echo " compile (compile project)"
+    echo " running (running project)"
+    echo " irunn (compile-run project)"
+    echo " debug (debugging project)"
+    echo " stop (stopped project)"
+    echo " restart (restart project)"
+    echo " gamemode (download gamemode)"
+    echo " pawncc (download pawncc)"
+    echo " clear (clear-screen)"
+    echo " checksums (checksums of workspace)"
+    echo " cat (cat file to terminal)"
+    echo " kill (kill/restart terminal)"
+    echo " sync (update/upgrade)"
+    echo " modular (module checking)"
+    echo " directory (change/display current directory)"
+    echo " exit (exit from terminal)"
+    echo " remcac (remove cache ~/.cache/)"
+    echo " vireon (Vireon, A.I Chat)"
+    echo " toml (rebuild kodo.toml)"
+    echo " fetch (fetch of workspace)"
+    
+    if command -v nano &> /dev/null; then
+        echo " nano (run nano editor from terminal)"
+    fi
+
+    echo " | Zapman |"
+    echo " zapman (enter Zapman)"
+    echo " autoinstall (install packages from cache)"
+    echo " install (install packages)"
+    echo " remove (remove packages)"
+    echo " exit (exit Zapman)"
+}
+
+function help_dialog_zapman()
+{
+    echo "Usage: zapman | <command> [<args>]"
+    echo "Commands:"
+    echo " autoinstall - Auto-Install from Zapman cache"
+    echo " install     - Install/Reinstall Packages"
+    echo " remove      - Remove Packages"
+    echo " exit        - Exit Zapman Mode"
+}
+
+function end_kodo_t_main() {
+    echo -e "$(collor_yellow "# Press any key to return.")"
+    read -r -n 1 -s
+    struct_kodo_t_main ""
+}
+
+: '
+    @summary: Main
+'
+struct_kodo_t_main ""

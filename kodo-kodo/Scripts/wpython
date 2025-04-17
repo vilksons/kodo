@@ -1,0 +1,36 @@
+#!/usr/bin/env python3
+
+import os
+import hashlib
+import sys
+import base64
+import signal
+
+def random_string(length=16):
+    """Generate a random string from random bytes."""
+    return base64.urlsafe_b64encode(os.urandom(length)).decode()[:length]
+
+def wpy_sha256(input_str=None):
+    """Double SHA256 hashing."""
+    if input_str is None:
+        input_str = random_string()
+    hash1 = hashlib.sha256(input_str.encode()).digest()
+    hash2 = hashlib.sha256(hash1).hexdigest()
+    return hash2, input_str
+
+def sigterm_handler(signum, frame):
+    """Handle SIGTERM to exit cleanly"""
+    sys.exit(0)
+
+signal.signal(signal.SIGTERM, sigterm_handler)
+
+if __name__ == '__main__':
+    if len(sys.argv) != 1:
+        sys.exit(0)
+
+    try:
+        random_word_1 = random_string(20)
+        RANDOM_HASH_SHA256, original_1 = wpy_sha256(random_word_1)
+        print(f'export RANDOM_HASH_SHA256="{RANDOM_HASH_SHA256}"')
+    except BrokenPipeError:
+        sys.exit(0)

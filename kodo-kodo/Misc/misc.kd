@@ -1,0 +1,77 @@
+#!/bin/bash
+
+function struct_choice_samp()
+{
+    while true; do
+        echo "# Select: [L]inux for Linux Files [W]indows for Windows Files"
+        read -r -p ">> " SEL_CO
+        case "$SEL_CO" in
+            [Ll])
+                struct_samp_linux "" && break ;;
+            [Ww])
+                struct_samp_win "" && break ;;
+            *)
+                echo -e "$(collor_red "err:") Invalid selection. Please enter L or W." ;;
+        esac
+    done
+}
+export struct_choice_samp
+
+function struct_choice_pawncc()
+{
+    while true; do
+        echo "# Select: [L]inux for Linux Files [W]indows for Windows Files"
+        read -r -p ">> " SEL_CO
+        case "$SEL_CO" in
+            [Ll])
+                struct_compilers_linux "" && break ;;
+            [Ww])
+                struct_compilers_win "" && break ;;
+            *)
+                echo -e "$(collor_red "err:") Invalid selection. Please enter L or W." ;;
+        esac
+    done
+}
+export struct_choice_pawncc
+
+function fetch_now()
+{
+    local latest=""
+    local current=""
+    if [ -f "$shell_DIR/.itskodo" ]; then
+        current=$(cat "$shell_DIR/.itskodo" 2>/dev/null)
+    else
+        current=""
+    fi
+    
+    latest=$(curl -s "https://api.github.com/repos/vilksons/kodo/commits/kodo" | grep -o '"sha": "[^"]*' | awk -F': "' '{print $2}')
+
+    echo "oooo                        .o8            "
+    echo "\`888                       \"888            "
+    echo " 888  oooo   .ooooo.   .oooo888   .ooooo.  "
+    echo " 888 .8P'   d88' \`88b d88' \`888  d88' \`88b "
+    echo " 888888.    888   888 888   888  888   888 "
+    echo " 888 \`88b.  888   888 888   888  888   888 "
+    echo "o888o o888o \`Y8bod8P' \`Y8bod88P\" \`Y8bod8P' "
+    echo
+
+    if [[ "$latest" == "$current" ]]; then
+        echo "Kodo is up-to-date."
+    else
+        echo "Kodo is behind the times"
+    fi
+    
+    echo "Kodo Licenses: $LICENSES"
+
+    find_PLATFORM=""
+    if [[ "$__OS__" == "linux" ]]; then find_PLATFORM="Linux"; fi
+    if [[ "$__OS__" == "windows" ]]; then find_PLATFORM="${find_PLATFORM:+$find_PLATFORM & }Windows"; fi
+
+    if [ -n "$find_PLATFORM" ]; then
+        echo "Kodo Platform: $find_PLATFORM"
+    else
+        echo "Kodo Platform: Unknown"
+    fi
+    end_kodo_t_main ""
+}
+export fetch_now

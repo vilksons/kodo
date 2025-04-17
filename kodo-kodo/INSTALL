@@ -1,0 +1,71 @@
+INSTALLATION PLATFORMS
+=====================
+Supported Platforms:
+- Linux, Windows, macOS, Android via:
+  - Docker (Windows/macOS): https://www.docker.com/
+  - WSL/WSL2 (Windows): https://learn.microsoft.com/en-us/windows/wsl/install
+  - Termux (Android/Emulator): https://termux.dev/en/
+
+INSTALL `kodo/workspace` SCRIPT
+=====================
+  - Download via GNU/Wget:
+      * wget -q -O workspace https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace
+  - Download via cURL:
+      * curl -L -o workspace https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace
+* With Skip Installation Steps:
+  - Download via GNU/Wget:
+      * wget -q -O workspace https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace && \
+        chmod +x workspace && \
+          ./workspace
+  - Download via cURL:
+      * curl -L -o workspace https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace && \
+        chmod +x workspace && \
+          ./workspace
+
+INSTALLATION STEPS
+=====================
+1. Open the Terminal.
+2. Make the `workspace` script executable:
+   - chmod +x workspace
+3. Run the script:
+   - bash ./workspace
+
+ERROR Win/Linux format Line.
+=====================
+* How to fix `-bash: ./workspace: cannot execute: required file not found`
+1. Install `dos2unix` on your Linux System.
+2. Running: `dos2unix workspace`
+3. And Running Workspace again: `./workspace`
+
+Docker Usage
+=====================
+NOTED
+*********************
+If you are interested in using the Docker environment, follow the steps below carefully.
+*********************
+  (Simple)
+  How to Usage 
+  # run this in Docker/dockerfile area. and don't forget for linux: `sudo usermod -aG docker $USER`
+                                                                  | `newgrp docker`
+                                                                  | `sudo systemctl enable docker`
+                                                                  | `sudo systemctl start docker` 
+  @ docker build -t docker_usage .
+    @ docker run --rm -it docker_usage
+
+  (Additional)
+    @ docker ps -a
+      ^ check all running/previously run docker
+      - docker start <container-names>
+        |            ^ docker container names
+        ^ for start a docker images
+      - docker exec -it <container-names> /bin/bash
+        |                                 ^ location session, /bin/bash : /bin/sh 
+        ^ to running the containers
+    @ docker stop <container-names>
+      ^ to stop a docker containers
+    @ docker rm -f <container-names>
+      |         ^ -f for forcing
+      ^ to remove a docker containers
+      - docker rm -f $(docker ps -a -q)
+        |         ^ -f for forcing
+        ^ to remove all docker containers
