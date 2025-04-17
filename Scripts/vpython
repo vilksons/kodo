@@ -37,7 +37,7 @@ def load_color_groups_from_url(url):
         print(f"Can't get text from: {e}", flush=True)
         return {}
 
-RAW_KEYWORDS_JSON = 'https://raw.githubusercontent.com/vilksons/kodo/kodo/keywords.json'
+RAW_KEYWORDS_JSON = 'https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/keywords.json'
 
 color_groups = load_color_groups_from_url(RAW_KEYWORDS_JSON)
 COLORS = {kw: color for color, keywords in color_groups.items() for kw in keywords}
