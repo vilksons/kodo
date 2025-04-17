@@ -7,12 +7,16 @@ function __encryption_create__()
             if [ ! -f "$HOME/kodo/.enkodo" ]; then
                 kodo_encryption_c=""
 
-                for i in {1..100}; do
+                for i in {1..26}; do
                     rand_base64_text=$(
-                        openssl rand -base64 1000 | sha256sum | awk '{print $1}'
+                        openssl rand -base64 1000 |
+                            sha256sum |
+                                awk '{print $1}'
                     )
                     rand_base64_text=$(
-                        echo "$rand_base64_text" | tr '[:upper:]' '[:lower:]'
+                        echo "$rand_base64_text" |
+                        : ' uppercase to lowercase '
+                            tr '[:upper:]' '[:lower:]'
                     )
                     
                     kodo_encryption_c="$kodo_encryption_c$rand_base64_text"$'\n'
@@ -32,7 +36,7 @@ function __encryption_create__()
                 touch "$shell_DIR/.cache/zapman"
             fi
         else
-            print_red "error:" "can't create encryption pass.. please see err/warn in your python-(.kodo/python/wpython) scripts!"
+            print_red "error:" "can't create encryption pass.. please see err/warn in your python-(.kodo/python/pyworkspace) scripts!"
         fi
     fi
 }

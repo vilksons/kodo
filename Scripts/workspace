@@ -379,9 +379,9 @@ function struct_kodo_t_main() {
             : ' Install or Load modules '
             if [ -f "$shell_DIR/$1" ] && [ "$kodo_t_module_loaded" -ne 1 ]; then
                 chmod +x "$shell_DIR/$1"
-                if [ "$1" != ".kodo/python/vpython" ]; then
-                    if [[ "$1" == ".kodo/python/wpython" ]]; then
-                        source <(python3 .kodo/python/wpython) || sleep 1.0
+                if [ "$1" != ".kodo/python/vipython" ]; then
+                    if [[ "$1" == ".kodo/python/pyworkspace" ]]; then
+                        source <(python3 .kodo/python/pyworkspace) || sleep 1.0
                     else
                         if [[ "$1" == ".kodo/compat.kd" ]]; then
                             source "$shell_DIR/$1" || sleep 1.0
@@ -417,8 +417,8 @@ function struct_kodo_t_main() {
             fi
         }
 
-        kodo_t_pack ".kodo/python/wpython" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/wpython" ""
-        kodo_t_pack ".kodo/python/vpython" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/vpython" ""
+        kodo_t_pack ".kodo/python/pyworkspace" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/pyworkspace" ""
+        kodo_t_pack ".kodo/python/vipython" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/vipython" ""
         kodo_t_pack ".kodo/compat.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compat/compat.kd" "compat" 
         kodo_t_pack ".kodo/compiler.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compiler/compiler.kd" "silent" 
         kodo_t_pack ".kodo/zapman.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Zapman/zapman.kd" "silent" 
@@ -760,10 +760,10 @@ function mode_KODO() {
                             done
 
                             cd "$shell_DIR/.kodo/python" >/dev/null 2>&1 || echo ""
-                            curl -L -o "wpython" \
-                                "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/wpython" &&
-                            curl -L -o "vpython" \
-                                "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/vpython" &&
+                            curl -L -o "pyworkspace" \
+                                "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/pyworkspace" &&
+                            curl -L -o "vipython" \
+                                "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/vipython" &&
                             cd "$shell_DIR" >/dev/null 2>&1 || echo ""
                             curl -L -o "workspace" \
                                 "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace"
@@ -957,8 +957,8 @@ function mode_KODO() {
 
                     echo "[DEBUG]: $1"
 
-                    if [[ "$1" == ".kodo/python/wpython" ]]; then
-                        python3 .kodo/python/wpython && print_yellow "Succes"
+                    if [[ "$1" == ".kodo/python/pyworkspace" ]]; then
+                        python3 .kodo/python/pyworkspace && print_yellow "Succes"
                     else
                         source "$shell_DIR/$1" && print_yellow "Succes"
                     fi
@@ -976,7 +976,7 @@ function mode_KODO() {
 
                 kodo_t_modular_load "$commands_INPUT" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/$commands_INPUT" ""
             else
-                kodo_t_modular_load ".kodo/python/wpython" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/wpython" ""
+                kodo_t_modular_load ".kodo/python/pyworkspace" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/pyworkspace" ""
 
                 cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
                 

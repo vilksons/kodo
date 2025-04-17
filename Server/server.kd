@@ -209,7 +209,7 @@ function start_false() {
     '
     echo -e "$(collor_yellow "~")"
     echo "    ; \"error\"   .. No .. False"
-    check2 ""
+    check_server_2 ""
 }
 export start_false
 
@@ -229,7 +229,7 @@ function start_false2() {
     '
     echo -e "$(collor_yellow "~")"
     echo "    ; \"failed\"  .. No .. False"
-    check3 ""
+    check_server_3 ""
 }
 export start_false2
 
@@ -260,7 +260,7 @@ function error_cache() {
     echo
     grep -i "error" "$toml_LOG_SERV"
     echo
-    check2 ""
+    check_server_2 ""
 }
 export error_cache
 
@@ -271,7 +271,7 @@ function failed_cache() {
     echo
     grep -i "failed" "$toml_LOG_SERV"
     echo
-    check3 ""
+    check_server_3 ""
 }
 export failed_cache
 
@@ -285,23 +285,23 @@ function invalid_cache() {
 }
 export invalid_cache
 
-function check2() {
+function check_server_2() {
     if grep -i "failed" "$toml_LOG_SERV" > /dev/null; then
         start_true2 ""
     else
         start_false2 ""
     fi
 }
-export check2
+export check_server_2
 
-function check3() {
+function check_server_3() {
     if grep -i "invalid" "$toml_LOG_SERV" > /dev/null; then
         start_true3 ""
     else
         start_false3 ""
     fi
 }
-export check3
+export check_server_3
 
 function ok_next() {
     : '
