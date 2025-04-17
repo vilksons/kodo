@@ -572,12 +572,12 @@ EOF
                     '
                     if ! jq -e '.pawn.legacy_plugins' "$toml_SERVER_CONFIG" 2>/dev/null > /dev/null; then
                         if jq -e '. | type == "object"' "$toml_SERVER_CONFIG" 2>/dev/null > /dev/null; then
-                            jq '.pawn = {legacy_plugins: []} + .' "$toml_SERVER_CONFIG" 2>/dev/null > .__ignored.json && mv .__ignored.json "$toml_SERVER_CONFIG"
+                            jq '.pawn = {legacy_plugins: []} + .' "$toml_SERVER_CONFIG" 2>/dev/null > "$shell_DIR/.cache/.cache.json" && mv "$shell_DIR/.cache/.cache.json" "$toml_SERVER_CONFIG"
                             print_yellow "dbg:" "key 'pawn.legacy_plugins' has been added as an empty array."
                         fi
                     fi
 
-                    jq '.pawn.legacy_plugins |= unique' "$toml_SERVER_CONFIG" > .__ignored.json && mv .__ignored.json "$toml_SERVER_CONFIG"
+                    jq '.pawn.legacy_plugins |= unique' "$toml_SERVER_CONFIG" > "$shell_DIR/.cache/.cache.json" && mv "$shell_DIR/.cache/.cache.json" "$toml_SERVER_CONFIG"
 
                     : '
                         Loops through dependencies, ensuring plugins are unique.
@@ -597,15 +597,15 @@ EOF
                         '
                         if [[ -f "$toml_ZAPMAN_PLUGINS/$__plugins__.so" && -f "$toml_ZAPMAN_PLUGINS/$__plugins__.dll" ]]; then
                             print_yellow "dbg:" "adding $__plugins__.so and $__plugins__.dll to pawn.legacy_plugins"
-                            jq --arg so "$__plugins__.so" --arg dll "$__plugins__.dll" '.pawn.legacy_plugins += [$dll, $so]' "$toml_SERVER_CONFIG" > .__ignored.json && mv .__ignored.json "$toml_SERVER_CONFIG"
+                            jq --arg so "$__plugins__.so" --arg dll "$__plugins__.dll" '.pawn.legacy_plugins += [$dll, $so]' "$toml_SERVER_CONFIG" > "$shell_DIR/.cache/.cache.json" && mv "$shell_DIR/.cache/.cache.json" "$toml_SERVER_CONFIG"
                             added_any=true
                         elif [[ -f "$toml_ZAPMAN_PLUGINS/$__plugins__.so" ]]; then
                             print_yellow "dbg:" "adding $__plugins__.so to pawn.legacy_plugins"
-                            jq --arg so "$__plugins__.so" '.pawn.legacy_plugins += [$so]' "$toml_SERVER_CONFIG" > .__ignored.json && mv .__ignored.json "$toml_SERVER_CONFIG"
+                            jq --arg so "$__plugins__.so" '.pawn.legacy_plugins += [$so]' "$toml_SERVER_CONFIG" > "$shell_DIR/.cache/.cache.json" && mv "$shell_DIR/.cache/.cache.json" "$toml_SERVER_CONFIG"
                             added_any=true
                         elif [[ -f "$toml_ZAPMAN_PLUGINS/$__plugins__.dll" ]]; then
                             print_yellow "dbg:" "adding $__plugins__.dll to pawn.legacy_plugins"
-                            jq --arg dll "$__plugins__.dll" '.pawn.legacy_plugins += [$dll]' "$toml_SERVER_CONFIG" > .__ignored.json && mv .__ignored.json "$toml_SERVER_CONFIG"
+                            jq --arg dll "$__plugins__.dll" '.pawn.legacy_plugins += [$dll]' "$toml_SERVER_CONFIG" > "$shell_DIR/.cache/.cache.json" && mv "$shell_DIR/.cache/.cache.json" "$toml_SERVER_CONFIG"
                             added_any=true
                         fi
 
@@ -620,7 +620,7 @@ EOF
                     : '
                         Ensures plugins are stored in a unique format.
                     '
-                    jq '.pawn.legacy_plugins |= unique' "$toml_SERVER_CONFIG" > .__ignored.json && mv .__ignored.json "$toml_SERVER_CONFIG"
+                    jq '.pawn.legacy_plugins |= unique' "$toml_SERVER_CONFIG" > "$shell_DIR/.cache/.cache.json" && mv "$shell_DIR/.cache/.cache.json" "$toml_SERVER_CONFIG"
                 fi
             fi
 

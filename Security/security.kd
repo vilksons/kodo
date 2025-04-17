@@ -100,8 +100,8 @@ function security_file_rm()
         shred -u ".cache_tmp"
     fi
 
-    if [ -f ".__ignored.json" ]; then
-        shred -u ".__ignored.json"
+    if [ -f "$shell_DIR/.cache/.cache.json" ]; then
+        shred -u "$shell_DIR/.cache/.cache.json"
     fi
 
     if [ -f ".cach" ]; then

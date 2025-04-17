@@ -176,7 +176,7 @@ function kodo_init_compilers()
                         SIGNAL_KILL ""
                     fi
                 }
-                ignore_this sleep 0.1
+                
                 cat "$CACHE_COMPILERS"
                 ignore_this sleep 0.1
 
@@ -297,9 +297,17 @@ function kodo_compilers() {
 
             local elapsed=$((end_time - start_time))
 
-            bash_cache_compiler ""
-            sleep 0.1
+            bash_cache_compiler "" || {
+                if [ "$terminal_MODULAR_LOADED" -eq 1 ]; then
+                    print_green "warn:" "err.. need to kill after installing \"succes\".."
+                    print_green " killing.."
+                    sleep 0.999
+                    SIGNAL_KILL ""
+                fi
+            }
+            
             cat "$CACHE_COMPILERS"
+            ignore_this sleep 0.1
 
             if [[ "$toml_RM_CACHE" == "true" ]]; then
                 cache_compiler=".cache/compiler.log"
