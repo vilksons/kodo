@@ -5,7 +5,7 @@ function kodo_vireon()
 {
     : ' store the first argument in a local variable '
     local commands_INPUT=$1
-    echo "$VIREON_token_Decrypt"
+    
     : ' check if the ai model is set to groq '
     if [ "$toml_VIREON_AI_MODEL" = "groq" ]; then
         : ' print the vireon chat ai title with model info '
