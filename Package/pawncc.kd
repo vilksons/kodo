@@ -100,9 +100,9 @@ function AGEN_pawncc_linux() {
             fi
         fi
         
-        print_yellow "Auto-GEN:" "Installation pawncc Succes!"
+        print_yellow "Auto-GEN:" "Installation PawnCC Succes!"
     else
-        print_red "InPawncCC:" "Installing PawnCC failed.. libpawnc.so not found!"
+        print_red "InPawncCC:" "Installation PawnCC failed.. libpawnc.so not found!"
     fi
 }
 
