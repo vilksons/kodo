@@ -49,8 +49,8 @@ function __encryption_token__()
 
                 VIREON_token_Encrypt=$(
                     echo "$__VIREON_TOKEN" |
-                        openssl enc -aes-256-cbc -salt -pbkdf2 -pass pass:"$__decrypt_passphrase__" -base64 |
-                            tr -d '\n'
+                    openssl enc -aes-256-cbc -pbkdf2 -pass pass:"$__decrypt_passphrase__" -base64 |
+                    tr -d '\n'
                 )
 
                 escaped_token=$(
@@ -65,7 +65,7 @@ function __encryption_token__()
                 local _sizeof_rate_token_
                 VIREON_token_Decrypt=$(
                     echo "$toml_VIREON_TOKEN" |
-                        openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:"$__decrypt_passphrase__" -base64
+                    openssl enc -aes-256-cbc -d -pbkdf2 -pass pass:"$__decrypt_passphrase__" -base64
                 )
             fi
         fi

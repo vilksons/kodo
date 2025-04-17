@@ -180,7 +180,7 @@ remcache_auto = false
 ai_model = "groq"
 rest_api = "https://api.groq.com/openai/v1/chat/completions"
 token = "your_token"
-model = "qwen-2.5-32b"
+model = "qwen-qwq-32b"
 profile = "hello vireom, your name is john"
 
 [compiler]

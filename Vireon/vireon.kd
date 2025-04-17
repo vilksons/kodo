@@ -5,7 +5,7 @@ function kodo_vireon()
 {
     : ' store the first argument in a local variable '
     local commands_INPUT=$1
-    
+    echo "$VIREON_token_Decrypt"
     : ' check if the ai model is set to groq '
     if [ "$toml_VIREON_AI_MODEL" = "groq" ]; then
         : ' print the vireon chat ai title with model info '
@@ -38,10 +38,17 @@ function kodo_vireon()
     if [ -f ".kodo/python/vpython" ]; then
         : ' parse the response using vpython script '
         echo "$vireon_response" | python3 ".kodo/python/vpython"
-
+        
         if command -v jq &>/dev/null; then
             ai_messages=$(echo "$vireon_response" | jq -r '.choices[].message.content') 
             ai_msg_lenght=$(echo -n "$ai_messages" | wc -c)
+
+            if echo "$vireon_response" | grep -iqE 'failed|error|invalid'; then
+                print_red "Error: API response contains 'failed' or 'error':"
+                echo "$vireon_response"
+            else
+                ai_msg_lenght=$(echo -n "$ai_messages" | wc -c)
+            fi
 
             if [ "$ai_msg_lenght" -gt 8192 ]; then
                 print_green "warning:" "messages is large of limit - 8192 characters!"
@@ -53,8 +60,14 @@ function kodo_vireon()
         
         if command -v jq &>/dev/null; then
             ai_messages=$(echo "$vireon_response" | jq -r '.choices[].message.content') 
-            ai_msg_lenght=$(echo -n "$ai_messages" | wc -c)
-            echo "$ai_messages"
+
+            if echo "$vireon_response" | grep -iqE 'failed|error|invalid'; then
+                print_red "Error: API response contains 'failed' or 'error':"
+                echo "$vireon_response"
+            else
+                ai_msg_lenght=$(echo -n "$ai_messages" | wc -c)
+                echo "$ai_messages"
+            fi
 
             if [ "$ai_msg_lenght" -gt 8192 ]; then
                 print_green "warning:" "messages is large of limit - 8192 characters!"
