@@ -51,7 +51,8 @@ function struct_ZAPMAN()
             Attempts to decrypt the stored value using AES-256-CBC.
         '
         zapman_AUTOINSTALL_ENCRYPT=$(tail -n 1 "$shell_DIR/.cache/zapman")
-        zapman_AUTOINSTALL_DECRYPT=$(echo "$zapman_AUTOINSTALL_ENCRYPT" | openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:"$__decrypt_passphrase__" -base64 -in "$shell_DIR/.cache/zapman")
+        zapman_AUTOINSTALL_DECRYPT=$(echo "$zapman_AUTOINSTALL_ENCRYPT" |
+            openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:"$__decrypt_passphrase__" -base64 -in "$shell_DIR/.cache/zapman")
 
         : ' 
             Verifies if the decrypted value is a valid URL.
@@ -88,9 +89,7 @@ function struct_ZAPMAN()
             local tb_zapman2_url_args=()
 
             if [[ -n "$tb_zapman2_input_args" && "$tb_zapman2_input_args" != "install" ]]; then
-                # if a valid repository URL is provided, store it in the tb_zapman2_url_args array
                 tb_zapman2_url_args=("$tb_zapman2_input_args")
-
                 SAVE_QUICK=1
             else
                 SAVE_QUICK=0
@@ -102,7 +101,7 @@ function struct_ZAPMAN()
                     mapfile -t tb_zapman2_url_args < <(yq -p=toml -r -o=yaml '.package.urls[]' zapman.toml)
                 else
                     print_red "crit:" "zapman.json or zapman.toml not found!"
-                    sleep 2.2
+                    IGNORE_ME sleep 2.2
                     cat > zapman.json <<EOF
 {
     "package": [
@@ -210,7 +209,7 @@ EOF
                     fi
                 fi
 
-                ignore_this sleep 0.1
+                IGNORE_ME sleep 0.1
 
                 : '
                     Initializes the cache extraction directory.
@@ -376,7 +375,7 @@ EOF
                 '
                 mapfile -t _zapman_include < <(find "$zapman_extract_dirs" -type f -name "*.inc" -exec basename {} \;)
                 
-                ignore_this sleep 0.1
+                IGNORE_ME sleep 0.1
 
                 if [ -d "$toml_ZAPMAN_INCLUDE" ]; then
                     : '
@@ -453,7 +452,7 @@ EOF
                     fi
                 fi
 
-                ignore_this sleep 0.1
+                IGNORE_ME sleep 0.1
 
                 : '
                     Performs cleanup by removing extracted archives and directories.
@@ -517,7 +516,7 @@ EOF
                 done
             fi
 
-            ignore_this sleep 0.1
+            IGNORE_ME sleep 0.1
                 
             if [ -f "$shell_DIR/$toml_SERVER_CONFIG" ]; then
                 : '
@@ -722,7 +721,7 @@ EOF
                 print_green "warn:" "$toml_ZAPMAN_PLUGINS not found"
             fi
 
-            ignore_this sleep 0.1
+            IGNORE_ME sleep 0.1
             
             : '
                 Iterates through packages for removal from game mode configuration.
@@ -748,7 +747,7 @@ EOF
                 fi
             done
 
-            ignore_this sleep 0.1
+            IGNORE_ME sleep 0.1
             
             : '
                 Removes plugin entries from SAMP or OMP configurations.

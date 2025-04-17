@@ -102,11 +102,11 @@ function SIGNAL_KILL()
     goto_mode_KODO "$kd_table"
 }
 
-function ignore_this() {
+function IGNORE_ME() {
     # ignore succes/error/warning to null
     "$@" > /dev/null 2>&1
 }
-export ignore_this
+export IGNORE_ME
 
 function kodo_reset_variable() {
     # Reset Variables #
@@ -341,7 +341,7 @@ function struct_kodo_t_main() {
                 print_red " Missing packages:" "${kodo_t_missing_cmds[*]}"
                 printf "\e]8;;https://github.com/vilksons/kodo/wiki/Required-Packages\e\\ Please see here for more.\e]8;;\e\\"
                 echo
-                ignore_this sleep 1.0
+                IGNORE_ME sleep 1.0
                 terminal_SAVE_NOTICE=2
                 ;;
         esac
@@ -562,12 +562,12 @@ function goto_mode_KODO() {
             ;;
         "stop")
             kodo_t_TITLE "Stop"
-            ignore_this pkill -15 -f "$toml_EXE_SERV"
+            IGNORE_ME pkill -15 -f "$toml_EXE_SERV"
             end_kodo_t_main ""
             ;;
         "restart")
             kodo_t_TITLE "Restart"
-            ignore_this pkill -15 -f "$toml_EXE_SERV"
+            IGNORE_ME pkill -15 -f "$toml_EXE_SERV"
             workspace_servers ""
             ;;
         "gamemode")
@@ -638,7 +638,7 @@ function goto_mode_KODO() {
                         fi
                     fi
                         
-                    ignore_this cd "$commands_INPUT"
+                    IGNORE_ME cd "$commands_INPUT"
                     ls -a &&
                         shell_TITLE="directory - $shell_DIR" &&
                             bash_title "$shell_TITLE" || echo && end_kodo_t_main ""
@@ -661,7 +661,7 @@ function goto_mode_KODO() {
             ;;
         "kill")
             terminal_SAVE_NOTICE=0
-            ignore_this clear
+            IGNORE_ME clear
             cd "$shell_DIR" || echo
             exec bash ./"$shell_NAME"
             ;;
@@ -794,7 +794,7 @@ function goto_mode_KODO() {
 
             local commands_ARGS="${kd_table#checksums }"
 
-            ignore_this cd "$shell_DIR" || echo ""
+            IGNORE_ME cd "$shell_DIR" || echo ""
 
             if [[ -n "$commands_ARGS" && "$commands_ARGS" != "$kd_table" ]]; then
                 commands_INPUT="$commands_ARGS"
@@ -817,7 +817,7 @@ function goto_mode_KODO() {
             end_kodo_t_main ""
             ;;
         "exit")
-            ignore_this pkill -9 -f "$shell_NAME"
+            IGNORE_ME pkill -9 -f "$shell_NAME"
             ;;
         "vireon"*)
             kodo_t_TITLE "Vireon Chat A.I"

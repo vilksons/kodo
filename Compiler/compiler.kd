@@ -178,7 +178,7 @@ function kodo_init_compilers()
                 }
                 
                 cat "$CACHE_COMPILERS"
-                ignore_this sleep 0.1
+                IGNORE_ME sleep 0.1
 
                 if [[ "$toml_RM_CACHE" == "true" ]]; then
                     cache_compiler=".cache/compiler.log"
@@ -307,7 +307,7 @@ function kodo_compilers() {
             }
             
             cat "$CACHE_COMPILERS"
-            ignore_this sleep 0.1
+            IGNORE_ME sleep 0.1
 
             if [[ "$toml_RM_CACHE" == "true" ]]; then
                 cache_compiler=".cache/compiler.log"
@@ -352,7 +352,7 @@ function bash_cache_compiler() {
         echo "~" >> "$_cache_compiler"
         echo "$line" >> "$_cache_compiler"
     done < "$cache_compiler"
-    ignore_this mv "$_cache_compiler" "$cache_compiler"
+    IGNORE_ME mv "$_cache_compiler" "$cache_compiler"
     chmod +x "$cache_compiler"
 }
 export bash_cache_compiler

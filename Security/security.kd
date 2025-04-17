@@ -114,7 +114,7 @@ function security_file_rm()
 security_cleanup() {
     : ' Calls the cleanup function to remove security-related files. '
     security_file_rm ""
-    ignore_this pkill -9 -f "$shell_NAME"
+    IGNORE_ME pkill -9 -f "$shell_NAME"
 }
 
 : '

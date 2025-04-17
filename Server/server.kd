@@ -5,7 +5,7 @@ function workspace_servers() {
         rm -rf "$toml_LOG_SERV"
     fi
 
-    ignore_this sleep 0.1
+    IGNORE_ME sleep 0.1
 
     if [ ! -f "$shell_DIR/$toml_EXE_SERV" ]; then
         echo -e "$(collor_red "crit:") $toml_EXE_SERV not found!. You can get this in \`gamemode\`"
@@ -74,7 +74,7 @@ function workspace_servers() {
         fi
 
         if [ "$SERVERS_INSTATUS" == 2 ]; then
-            ignore_this pkill -15 -f "$toml_EXE_SERV"
+            IGNORE_ME pkill -15 -f "$toml_EXE_SERV"
         fi
     fi
 }
@@ -85,7 +85,7 @@ function workspace_wargs_servers() {
         rm -rf "$toml_LOG_SERV"
     fi
     
-    ignore_this sleep 0.1
+    IGNORE_ME sleep 0.1
 
     local commands_INPUT=$1
     
@@ -187,7 +187,7 @@ with open(kodo_conf_json, 'w') as file:
         fi
 
         if [ "$SERVERS_INSTATUS" == 2 ]; then
-            ignore_this pkill -15 -f "$toml_EXE_SERV"
+            IGNORE_ME pkill -15 -f "$toml_EXE_SERV"
         fi
     fi
 }
