@@ -43,7 +43,7 @@ function kodo_vireon()
             ai_messages=$(echo "$vireon_response" | jq -r '.choices[].message.content') 
             ai_msg_lenght=$(echo -n "$ai_messages" | wc -c)
 
-            if echo "$vireon_response" | grep -iqE 'failed|error|invalid'; then
+            if echo "$vireon_response" | grep -iqE 'failed|error|invalid' && ! echo "$commands_INPUT" | grep -iqE 'failed|error|invalid' ; then
                 print_red "Error: API response contains 'failed' or 'error':"
                 echo "$vireon_response"
             else
@@ -61,7 +61,7 @@ function kodo_vireon()
         if command -v jq &>/dev/null; then
             ai_messages=$(echo "$vireon_response" | jq -r '.choices[].message.content') 
 
-            if echo "$vireon_response" | grep -iqE 'failed|error|invalid'; then
+            if echo "$vireon_response" | grep -iqE 'failed|error|invalid' && ! echo "$commands_INPUT" | grep -iqE 'failed|error|invalid' ; then
                 print_red "Error: API response contains 'failed' or 'error':"
                 echo "$vireon_response"
             else
