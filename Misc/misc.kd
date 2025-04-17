@@ -36,8 +36,7 @@ export struct_choice_pawncc
 
 function fetch_now()
 {
-    local latest=""
-    local current=""
+    local latest="" current="" find_PLATFORM=""
     if [ -f "$shell_DIR/.itskodo" ]; then
         current=$(cat "$shell_DIR/.itskodo" 2>/dev/null)
     else
@@ -63,7 +62,6 @@ function fetch_now()
     
     echo "Kodo Licenses: $LICENSES"
 
-    find_PLATFORM=""
     if [[ "$OS_NAME" == "linux" ]]; then find_PLATFORM="Linux"; fi
     if [[ "$OS_NAME" == "windows" ]]; then find_PLATFORM="${find_PLATFORM:+$find_PLATFORM & }Windows"; fi
 
@@ -72,6 +70,7 @@ function fetch_now()
     else
         echo "Kodo Platform: Unknown"
     fi
+    
     end_kodo_t_main ""
 }
 export fetch_now
