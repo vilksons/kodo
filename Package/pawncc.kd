@@ -302,7 +302,7 @@ function struct_compilers_linux() {
         DOWNLOAD_FILE_CURL="pawnc-$VER-linux.tar.gz"
         DOWNLOAD_URL_CURL="https://github.com/pawn-lang/compiler/releases/download/v$VER/$DOWNLOAD_FILE_CURL"
 
-        echo -e "\nDownloading: $DOWNLOAD_URL_CURL -> $call_download_file_CURL"
+        echo -e "\nDownloading: $DOWNLOAD_URL_CURL -> $DOWNLOAD_FILE_CURL"
         curl -L --progress-bar -o "$DOWNLOAD_FILE_CURL" "$DOWNLOAD_URL_CURL"
 
         wait
@@ -377,7 +377,7 @@ function struct_compilers_win()
         DOWNLOAD_FILE_CURL="pawnc-$VER-windows.zip"
         DOWNLOAD_URL_CURL="https://github.com/pawn-lang/compiler/releases/download/v$VER/$DOWNLOAD_FILE_CURL"
 
-        echo -e "\nDownloading: $DOWNLOAD_URL_CURL -> $call_download_file_CURL"
+        echo -e "\nDownloading: $DOWNLOAD_URL_CURL -> $DOWNLOAD_FILE_CURL"
         curl -L --progress-bar -o "$DOWNLOAD_FILE_CURL" "$DOWNLOAD_URL_CURL"
 
         wait
