@@ -1,0 +1,25 @@
+{
+    "green": [
+      "true", "string", "int", "float", "bool", "double", "char", "short", "long",
+      "if", "else", "while", "for", "do", "switch", "case", "default",
+      "class", "void", "inline", "include", "import", "module",
+      "end", "printf", "print", "println", "std", "const", "constexpr", "static",
+      "public", "private", "protected", "struct", "enum", "typedef",
+      "new", "delete", "sizeof", "this", "namespace", "using", "template",
+      "var", "let", "function", "fn", "def", "pass", "as", "in", "from", "export"
+    ],
+    "red": [
+      "false", "return", "throw", "break", "continue", "foo", "sudo",
+      "abort", "exit", "assert", "panic", "fatal", "fail", "raise",
+      "die", "trap", "stop", "error"
+    ],
+    "orange": [
+      "try", "catch", "finally", "goto", "main", "except", "with", "yield",
+      "await", "async", "lambda", "defer", "then", "promise", "resolve", "reject"
+    ],
+    "gray": [
+      "gcc", "clang", "sudo", "cmake", "make", "g++", "ld", "objdump", "valgrind",
+      "docker", "gdb", "git", "vim", "nano", "bash", "zsh", "sh", "env"
+    ]
+  }
+  

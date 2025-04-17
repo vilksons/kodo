@@ -5,54 +5,48 @@ import json
 import re
 import time
 import signal
+import requests
 
-def sigterm_handler(signum, frame):
-    sys.exit(0)
-
-signal.signal(signal.SIGTERM, sigterm_handler)
-
+# ANSI color codes
 GREEN = '\033[32m'
 RED = '\033[31m'
 ORANGE = '\033[33m'
 GRAY = '\033[37m'
 RESET = '\033[0m'
 
-""" Keyword groups associated with specific colors """
-color_groups = {
-    GREEN: [
-        'true', 'string', 'int', 'float', 'bool', 'double', 'char', 'short', 'long',
-        'if', 'else', 'while', 'for', 'do', 'switch', 'case', 'default',
-        'class', 'void', 'inline', 'include', 'import', 'module',
-        'end', 'printf', 'print', 'println', 'std', 'const', 'constexpr', 'static',
-        'public', 'private', 'protected', 'struct', 'enum', 'typedef',
-        'new', 'delete', 'sizeof', 'this', 'namespace', 'using', 'template',
-        'var', 'let', 'function', 'fn', 'def', 'pass', 'as', 'in', 'from', 'export'
-    ],
-    RED: [
-        'false', 'return', 'throw', 'break', 'continue', 'foo', 'sudo',
-        'abort', 'exit', 'assert', 'panic', 'fatal', 'fail', 'raise',
-        'die', 'trap', 'stop', 'error'
-    ],
-    ORANGE: [
-        'try', 'catch', 'finally', 'goto', 'main', 'except', 'with', 'yield',
-        'await', 'async', 'lambda', 'defer', 'then', 'promise', 'resolve', 'reject'
-    ],
-    GRAY: [
-        'gcc', 'clang', 'sudo', 'cmake', 'make', 'g++', 'ld', 'objdump', 'valgrind',
-        'docker', 'gdb', 'git', 'vim', 'nano', 'bash', 'zsh', 'sh', 'env'
-    ],
-}
+def sigterm_handler(signum, frame):
+    sys.exit(0)
 
-""" Flatten the color groups into a dictionary of keyword-color mappings """
+signal.signal(signal.SIGTERM, sigterm_handler)
+
+def load_color_groups_from_url(url):
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        raw = response.json()
+
+        color_map = {
+            'green': GREEN,
+            'red': RED,
+            'orange': ORANGE,
+            'gray': GRAY
+        }
+
+        return {color_map[k]: v for k, v in raw.items() if k in color_map}
+    except Exception as e:
+        print(f"Can't get text from: {e}", flush=True)
+        return {}
+
+RAW_KEYWORDS_JSON = 'https://raw.githubusercontent.com/vilksons/kodo/kodo/keywords.json'
+
+color_groups = load_color_groups_from_url(RAW_KEYWORDS_JSON)
 COLORS = {kw: color for color, keywords in color_groups.items() for kw in keywords}
 
 def highlight_comments_in_codeblock(text):
-    """ Replaces comments in the code block with placeholders, then stores the highlighted versions """
     comment_placeholders = {}
     comment_id = 0
 
     def repl_single(match):
-        """ Replace single-line comments with placeholder """
         nonlocal comment_id
         comment = match.group(0)
         key = f"__COMMENT_{comment_id}__"
@@ -61,7 +55,6 @@ def highlight_comments_in_codeblock(text):
         return key
 
     def repl_multi(match):
-        """ Replace multi-line comments with placeholder """
         nonlocal comment_id
         comment = match.group(0)
         key = f"__COMMENT_{comment_id}__"
@@ -69,26 +62,21 @@ def highlight_comments_in_codeblock(text):
         comment_id += 1
         return key
 
-    """ Substitute single and multi-line comments with placeholders """
     text = re.sub(r'//.*', repl_single, text)
     text = re.sub(r'/\*[\s\S]*?\*/', repl_multi, text)
-
     return text, comment_placeholders
 
 def highlight(match):
-    """ Highlight a matched keyword using its corresponding color """
     word = match.group(0)
     color = COLORS.get(word.lower())
     return f'{color}{word}{RESET}' if color else word
 
 def process_text(text):
-    """ Process input text to highlight code blocks and inline code based on keyword categories """
     parts = re.split(r'(```.*?\n.*?```|`.*?`)', text, flags=re.DOTALL)
-    
     result = []
+
     for i, part in enumerate(parts):
         if i % 2 == 1:
-            """ If the part is a code block or inline code """
             if part.startswith('```'):
                 code_content = part[3:-3]
                 code_content, comment_placeholders = highlight_comments_in_codeblock(code_content)
@@ -96,35 +84,30 @@ def process_text(text):
                 pattern = r'\b(' + '|'.join(re.escape(k) for k in COLORS.keys()) + r')\b'
                 highlighted_code = re.sub(pattern, highlight, code_content, flags=re.IGNORECASE)
 
-                """ Re-insert the colored comments """
                 for key, comment in comment_placeholders.items():
                     highlighted_code = highlighted_code.replace(key, comment)
 
                 result.append(f'```{highlighted_code}```')
             else:
-                """ Handle inline code (`code`) """
                 code_content = part[1:-1]
                 pattern = r'\b(' + '|'.join(re.escape(k) for k in COLORS.keys()) + r')\b'
                 highlighted_code = re.sub(pattern, highlight, code_content, flags=re.IGNORECASE)
                 result.append(f'`{highlighted_code}`')
         else:
-            """ Non-code text, append as-is """
             result.append(part)
     
     return ''.join(result)
 
 def main():
-    """ Main function to handle input from stdin, process the text, and print with delay """
     try:
         data = json.load(sys.stdin)
         vireon_response = data.get('choices', [{}])[0].get('message', {}).get('content')
 
         if not vireon_response:
-            raise ValueError('Error: Response API Failed. Token/Model/Profiles invalid. please debugging before use Vireon A.I!')
+            raise ValueError('Error: Response API Failed. Token/Model/Profiles invalid.')
 
         processed_response = process_text(vireon_response)
 
-        """ Print each character with a short delay to simulate typing """
         for char in processed_response:
             print(char, end='', flush=True)
             time.sleep(0.01)
