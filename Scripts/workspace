@@ -885,7 +885,7 @@ function mode_KODO() {
             fi
 
             if [ -f "$shell_DIR/.cache/zapman" ]; then
-                print_gray ":: Cache Dir: $shell_DIR/.cache/tlizapmangpac"
+                print_gray ":: Cache Dir: $shell_DIR/.cache/zapman"
                 read -r -p ":: Do you want to remove ALL files from $shell_DIR/.cache/zapman? [y/n] " PERMISSION_NEED_RC
                 echo
                 [[ -z "$PERMISSION_NEED_RC" ]] && PERMISSION_NEED_RC="Y"
