@@ -1,25 +1,36 @@
 {
-    "green": [
-      "true", "string", "int", "float", "bool", "double", "char", "short", "long",
-      "if", "else", "while", "for", "do", "switch", "case", "default",
-      "class", "void", "inline", "include", "import", "module",
-      "end", "printf", "print", "println", "std", "const", "constexpr", "static",
-      "public", "private", "protected", "struct", "enum", "typedef",
-      "new", "delete", "sizeof", "this", "namespace", "using", "template",
-      "var", "let", "function", "fn", "def", "pass", "as", "in", "from", "export"
-    ],
-    "red": [
-      "false", "return", "throw", "break", "continue", "foo", "sudo",
-      "abort", "exit", "assert", "panic", "fatal", "fail", "raise",
-      "die", "trap", "stop", "error"
-    ],
-    "orange": [
-      "try", "catch", "finally", "goto", "main", "except", "with", "yield",
-      "await", "async", "lambda", "defer", "then", "promise", "resolve", "reject"
-    ],
-    "gray": [
-      "gcc", "clang", "sudo", "cmake", "make", "g++", "ld", "objdump", "valgrind",
-      "docker", "gdb", "git", "vim", "nano", "bash", "zsh", "sh", "env"
-    ]
-  }
-  
+  "green": [
+    "true", "false", "null", "undefined", "NaN",
+    "string", "int", "float", "bool", "boolean", "double", "char", "byte", "short", "long", "number", "symbol", "any", "void", "never",
+    "if", "else", "elseif", "elif", "then", "for", "while", "do", "until", "switch", "case", "default", "match",
+    "class", "interface", "struct", "enum", "record", "typedef", "union", "type", "object",
+    "public", "private", "protected", "internal", "static", "final", "const", "constexpr", "mutable", "readonly", "volatile", "override", "abstract", "virtual", "sealed",
+    "this", "super", "self", "base",
+    "new", "delete", "sizeof", "typeof", "instanceof", "is", "as", "in", "out", "ref", "val", "var", "let",
+    "function", "fn", "def", "lambda", "sub", "macro", "inline",
+    "import", "include", "require", "from", "export", "module", "package", "use", "using", "namespace", "with", "yield", "await", "async",
+    "get", "set", "init", "main", "end", "pass", "next", "step", "range",
+    "printf", "print", "println", "echo", "log", "debug", "trace",
+    "map", "filter", "reduce", "fold", "flatMap", "zip", "unzip", "sort", "reverse", "slice"
+  ],
+  "red": [
+    "return", "break", "continue", "throw", "raise", "panic", "assert", "error", "fail", "fatal", "abort", "exit", "die", "trap", "retry", "revert",
+    "sudo", "foo", "bar", "baz", "qux", "todo", "fixme", "not_implemented", "unreachable"
+  ],
+  "orange": [
+    "try", "catch", "finally", "except", "ensure", "rescue", "defer",
+    "then", "promise", "resolve", "reject", "await", "async",
+    "future", "task", "result", "option", "maybe", "ok", "err", "left", "right",
+    "callback", "event", "signal", "listener", "handler", "subscriber", "observe", "watch"
+  ],
+  "gray": [
+    "gcc", "g++", "clang", "ld", "as", "make", "cmake", "ninja", "configure", "autoconf", "automake",
+    "docker", "podman", "kubernetes", "kubectl", "helm",
+    "git", "svn", "hg", "diff", "patch", "merge", "rebase", "stash", "clone", "pull", "push", "commit",
+    "bash", "zsh", "sh", "fish", "dash", "tmux", "screen", "ssh", "scp", "rsync",
+    "vim", "nvim", "nano", "emacs", "code", "subl", "gedit",
+    "curl", "wget", "http", "https", "ftp", "tcpdump", "netstat", "ping", "traceroute", "dig", "whois",
+    "env", "alias", "export", "source", "path", "chmod", "chown", "kill", "ps", "top", "htop", "df", "du",
+    "npm", "yarn", "pnpm", "pip", "conda", "poetry", "cargo", "go", "rustc", "deno", "bun", "brew", "apt", "pacman", "dnf", "rpm"
+  ]
+}
