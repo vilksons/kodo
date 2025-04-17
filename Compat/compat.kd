@@ -1,16 +1,28 @@
 #!/bin/bash
 
-compat_now() {
+kodo_compat() {
+    : '
+        Detects the operating system environment.
+        Sets appropriate configurations based on detected OS type.
+        Provides user selection if both Windows and Linux are detected. '
     if [ "$OS_NOTICES" -ne 1 ]; then
         local OS_TYPE
         OS_TYPE=$(uname)
         
+        : ' 
+            Determines whether the system is Linux.
+            Checks for Docker or Termux to confirm Linux compatibility.
+            Assigns default values for Linux-based environments. '
         if [[ "$OS_TYPE" == "Linux" ]] || [[ -f "/.dockerenv" ]] || { [ -d "$HOME/bin" ] && [ -d "$PREFIX" ]; }; then
             OS_NAME="linux"
             PAWNCC_NAME="pawncc"
             OS_NOTICES=1
 
         elif [[ "$OS_NOTICES" != 1 ]]; then
+            : '
+                Checks if the system belongs to a Windows environment.
+                Searches for common Windows directories to confirm detection.
+                Assigns proper executable names based on OS. '
             if [ -d "/c/windows/System32" ] || [ -d "/mnt/c/windows/System32" ] || [ -d "/windows/System32" ]; then
                 OS_NAME="windows"
                 PAWNCC_NAME="pawncc.exe"
@@ -18,9 +30,12 @@ compat_now() {
             fi
         fi
 
+        : ' 
+            Handles cases where both Windows and Linux are detected.
+            Prompts the user to select their preferred OS for compatibility. '
         if [[ "$OS_NAME" == "windows" ]] && [[ "$OS_NAME" == "linux" ]]; then
-            echo -e "$(collor_gray ":: System detected both windows and Linux. Which one will you choose?")"
-            read -r -p "Choose OS for Kodo Y) windows, B) GNU/Linux" PERMISSION_NEED_OS
+            echo -e "$(collor_gray ":: System detected both Windows and Linux. Which one will you choose?")"
+            read -r -p "Choose OS for Kodo Y) Windows, B) GNU/Linux: " PERMISSION_NEED_OS
 
             while true; do
                 case "$PERMISSION_NEED_OS" in
@@ -38,7 +53,7 @@ compat_now() {
                         ;;
                     *) 
                         echo -e "$(collor_red "err:") Invalid selection. Please enter the correct option!"
-                        read -r -p "Choose OS for Kodo Y) windows, B) GNU/Linux: " PERMISSION_NEED_OS 
+                        read -r -p "Choose OS for Kodo Y) Windows, B) GNU/Linux: " PERMISSION_NEED_OS 
                         ;;
                 esac
             done

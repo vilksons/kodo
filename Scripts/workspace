@@ -108,7 +108,7 @@ function ignore_this() {
 }
 export ignore_this
 
-function rest_var() {
+function kodo_reset_variable() {
     # Reset Variables #
 
     : ' Checking before unset '
@@ -383,7 +383,7 @@ function struct_kodo_t_main() {
                     else
                         if [[ "$1" == ".kodo/compat.kd" ]]; then
                             source "$shell_DIR/$1" || sleep 1.0
-                            compat_now ""
+                            kodo_compat ""
                         else
                             source "$shell_DIR/$1" || sleep 1.0
                         fi
@@ -440,7 +440,7 @@ function struct_kodo_t_main() {
         __encryption_token__ ""
     fi
     
-    rest_var "" && typeof ""
+    kodo_reset_variable "" && typeof ""
 }
 export struct_kodo_t_main
 
