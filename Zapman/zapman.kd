@@ -340,10 +340,27 @@ EOF
                 fi
 
                 : '
+                    Needed Confirm before downloads depends..
+                '
+                echo ":: Do you want to continue for $zapman_DEPENDS? [y/n]"
+                read -r -n1 -p ">> " PERMISSION_NEED_D
+                echo
+                [[ -z "$PERMISSION_NEED_D" ]] && PERMISSION_NEED_D="Y"
+
+                case "$PERMISSION_NEED_D" in
+                    [Yy])
+                        ;;
+                    *)
+                        goto_mode_ZAPMAN ""
+                        continue
+                        ;;
+                esac
+
+                : '
                     Informs the user that the download is starting.
                     Uses curl to fetch the archive while displaying progress.
                 '
-                echo -e "$(collor_yellow "Downloading") $new_zapman_DEPENDS $vrepo"
+                echo -e "$(collor_yellow "Downloading") $zapman_DEPENDS - $new_zapman_DEPENDS $vrepo"
                 curl -L -o "$arch_files" "$zapman_ARCH_URL"
 
                 wait
