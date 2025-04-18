@@ -51,7 +51,7 @@ KEYWORDS_JSON_GET = 'https://raw.githubusercontent.com/vilksons/kodo/refs/heads/
 color_groups = load_color_groups_from_url(KEYWORDS_JSON_GET)
 COLORS = {kw: color for color, keywords in color_groups.items() for kw in keywords}
 
-def highlight_comments_in_codeblock(text):
+def vireon_comments_in_codeblock(text):
     """ 
         Detects and highlights single-line and multi-line comments in code blocks.
         Replaces detected comments with ANSI gray color for visibility.
@@ -90,6 +90,54 @@ def highlight(match):
     color = COLORS.get(word.lower())
     return f'{color}{word}{RESET}' if color else word
 
+def vireon_process_text(text):
+    """
+    Processes input text to identify and highlight code blocks and inline code.
+
+    Splits the input `text` using regex to separate out code blocks (```...```)
+        and inline code (`...`) from regular text. The result is a list of parts
+        where even indices are plain text, and odd indices are code.
+
+    Iterates through each part. If the index is odd, it means the part is code.
+
+        - For triple backtick blocks (```...```):
+            Removes the surrounding backticks and highlights comments using gray color.
+            Highlights predefined keywords using ANSI color codes.
+            Reinserts highlighted comments and wraps the code block again with ```.
+
+        - For inline code (`...`):
+            Highlights keywords in the inline code using the same coloring approach.
+
+    Non-code parts (even indices) are appended directly without modification.
+
+    Returns the reconstructed string with code highlighted appropriately.
+    """
+
+    parts = re.split(r'(```.*?\n.*?```|`.*?`)', text, flags=re.DOTALL)
+    result = []
+
+    for i, part in enumerate(parts):
+        if i % 2 == 1:
+            if part.startswith('```'):
+                code_content = part[3:-3]
+                code_content, comment_placeholders = vireon_comments_in_codeblock(code_content)
+                pattern = r'\b(' + '|'.join(re.escape(k) for k in COLORS.keys()) + r')\b'
+                highlighted_code = re.sub(pattern, highlight, code_content, flags=re.IGNORECASE)
+
+                for key, comment in comment_placeholders.items():
+                    highlighted_code = highlighted_code.replace(key, comment)
+
+                result.append(f'```{highlighted_code}```')
+            else:
+                code_content = part[1:-1]
+                pattern = r'\b(' + '|'.join(re.escape(k) for k in COLORS.keys()) + r')\b'
+                highlighted_code = re.sub(pattern, highlight, code_content, flags=re.IGNORECASE)
+                result.append(f'`{highlighted_code}`')
+        else:
+            result.append(part)
+
+    return ''.join(result)
+
 def main():
     """ 
         Reads JSON input from standard input stream.
@@ -104,9 +152,9 @@ def main():
             print('Error: Response API Failed. Token/Model/Profiles invalid.', flush=True)
             raise SystemExit(111)
 
-        processed_response = process_text(vireon_response)
+        processed_vireon_response = vireon_process_text(vireon_response)
 
-        for char in processed_response:
+        for char in processed_vireon_response:
             print(char, end='', flush=True)
             time.sleep(0.01)
         print()

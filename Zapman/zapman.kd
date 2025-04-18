@@ -472,7 +472,6 @@ EOF
                     elif [[ "$SAMP_SERVER" == "omp" ]]; then
                         toml_ZAPMAN_PLUGINS="$shell_DIR/components/"
                     fi
-
                 else
                     : '
                         If neither components nor plugins exist, move .dll and .so files instead.
