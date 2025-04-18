@@ -4,7 +4,7 @@ KODO TOOLCHAIN
 INTRODUCTION 
 #####################
 
-WIKI | MEDIA MAP
+WIKI | REPOSITORY MAP
 =====================
 Essential references to understand and use Kodo:
   - Compiler Options https://github.com/vilksons/kodo/wiki/Compiler-Option
@@ -17,6 +17,20 @@ Media of Repository:
   - Gitea: https://gitea.com/vilksons/kodo
   - SourceForge: https://sourceforge.net/projects/kodo/
   - Replit: https://replit.com/@hotmenparis/kodo
+Repository Folder:'
+  - Kodo/Workspace: https://github.com/vilksons/kodo/tree/kodo/Scripts
+  - Samples: https://github.com/vilksons/kodo/tree/kodo/Sample
+  - Preview/Figures: https://github.com/vilksons/kodo/tree/kodo/Figures
+  - Modules:
+    o Compat: https://github.com/vilksons/kodo/tree/kodo/Compat
+    o Compiler: https://github.com/vilksons/kodo/tree/kodo/Compiler
+    o Docker: https://github.com/vilksons/kodo/tree/kodo/Docker
+    o Misc: https://github.com/vilksons/kodo/tree/kodo/Misc
+    o Package: https://github.com/vilksons/kodo/tree/kodo/Package
+    o Security: https://github.com/vilksons/kodo/tree/kodo/Security
+    o Server: https://github.com/vilksons/kodo/tree/kodo/Server
+    o Vireon: https://github.com/vilksons/kodo/tree/kodo/Vireon
+    o Zapman: https://github.com/vilksons/kodo/tree/kodo/Zapman
 
 WHAT IS KODO?
 =====================
