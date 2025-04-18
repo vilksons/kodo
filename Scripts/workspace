@@ -179,7 +179,7 @@ ai_model = "groq"
 rest_api = "https://api.groq.com/openai/v1/chat/completions"
 token = "your_token"
 model = "compound-beta"
-profile = "your is name vireon."
+profile = "your name is vireon."
 
 [compiler]
 exclude_paths = ["includes1/", "includes2/", "includes3/"]
