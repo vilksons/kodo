@@ -418,28 +418,6 @@ EOF
                         toml_ZAPMAN_PLUGINS="$shell_DIR/components/"
                     fi
 
-                elif [ -d "$zapman_extract_dirs/components" ]; then
-                    : '
-                        Moves components to the shell directory.
-                        Sets the correct plugin location for future reference.
-                    '
-                    mkdir -p "$shell_DIR/components"
-                    echo -e "$(collor_yellow "detected & moving") components to $shell_DIR"
-                    cp -r "$zapman_extract_dirs/components/"* "$shell_DIR/components/"
-
-                    toml_ZAPMAN_PLUGINS="$shell_DIR/components/"
-
-                elif [ -d "$zapman_extract_dirs/plugins" ]; then
-                    : '
-                        Moves plugins to the shell directory.
-                        Updates the plugin path accordingly.
-                    '
-                    mkdir -p "$shell_DIR/plugins"
-                    echo -e "$(collor_yellow "detected & moving") plugins to $shell_DIR"
-                    cp -r "$zapman_extract_dirs/plugins/"* "$shell_DIR/plugins/"
-
-                    toml_ZAPMAN_PLUGINS="$shell_DIR/plugins/"
-
                 else
                     : '
                         If neither components nor plugins exist, move .dll and .so files instead.
@@ -671,33 +649,27 @@ EOF
             fi
 
             : '
-                Filters and removes files based on a pattern.
-                Reads each line of file paths and matches them using regex.
-                Extracts file names before confirming deletion.
-            '
-            regex_to_remove() {
-                while read -r __file; do
-                    _file=$(basename "$__file")
-                    if [[ "$_file" =~ ^$$1([0-9]{1,4})?(\.[a-z]+)?$ ||
-                        "$_file" =~ .*-?$$1([0-9]{1,4})?(\.[a-z]+)?$ ]]; then
-                        echo "$__file"
-                    fi
-                done
-            }
-
-            : '
                 Checks if the include directory exists.
-                Searches for matching include files using the pattern.
+                Searches for matching include files using the pettern.
                 Deletes matching files if found and logs the removal.
             '
             if [ -d "$toml_ZAPMAN_INCLUDE" ]; then
-                zapman_INCLUDES=$(find "$toml_ZAPMAN_INCLUDE" -type f -name "*.inc" -print0 | regex_to_remove "$rm_input_save")
+                local zapman_INCLUDES=""
+                if [[ "$toml_ZAPMAN_INCLUDE" == */ ]]; then
+                    search_path="$toml_ZAPMAN_INCLUDE"
+                else
+                    search_path="$toml_ZAPMAN_INCLUDE/"
+                fi
+
+                zapman_INCLUDES=$(find "$search_path" -type f -regextype posix-extended -regex ".*/${tb_zapman3_input_args}([0-9]+)?\.inc")
 
                 if [[ -n "$zapman_INCLUDES" ]]; then
-                    echo "$zapman_INCLUDES" | xargs -0 shred -u
-                    print_yellow "[OK]" "removed includes: $zapman_INCLUDES"
+                    while IFS= read -r file; do
+                        shred -u "$file"
+                        print_yellow "[OK]" "removed include: $file"
+                    done <<< "$zapman_INCLUDES"
                 else
-                    print_yellow "dbg:" "no matching include files found: $rm_input_save"
+                    print_yellow "dbg:" "no matching include files found for: ${tb_zapman3_input_args}"
                 fi
             else
                 print_green "warn:" "$toml_ZAPMAN_INCLUDE not found"
@@ -709,20 +681,27 @@ EOF
                 Logs actions taken for user review.
             '
             if [ -d "$toml_ZAPMAN_PLUGINS" ]; then
-                _zapman_plugins=$(find "$toml_ZAPMAN_PLUGINS" -type f \( -name "*.dll" -o -name "*.so" \) -print0 | regex_to_remove "$rm_input_save")
-
-                if [[ -n "$_zapman_plugins" ]]; then
-                    echo "$_zapman_plugins" | xargs -0 shred -u
-                    print_yellow "[OK]" "removed plugins: $_zapman_plugins"
+                if [[ "$toml_ZAPMAN_PLUGINS" == */ ]]; then
+                    search_path="$toml_ZAPMAN_PLUGINS"
                 else
-                    print_yellow "dbg:" "no matching plugin files found: $rm_input_save"
+                    search_path="$toml_ZAPMAN_PLUGINS/"
+                fi
+
+                local zapman_PLUGINS_COMPONENTS=""
+                zapman_PLUGINS_COMPONENTS=$(find "$search_path" -type f -regextype posix-extended -regex ".*/${tb_zapman3_input_args}([0-9]+)?\.(dll|so)")
+
+                if [[ -n "$zapman_PLUGINS_COMPONENTS" ]]; then
+                    while IFS= read -r file; do
+                        shred -u "$file"
+                        print_yellow "[OK]" "removed plugin: $file"
+                    done <<< "$zapman_PLUGINS_COMPONENTS"
+                else
+                    print_yellow "dbg:" "no matching plugin files found for: ${tb_zapman3_input_args}"
                 fi
             else
                 print_green "warn:" "$toml_ZAPMAN_PLUGINS not found"
             fi
 
-            IGNORE_ME sleep 0.1
-            
             : '
                 Iterates through packages for removal from game mode configuration.
                 Ensures that #include statements related to plugins are deleted.

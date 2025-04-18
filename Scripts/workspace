@@ -164,8 +164,8 @@ function __kodo_toml_create__() {
         cat > kodo.toml <<EOF
 [paths]
 include_paths = "$kodo_toml_include"
-include_dir = "zapman/include"
-plugins_dir = "zapman/plugins"
+include_dir = "include"
+plugins_dir = "plugins"
 
 [server]
 log = "$kodo_toml_log"
