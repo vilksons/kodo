@@ -4,3 +4,5 @@
 ![img](https://raw.githubusercontent.com/BasketBall27/kodo_preview/refs/heads/main/RUNNING.png)
 ![img](https://raw.githubusercontent.com/BasketBall27/kodo_preview/refs/heads/main/DEBUG.png)
 ![img](https://raw.githubusercontent.com/BasketBall27/kodo_preview/refs/heads/main/COMPILER.png)
+![img](https://raw.githubusercontent.com/BasketBall27/kodo_preview/refs/heads/main/L_AUTOGEN.png)
+![img](https://raw.githubusercontent.com/BasketBall27/kodo_preview/refs/heads/main/W_AUTOGEN.png)
