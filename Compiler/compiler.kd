@@ -89,6 +89,7 @@ function kodo_init_compilers()
         : '
             @Map
         '
+        local __files_wargs=()
         while IFS= read -r -d '' __LOOP_COMPILES_FILE; do
             __files_wargs+=("$__LOOP_COMPILES_FILE")
         done < <(find "$shell_DIR" -name "$commands_INPUT" -type f -print0)
@@ -206,7 +207,7 @@ function kodo_compilers() {
     : '
         @Map
     '
-    __files=()
+    local __files=()
     while IFS= read -r -d '' __LOOP_COMPILES_FILE; do
         __files+=("$__LOOP_COMPILES_FILE")
     done < <(find "$shell_DIR" -name "*.io*" -type f -print0)
