@@ -494,7 +494,7 @@ function typeof() {
             echo
         fi
     fi
-    
+
     HISTFILE="$HOME/kodo/.kodo.txt"
     touch "$HISTFILE"
 
@@ -734,8 +734,7 @@ function goto_mode_KODO() {
 
                     __modular__() {
                         kodo_t_TITLE "Sync | Upgrade"
-
-                        echo "Upgrading.."
+                        echo "Comparing Local and Remote..."
 
                         __kodo_modular__=(
                             "Security/security.kd"
@@ -749,26 +748,51 @@ function goto_mode_KODO() {
                             "Compiler/compiler.kd"
                         )
 
-                        cd "$shell_DIR/.kodo" >/dev/null 2>&1 ||
-                            echo ""
-
+                        cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
                         for __file__ in "${__kodo_modular__[@]}"; do
-                            curl -L -o "$(basename "$__file__")" \
-                                "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/$__file__" \
-                                ||
-                                    { touch "$shell_DIR/.sync"; }
+                            fname=$(basename "$__file__")
+                            local_path="$shell_DIR/.kodo/$fname"
+                            remote_url="https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/$__file__"
+                            remote_content=$(curl -s "$remote_url")
+                            local_content=$(cat "$local_path" 2>/dev/null || echo "")
+
+                            if [[ "$remote_content" == "$local_content" ]]; then
+                                print_gray ":: $fname is up to date, Nothing to do."
+                            else
+                                print_yellow "Updating: $fname"
+                                echo "$remote_content" > "$local_path"
+                            fi
                         done
 
-                        cd "$shell_DIR/.kodo/python" >/dev/null 2>&1 ||
-                            echo ""
-                        curl -L -o "wpython" \
-                            "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/wpython" &&
-                        curl -L -o "vipython" \
-                            "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/vipython" &&
-                        cd "$shell_DIR" >/dev/null 2>&1 ||
-                            echo ""
-                        curl -L -o "workspace" \
-                            "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace"
+                        cd "$shell_DIR/.kodo/python" >/dev/null 2>&1 || echo ""
+
+                        for pyfile in "wpython" "vipython"; do
+                            remote_url="https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/$pyfile"
+                            remote_content=$(curl -s "$remote_url")
+                            local_path="$shell_DIR/.kodo/python/$pyfile"
+                            local_content=$(cat "$local_path" 2>/dev/null || echo "")
+
+                            if [[ "$remote_content" == "$local_content" ]]; then
+                                print_gray ":: $pyfile is up to date, Nothing to do."
+                            else
+                                print_yellow "Updating: $pyfile"
+                                echo "$remote_content" > "$local_path"
+                            fi
+                        done
+
+                        cd "$shell_DIR" >/dev/null 2>&1 || echo ""
+
+                        remote_url="https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace"
+                        remote_content=$(curl -s "$remote_url")
+                        local_path="$shell_DIR/workspace"
+                        local_content=$(cat "$local_path" 2>/dev/null || echo "")
+
+                        if [[ "$remote_content" == "$local_content" ]]; then
+                            print_gray ":: workspace is up to date, Nothing to do."
+                        else
+                            print_yellow "Updating: workspace"
+                            echo "$remote_content" > "$local_path"
+                        fi
                     }
 
                         if [ "$kd_table" = "sync" ]; then
@@ -778,9 +802,19 @@ function goto_mode_KODO() {
 
                             echo "Updating.."
 
-                            cd "$shell_DIR" || echo ""
-                            curl -L -o "workspace" \
-                                "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace"
+                            cd "$shell_DIR" >/dev/null 2>&1 || echo ""
+
+                            remote_url="https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/workspace"
+                            remote_content=$(curl -s "$remote_url")
+                            local_path="$shell_DIR/workspace"
+                            local_content=$(cat "$local_path" 2>/dev/null || echo "")
+
+                            if [[ "$remote_content" == "$local_content" ]]; then
+                                print_gray ":: workspace is up to date, Nothing to do."
+                            else
+                                print_yellow "Updating: workspace"
+                                echo "$remote_content" > "$local_path"
+                            fi
                         else
                             __modular__ ""
                         fi
