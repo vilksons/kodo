@@ -54,8 +54,8 @@ You can rename `yourmode.pwn` files to a project-appropriate format (e.g., `your
 BASIC OPERATION
 =====================
 Usage: kodo <flags> | help | -h | --h | [<commands>] [<args>]
-Help Usage: <commands> | help compile | help running
-Tip: use CTRL+C to exit and use CTRL+D to goto main
+Help Usage: help  <commands> | help compile | help running
+Tip: use CTRL+C to exit and use CTRL+D to back
 Commands:
  | Kodo |
  compile (compile project)
