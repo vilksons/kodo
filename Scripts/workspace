@@ -178,8 +178,8 @@ remcache_auto = false
 ai_model = "groq"
 rest_api = "https://api.groq.com/openai/v1/chat/completions"
 token = "your_token"
-model = "llama-3.1-8b-instant"
-profile = "hello vireon, your name is john"
+model = "compound-beta"
+profile = "your is name vireon."
 
 [compiler]
 exclude_paths = ["includes1/", "includes2/", "includes3/"]
