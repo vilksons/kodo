@@ -1140,7 +1140,7 @@ function help_dialog_kd()
     fi
 
     echo "Usage: kodo <flags> | help | -h | --h | [<commands>] [<args>]"
-    echo "Help Usage: help  <commands> | help compile | help running"
+    echo "Help Usage: help <commands> | help compile | help running"
     echo "Tip: use CTRL+C to exit and use CTRL+D to back"
     echo "Commands:"
     echo " | Kodo |"
