@@ -51,8 +51,10 @@ function struct_ZAPMAN()
             Attempts to decrypt the stored value using AES-256-CBC.
         '
         zapman_AUTOINSTALL_ENCRYPT=$(tail -n 1 "$shell_DIR/.cache/zapman")
-        zapman_AUTOINSTALL_DECRYPT=$(echo "$zapman_AUTOINSTALL_ENCRYPT" |
-            openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:"$__decrypt_passphrase__" -base64 -in "$shell_DIR/.cache/zapman")
+        zapman_AUTOINSTALL_DECRYPT=$(
+            echo "$zapman_AUTOINSTALL_ENCRYPT" |
+                openssl enc -aes-256-cbc -d -salt -pbkdf2 -pass pass:"$__decrypt_passphrase__" -base64 -in "$shell_DIR/.cache/zapman"
+        )
 
         : ' 
             Verifies if the decrypted value is a valid URL.
@@ -96,9 +98,13 @@ function struct_ZAPMAN()
                 if [ -f "zapman.json" ] && [ -f "zapman.toml" ]; then
                     print_red "crit:" "zapman.json and zapman.toml Cannot be merged!. choose zapman.json.."
                 elif [ -f "zapman.json" ]; then
-                    mapfile -t tb_zapman2_url_args < <(python3 -c 'import json, sys; data = json.load(sys.stdin); print("\n".join(data["package"]))' < zapman.json)
+                    mapfile -t tb_zapman2_url_args < <(
+                        python3 -c 'import json, sys; data = json.load(sys.stdin); print("\n".join(data["package"]))' < zapman.json
+                    )
                 elif [ -f "zapman.toml" ]; then
-                    mapfile -t tb_zapman2_url_args < <(yq -p=toml -r -o=yaml '.package.urls[]' zapman.toml)
+                    mapfile -t tb_zapman2_url_args < <(
+                        yq -p=toml -r -o=yaml '.package.urls[]' zapman.toml
+                    )
                 else
                     print_red "crit:" "zapman.json or zapman.toml not found!"
                     IGNORE_ME sleep 2.2
@@ -172,9 +178,21 @@ EOF
 
                     : ' Determines final download URL based on repository host classification. '
                     if [ "$zapman_uhost" -eq 1 ]; then
-                        [[ -z "$zapman_ARCH_URL" ]] && zapman_ARCH_URL=$(curl -s "$tb_zapman2_input_args" | grep "browser_download_url" | grep -E ".zip|.tar.gz" | awk -F '"' '{print $4}' | head -n 1)
+                        [[ -z "$zapman_ARCH_URL" ]] && zapman_ARCH_URL=$(
+                            curl -s "$tb_zapman2_input_args" |
+                                grep "browser_download_url" |
+                                    grep -E ".zip|.tar.gz" |
+                                        awk -F '"' '{print $4}' |
+                                            head -n 1
+                            )
                     elif [ "$zapman_uhost" -eq 0 ]; then
-                        [[ -z "$zapman_ARCH_URL" ]] && zapman_ARCH_URL=$(curl -s "$zapman_API_URL" | grep "browser_download_url" | grep -E ".zip|.tar.gz" | awk -F '"' '{print $4}' | head -n 1)
+                        [[ -z "$zapman_ARCH_URL" ]] && zapman_ARCH_URL=$(
+                            curl -s "$zapman_API_URL" |
+                                grep "browser_download_url" |
+                                    grep -E ".zip|.tar.gz" |
+                                        awk -F '"' '{print $4}' |
+                                            head -n 1
+                            )
                     fi
                 else
                     : ' Extracts repository name for API lookup when no specific tag is found. '
@@ -203,9 +221,21 @@ EOF
                         Parses API responses for valid .zip or .tar.gz links.
                     '
                     if [ "$zapman_uhost" -eq 1 ]; then
-                        [[ -z "$zapman_ARCH_URL" ]] && zapman_ARCH_URL=$(curl -s "$tb_zapman2_input_args" | grep "browser_download_url" | grep -E ".zip|.tar.gz" | awk -F '"' '{print $4}' | head -n 1)
+                        [[ -z "$zapman_ARCH_URL" ]] && zapman_ARCH_URL=$(
+                            curl -s "$tb_zapman2_input_args" |
+                                grep "browser_download_url" |
+                                    grep -E ".zip|.tar.gz" |
+                                        awk -F '"' '{print $4}' |
+                                            head -n 1
+                            )
                     elif [ "$zapman_uhost" -eq 0 ]; then
-                        [[ -z "$zapman_ARCH_URL" ]] && zapman_ARCH_URL=$(curl -s "$zapman_API_URL" | grep "browser_download_url" | grep -E ".zip|.tar.gz" | awk -F '"' '{print $4}' | head -n 1)
+                        [[ -z "$zapman_ARCH_URL" ]] && zapman_ARCH_URL=$(
+                            curl -s "$zapman_API_URL" |
+                                grep "browser_download_url" |
+                                    grep -E ".zip|.tar.gz" |
+                                        awk -F '"' '{print $4}' |
+                                            head -n 1
+                            )
                     fi
                 fi
 
@@ -243,7 +273,8 @@ EOF
                     Creates "plugins" as a fallback if the expected directory is missing.
                 '
                 if [ ! -d "$toml_ZAPMAN_PLUGINS" ]; then
-                    mkdir "$toml_ZAPMAN_PLUGINS" >/dev/null 2>&1 || mkdir "plugins" >/dev/null 2>&1
+                    mkdir "$toml_ZAPMAN_PLUGINS" >/dev/null 2>&1 ||
+                    mkdir "plugins" >/dev/null 2>&1
                 fi
 
                 : '
@@ -322,7 +353,10 @@ EOF
                         Encrypts the installation package using AES-256-CBC.
                         Stores the encrypted data securely in cache if needed.
                     '
-                    zapman_AUTOINSTALL_ENCRYPT=$(echo "$tb_zapman2_input_args" | openssl enc -aes-256-cbc -salt -pbkdf2 -pass pass:"$__decrypt_passphrase__" -base64)
+                    zapman_AUTOINSTALL_ENCRYPT=$(
+                        echo "$tb_zapman2_input_args" |
+                            openssl enc -aes-256-cbc -salt -pbkdf2 -pass pass:"$__decrypt_passphrase__" -base64
+                    )
 
                     if [ "$zapman_AUTOINSTALL" -ne 1 ]; then
                         echo "$zapman_AUTOINSTALL_ENCRYPT" > "$shell_DIR/.cache/zapman"
@@ -373,7 +407,9 @@ EOF
                     Reads and stores include files detected in the extraction directory.
                     Uses basename to capture only the file names.
                 '
-                mapfile -t _zapman_include < <(find "$zapman_extract_dirs" -type f -name "*.inc" -exec basename {} \;)
+                mapfile -t _zapman_include < <(
+                    find "$zapman_extract_dirs" -type f -name "*.inc" -exec basename {} \;
+                )
                 
                 IGNORE_ME sleep 0.1
 
@@ -384,7 +420,9 @@ EOF
                         Moves detected include files to the destination directory.
                     '
                     find "$zapman_extract_dirs" -type f -name "*.inc" | while IFS= read -r inc_file; do
-                        _real_path=$(realpath --relative-to="$zapman_extract_dirs" "$inc_file" 2> /dev/null || echo "$inc_file")
+                        _real_path=$(
+                            realpath --relative-to="$zapman_extract_dirs" "$inc_file" 2> /dev/null || echo "$inc_file"
+                        )
                         
                         if [[ "$_real_path" =~ (^|/)include/ ]]; then
                             _real_path="${_real_path#*include/}"
@@ -459,20 +497,22 @@ EOF
                     Loops through the list of packages to be included.
                     Skips empty package entries to ensure proper operation.
                 '
-                for __packages__ in "${_zapman_include[@]}"; do
-                    if [[ -z "$__packages__" ]]; then
+                for zapman_search_depends in "${_zapman_include[@]}"; do
+                    if [[ -z "$zapman_search_depends" ]]; then
                         continue
                     fi
 
-                    include_line="#include <${__packages__}>"
-                    file_path="$shell_DIR/gamemodes/$toml_FILE_SERV"
+                    local zapman_include_line=""
+                    zapman_include_line="#include <${zapman_search_depends}>"
+                    local zapman_file_path=""
+                    zapman_file_path="$shell_DIR/gamemodes/$toml_FILE_SERV"
 
                     : '
                         Checks if the include line already exists in the file.
                         If found, logs the information and skips addition.
                     '
-                    if grep -qxF "$include_line" "$file_path"; then
-                        print_yellow "dbg:" "$include_line already exists in $file_path"
+                    if grep -qxF "$zapman_include_line" "$zapman_file_path"; then
+                        print_yellow "dbg:" "$zapman_include_line already exists in $zapman_file_path"
                         continue
                     fi
 
@@ -481,15 +521,15 @@ EOF
                         If found, adds the new include statement after it.
                         Otherwise, appends the include statement at the top.
                     '
-                    if grep -Eq '^#include[[:space:]]+["<]?(a_samp|a_samp.inc|open\.mp)[">]?' "$file_path"; then
-                        print_yellow "dbg:" "adding $include_line after #include <a_samp> or #include <open.mp>"
-                        awk -v inc="$include_line" '
+                    if grep -Eq '^#include[[:space:]]+["<]?(a_samp|a_samp.inc|open\.mp)[">]?' "$zapman_file_path"; then
+                        print_yellow "dbg:" "adding $zapman_include_line after #include <a_samp> or #include <open.mp>"
+                        awk -v inc="$zapman_include_line" '
                             /^#include[[:space:]]+["<]?(a_samp|a_samp.inc|open\.mp)[">]?/ { print; print inc; next }
                             { print }
-                        ' "$file_path" > "$file_path.tmp" && mv "$file_path.tmp" "$file_path"
+                        ' "$zapman_file_path" > "$zapman_file_path.tmp" && mv "$zapman_file_path.tmp" "$zapman_file_path"
                     else
                         print_yellow "dbg:" "no #include <a_samp> | \"a_samp\" or #include <open.mp> | \"open.mp\" found, adding at the beginning"
-                        sed -i "1i$include_line" "$file_path"
+                        sed -i "1i$zapman_include_line" "$zapman_file_path"
                     fi
                 done
             fi
@@ -516,9 +556,9 @@ EOF
                         Loops through dependencies to check if plugins are already included.
                         If missing, attempts to add them dynamically.
                     '
-                    for __plugins__ in $zapman_DEPENDS $new_zapman_DEPENDS; do
-                        if grep -qE "^plugins.*\b$__plugins__\b" "$toml_SERVER_CONFIG"; then
-                            print_yellow "dbg:" "plugin $__plugins__ already exists, not added."
+                    for zapman_plugin_search in $zapman_DEPENDS $new_zapman_DEPENDS; do
+                        if grep -qE "^plugins.*\b$zapman_plugin_search\b" "$toml_SERVER_CONFIG"; then
+                            print_yellow "dbg:" "plugin $zapman_plugin_search already exists, not added."
                             continue
                         fi
 
@@ -528,17 +568,17 @@ EOF
                             Adds both .so and .dll plugin versions if available.
                             Updates the configuration file accordingly.
                         '
-                        if [[ -f "$toml_ZAPMAN_PLUGINS/$__plugins__.so" && -f "$toml_ZAPMAN_PLUGINS/$__plugins__.dll" ]]; then
-                            print_yellow "dbg:" "adding $__plugins__.so and $__plugins__.dll to the plugins"
-                            sed -i -E "s/^(plugins.*)/\1 $__plugins__.dll $__plugins__.so/" "$toml_SERVER_CONFIG"
+                        if [[ -f "$toml_ZAPMAN_PLUGINS/$zapman_plugin_search.so" && -f "$toml_ZAPMAN_PLUGINS/$zapman_plugin_search.dll" ]]; then
+                            print_yellow "dbg:" "adding $zapman_plugin_search.so and $zapman_plugin_search.dll to the plugins"
+                            sed -i -E "s/^(plugins.*)/\1 $zapman_plugin_search.dll $zapman_plugin_search.so/" "$toml_SERVER_CONFIG"
                             added_any=true
-                        elif [[ -f "$toml_ZAPMAN_PLUGINS/$__plugins__.so" ]]; then
-                            print_yellow "dbg:" "adding $__plugins__.so to the plugins"
-                            sed -i -E "s/^(plugins.*)/\1 $__plugins__.so/" "$toml_SERVER_CONFIG"
+                        elif [[ -f "$toml_ZAPMAN_PLUGINS/$zapman_plugin_search.so" ]]; then
+                            print_yellow "dbg:" "adding $zapman_plugin_search.so to the plugins"
+                            sed -i -E "s/^(plugins.*)/\1 $zapman_plugin_search.so/" "$toml_SERVER_CONFIG"
                             added_any=true
-                        elif [[ -f "$toml_ZAPMAN_PLUGINS/$__plugins__.dll" ]]; then
-                            print_yellow "dbg:" "adding $__plugins__.dll to the plugins"
-                            sed -i -E "s/^(plugins.*)/\1 $__plugins__.dll/" "$toml_SERVER_CONFIG"
+                        elif [[ -f "$toml_ZAPMAN_PLUGINS/$zapman_plugin_search.dll" ]]; then
+                            print_yellow "dbg:" "adding $zapman_plugin_search.dll to the plugins"
+                            sed -i -E "s/^(plugins.*)/\1 $zapman_plugin_search.dll/" "$toml_SERVER_CONFIG"
                             added_any=true
                         fi
 
@@ -546,7 +586,7 @@ EOF
                             Logs a message if the plugin was not found.
                         '
                         if [[ "$added_any" = false ]]; then
-                            print_yellow "dbg:" "plugin $__plugins__ not found in $toml_ZAPMAN_PLUGINS"
+                            print_yellow "dbg:" "plugin $zapman_plugin_search not found in $toml_ZAPMAN_PLUGINS"
                         fi
                     done
 
@@ -557,20 +597,22 @@ EOF
                     '
                     if ! jq -e '.pawn.legacy_plugins' "$toml_SERVER_CONFIG" 2>/dev/null > /dev/null; then
                         if jq -e '. | type == "object"' "$toml_SERVER_CONFIG" 2>/dev/null > /dev/null; then
-                            jq '.pawn = {legacy_plugins: []} + .' "$toml_SERVER_CONFIG" 2>/dev/null > "$shell_DIR/.cache/.cache.json" && mv "$shell_DIR/.cache/.cache.json" "$toml_SERVER_CONFIG"
+                            jq '.pawn = {legacy_plugins: []} + .' "$toml_SERVER_CONFIG" 2>/dev/null > "$shell_DIR/.cache/.cache.json" &&
+                                mv "$shell_DIR/.cache/.cache.json" "$toml_SERVER_CONFIG"
                             print_yellow "dbg:" "key 'pawn.legacy_plugins' has been added as an empty array."
                         fi
                     fi
 
-                    jq '.pawn.legacy_plugins |= unique' "$toml_SERVER_CONFIG" > "$shell_DIR/.cache/.cache.json" && mv "$shell_DIR/.cache/.cache.json" "$toml_SERVER_CONFIG"
+                    jq '.pawn.legacy_plugins |= unique' "$toml_SERVER_CONFIG" > "$shell_DIR/.cache/.cache.json" &&
+                        mv "$shell_DIR/.cache/.cache.json" "$toml_SERVER_CONFIG"
 
                     : '
                         Loops through dependencies, ensuring plugins are unique.
                         Adds missing plugins dynamically.
                     '
-                    for __plugins__ in $zapman_DEPENDS $new_zapman_DEPENDS; do
-                        if jq -e --arg plugin1 "$__plugins__.so" --arg plugin2 "$__plugins__.dll" '.pawn.legacy_plugins | index($plugin1) or index($plugin2)' "$toml_SERVER_CONFIG" > /dev/null 2>&1; then
-                            print_yellow "dbg:" "plugin $__plugins__ already exists in pawn.legacy_plugins, not added."
+                    for zapman_plugin_search in $zapman_DEPENDS $new_zapman_DEPENDS; do
+                        if jq -e --arg plugin1 "$zapman_plugin_search.so" --arg plugin2 "$zapman_plugin_search.dll" '.pawn.legacy_plugins | index($plugin1) or index($plugin2)' "$toml_SERVER_CONFIG" > /dev/null 2>&1; then
+                            print_yellow "dbg:" "plugin $zapman_plugin_search already exists in pawn.legacy_plugins, not added."
                             continue
                         fi
 
@@ -580,17 +622,20 @@ EOF
                             Adds both .so and .dll plugin versions if they exist.
                             Updates the configuration file dynamically.
                         '
-                        if [[ -f "$toml_ZAPMAN_PLUGINS/$__plugins__.so" && -f "$toml_ZAPMAN_PLUGINS/$__plugins__.dll" ]]; then
-                            print_yellow "dbg:" "adding $__plugins__.so and $__plugins__.dll to pawn.legacy_plugins"
-                            jq --arg so "$__plugins__.so" --arg dll "$__plugins__.dll" '.pawn.legacy_plugins += [$dll, $so]' "$toml_SERVER_CONFIG" > "$shell_DIR/.cache/.cache.json" && mv "$shell_DIR/.cache/.cache.json" "$toml_SERVER_CONFIG"
+                        if [[ -f "$toml_ZAPMAN_PLUGINS/$zapman_plugin_search.so" && -f "$toml_ZAPMAN_PLUGINS/$zapman_plugin_search.dll" ]]; then
+                            print_yellow "dbg:" "adding $zapman_plugin_search.so and $zapman_plugin_search.dll to pawn.legacy_plugins"
+                            jq --arg so "$zapman_plugin_search.so" --arg dll "$zapman_plugin_search.dll" '.pawn.legacy_plugins += [$dll, $so]' "$toml_SERVER_CONFIG" > "$shell_DIR/.cache/.cache.json" &&
+                                mv "$shell_DIR/.cache/.cache.json" "$toml_SERVER_CONFIG"
                             added_any=true
-                        elif [[ -f "$toml_ZAPMAN_PLUGINS/$__plugins__.so" ]]; then
-                            print_yellow "dbg:" "adding $__plugins__.so to pawn.legacy_plugins"
-                            jq --arg so "$__plugins__.so" '.pawn.legacy_plugins += [$so]' "$toml_SERVER_CONFIG" > "$shell_DIR/.cache/.cache.json" && mv "$shell_DIR/.cache/.cache.json" "$toml_SERVER_CONFIG"
+                        elif [[ -f "$toml_ZAPMAN_PLUGINS/$zapman_plugin_search.so" ]]; then
+                            print_yellow "dbg:" "adding $zapman_plugin_search.so to pawn.legacy_plugins"
+                            jq --arg so "$zapman_plugin_search.so" '.pawn.legacy_plugins += [$so]' "$toml_SERVER_CONFIG" > "$shell_DIR/.cache/.cache.json" &&
+                                mv "$shell_DIR/.cache/.cache.json" "$toml_SERVER_CONFIG"
                             added_any=true
-                        elif [[ -f "$toml_ZAPMAN_PLUGINS/$__plugins__.dll" ]]; then
-                            print_yellow "dbg:" "adding $__plugins__.dll to pawn.legacy_plugins"
-                            jq --arg dll "$__plugins__.dll" '.pawn.legacy_plugins += [$dll]' "$toml_SERVER_CONFIG" > "$shell_DIR/.cache/.cache.json" && mv "$shell_DIR/.cache/.cache.json" "$toml_SERVER_CONFIG"
+                        elif [[ -f "$toml_ZAPMAN_PLUGINS/$zapman_plugin_search.dll" ]]; then
+                            print_yellow "dbg:" "adding $zapman_plugin_search.dll to pawn.legacy_plugins"
+                            jq --arg dll "$zapman_plugin_search.dll" '.pawn.legacy_plugins += [$dll]' "$toml_SERVER_CONFIG" > "$shell_DIR/.cache/.cache.json" &&
+                                mv "$shell_DIR/.cache/.cache.json" "$toml_SERVER_CONFIG"
                             added_any=true
                         fi
 
@@ -598,14 +643,15 @@ EOF
                             Logs an error if the plugin was not found.
                         '
                         if [[ "$added_any" = false ]]; then
-                            print_yellow "dbg:" "plugin $__plugins__ not found in $toml_ZAPMAN_PLUGINS"
+                            print_yellow "dbg:" "plugin $zapman_plugin_search not found in $toml_ZAPMAN_PLUGINS"
                         fi
                     done
 
                     : '
                         Ensures plugins are stored in a unique format.
                     '
-                    jq '.pawn.legacy_plugins |= unique' "$toml_SERVER_CONFIG" > "$shell_DIR/.cache/.cache.json" && mv "$shell_DIR/.cache/.cache.json" "$toml_SERVER_CONFIG"
+                    jq '.pawn.legacy_plugins |= unique' "$toml_SERVER_CONFIG" > "$shell_DIR/.cache/.cache.json" &&
+                        mv "$shell_DIR/.cache/.cache.json" "$toml_SERVER_CONFIG"
                 fi
             fi
 
@@ -656,12 +702,14 @@ EOF
             if [ -d "$toml_ZAPMAN_INCLUDE" ]; then
                 local zapman_INCLUDES=""
                 if [[ "$toml_ZAPMAN_INCLUDE" == */ ]]; then
-                    search_path="$toml_ZAPMAN_INCLUDE"
+                    zapman_search_path="$toml_ZAPMAN_INCLUDE"
                 else
-                    search_path="$toml_ZAPMAN_INCLUDE/"
+                    zapman_search_path="$toml_ZAPMAN_INCLUDE/"
                 fi
 
-                zapman_INCLUDES=$(find "$search_path" -type f -regextype posix-extended -regex ".*/${tb_zapman3_input_args}([0-9]+)?\.inc")
+                zapman_INCLUDES=$(
+                    find "$zapman_search_path" -type f -regextype posix-extended -regex ".*/${tb_zapman3_input_args}([0-9]+)?\.inc"
+                )
 
                 if [[ -n "$zapman_INCLUDES" ]]; then
                     while IFS= read -r file; do
@@ -682,13 +730,15 @@ EOF
             '
             if [ -d "$toml_ZAPMAN_PLUGINS" ]; then
                 if [[ "$toml_ZAPMAN_PLUGINS" == */ ]]; then
-                    search_path="$toml_ZAPMAN_PLUGINS"
+                    zapman_search_path="$toml_ZAPMAN_PLUGINS"
                 else
-                    search_path="$toml_ZAPMAN_PLUGINS/"
+                    zapman_search_path="$toml_ZAPMAN_PLUGINS/"
                 fi
 
                 local zapman_PLUGINS_COMPONENTS=""
-                zapman_PLUGINS_COMPONENTS=$(find "$search_path" -type f -regextype posix-extended -regex ".*/${tb_zapman3_input_args}([0-9]+)?\.(dll|so)")
+                zapman_PLUGINS_COMPONENTS=$(
+                    find "$zapman_search_path" -type f -regextype posix-extended -regex ".*/${tb_zapman3_input_args}([0-9]+)?\.(dll|so)"
+                )
 
                 if [[ -n "$zapman_PLUGINS_COMPONENTS" ]]; then
                     while IFS= read -r file; do
@@ -706,23 +756,23 @@ EOF
                 Iterates through packages for removal from game mode configuration.
                 Ensures that #include statements related to plugins are deleted.
             '
-            for __packages__ in $rm_input_save; do
-                if [[ -z "$__packages__" ]]; then
+            for zapman_search_depends in $rm_input_save; do
+                if [[ -z "$zapman_search_depends" ]]; then
                     continue
                 fi
 
-                esc_plugins=$(echo "$__packages__" | sed 's/[&/\]/\\&/g')
-                file_path="$shell_DIR/gamemodes/$toml_FILE_SERV"
+                zapman_esc_plugins=$(echo "$zapman_search_depends" | sed 's/[&/\]/\\&/g')
+                zapman_file_path="$shell_DIR/gamemodes/$toml_FILE_SERV"
 
-                if [[ -f "$file_path" ]]; then
-                    if grep -q "#include <$esc_plugins>" "$file_path"; then
-                        print_yellow "dbg:" "removing #include <$esc_plugins> from $file_path"
-                        sed -i "/#include <$esc_plugins>/d" "$file_path"
+                if [[ -f "$zapman_file_path" ]]; then
+                    if grep -q "#include <$zapman_esc_plugins>" "$zapman_file_path"; then
+                        print_yellow "dbg:" "removing #include <$zapman_esc_plugins> from $zapman_file_path"
+                        sed -i "/#include <$zapman_esc_plugins>/d" "$zapman_file_path"
                     else
-                        print_yellow "dbg:" "#include <$esc_plugins> not found in $file_path"
+                        print_yellow "dbg:" "#include <$zapman_esc_plugins> not found in $zapman_file_path"
                     fi
                 else
-                    print_yellow "dbg:" "$file_path not found."
+                    print_yellow "dbg:" "$zapman_file_path not found."
                 fi
             done
 
@@ -750,7 +800,8 @@ EOF
                     if jq -e '.pawn.legacy_plugins' "$toml_SERVER_CONFIG" > /dev/null; then
                         jq --arg pattern "$rm_input_save" --arg pattern_dll "$rm_input_save.dll" --arg pattern_so "$rm_input_save.so" \
                         '.pawn.legacy_plugins |= map(select(. != $pattern and . != $pattern_dll and . != $pattern_so))' \
-                        "$toml_SERVER_CONFIG" > .cache_tmp && mv .cache_tmp "$toml_SERVER_CONFIG"
+                        "$toml_SERVER_CONFIG" > .cache_tmp &&
+                            mv .cache_tmp "$toml_SERVER_CONFIG"
 
                         print_yellow "[OK]" "removed $rm_input_save and its variants from legacy_plugins in $toml_SERVER_CONFIG"
                     else

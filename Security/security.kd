@@ -66,8 +66,8 @@ function __encryption_token__()
                 : ' Encrypts the token using AES-256-CBC and stores it securely. '
                 vireon_TOKEN_ENCRYPT=$(
                     echo "$__VIREON_TOKEN" |
-                    openssl enc -aes-256-cbc -pbkdf2 -pass pass:"$__decrypt_passphrase__" -base64 |
-                    tr -d '\n'
+                        openssl enc -aes-256-cbc -pbkdf2 -pass pass:"$__decrypt_passphrase__" -base64 |
+                            tr -d '\n'
                 )
 
                 escaped_token=$(
@@ -82,7 +82,7 @@ function __encryption_token__()
                 local _sizeof_rate_token_
                 vireon_TOKEN_DECRYPT=$(
                     echo "$toml_VIREON_TOKEN" |
-                    openssl enc -aes-256-cbc -d -pbkdf2 -pass pass:"$__decrypt_passphrase__" -base64
+                        openssl enc -aes-256-cbc -d -pbkdf2 -pass pass:"$__decrypt_passphrase__" -base64
                 )
             fi
         fi
