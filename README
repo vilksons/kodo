@@ -122,7 +122,7 @@ STARTING & DEBUGGING
 =====================
  o Run a compiled script:
 	`running yourmode.pwn`
- o Debug a script:
+ o Debug a script (Run the server in debug mode, auto-shut it down when done, and always print logs-even on success):
 	`debug yourmode.pwn`
 
 CONFIGURATION `kodo.toml`
