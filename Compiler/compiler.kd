@@ -90,11 +90,12 @@ function kodo_init_compilers()
             @Map
         '
         while IFS= read -r -d '' __LOOP_COMPILES_FILE; do
-            __files+=("$__LOOP_COMPILES_FILE")
+            __files_wargs+=("$__LOOP_COMPILES_FILE")
         done < <(find "$shell_DIR" -name "$commands_INPUT" -type f -print0)
 
-        for __LOOP_COMPILES_FILE in "${__files[@]}"; do
+        for __LOOP_COMPILES_FILE in "${__files_wargs[@]}"; do
             if [ -f "$__LOOP_COMPILES_FILE" ] && [[ "$__LOOP_COMPILES_FILE" != *.amx ]]; then
+
                 bash_title "$__LOOP_COMPILES_FILE"
 
                 local _AMX_OUTPUT_
