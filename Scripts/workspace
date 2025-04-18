@@ -494,22 +494,7 @@ function typeof() {
             echo
         fi
     fi
-    echo "Include Paths: $toml_INCLUDE"
-    echo "First Include: $toml_INCLUDE_FIRST"
-    echo "Zapman Include: $toml_ZAPMAN_INCLUDE"
-    echo "Zapman Plugins: $toml_ZAPMAN_PLUGINS"
-    echo "Server Log: $toml_LOG_SERV"
-    echo "Server Config: $toml_SERVER_CONFIG"
-    echo "File Server: $toml_FILE_SERV"
-    echo "Executable Server: $toml_EXE_SERV"
-    echo "Remove Cache: $toml_RM_CACHE"
-    echo "Vireon AI Model: $toml_VIREON_AI_MODEL"
-    echo "Vireon Rest API: $toml_VIREON_REST_API"
-    echo "Vireon Model: $toml_VIREON_MODEL"
-    echo "Vireon Bio Data: $toml_VIREON_BIODATA"
-    echo "Vireon Token: $toml_VIREON_TOKEN"
-    echo "Exclude Paths: $toml_EXCLUDE"
-    echo "AMX Flags: $toml_AMX_OPT_F"
+    
     HISTFILE="$HOME/kodo/.kodo.txt"
     touch "$HISTFILE"
 
