@@ -106,17 +106,6 @@ function IGNORE_ME() {
 }
 export IGNORE_ME
 
-function kodo_reset_variable() {
-    : ' Checking before unset '
-    [ -n "${compiler_INSTATUS+x}" ] && unset compiler_INSTATUS
-    [ -n "${compiler_PAWNCC+x}" ] && unset compiler_PAWNCC
-    [ -n "${compiler_MODE+x}" ] && unset compiler_MODE
-    [ -n "${SERVERS_INSTATUS+x}" ] && unset SERVERS_INSTATUS
-    [ -n "${AGEN_INSTALLER+x}" ] && unset AGEN_INSTALLER
-
-    compiler_INSTATUS="nul"; compiler_PAWNCC=""; compiler_MODE=0; SERVERS_INSTATUS=0; zapman_AUTOINSTALL=0; AGEN_INSTALLER=0
-}
-
 function load_function_with_check()
 {
     if ! declare -f "$1" > /dev/null; then
@@ -472,7 +461,7 @@ function struct_kodo_t_main() {
         load_function_with_check __encryption_token__ ""
     fi
     
-    kodo_reset_variable "" && typeof ""
+    typeof ""
 }
 export struct_kodo_t_main
 

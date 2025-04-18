@@ -22,9 +22,9 @@ function kodo_init_compilers()
         compiler_INSTATUS="true"
         kodo_compilers ""
     else
+        compiler_INSTATUS="true"
         if [[ -n "$commands_INPUT" ]]; then
             if [[ "$commands_INPUT" == "." ]]; then
-                compiler_INSTATUS="true"
                 kodo_compilers ""
             else
                 if [[ "${#commands_OPAMX[@]}" -eq 0 ]]; then
@@ -164,6 +164,11 @@ function kodo_init_compilers()
                 fi
             fi
         done
+    fi
+    if [[ "$compiler_INSTATUS" == "true" || "$compiler_INSTATUS" == "nul" || "$compiler_INSTATUS" == "" ]]; then
+        end_kodo_t_main ""
+    elif [[ "$compiler_INSTATUS" == "false" ]]; then
+        workspace_servers ""
     fi
 }
 export kodo_init_compilers

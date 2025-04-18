@@ -3,8 +3,6 @@
 function goto_mode_ZAPMAN() {
     kodo_t_TITLE "Zapman Mode"
     
-    kodo_reset_variable ""
-    
     HISTFILE="$HOME/kodo/.kodo.txt"
     touch "$HISTFILE"
 

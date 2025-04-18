@@ -72,11 +72,9 @@ function workspace_servers() {
         else
             start_false ""
         fi
-
-        if [ "$SERVERS_INSTATUS" == 2 ]; then
-            IGNORE_ME pkill -15 -f "$toml_EXE_SERV"
-        fi
     fi
+
+    struct_kodo_t_main ""
 }
 export workspace_servers
 
@@ -185,11 +183,9 @@ with open(kodo_conf_json, 'w') as file:
                 start_false ""
             fi
         fi
-
-        if [ "$SERVERS_INSTATUS" == 2 ]; then
-            IGNORE_ME pkill -15 -f "$toml_EXE_SERV"
-        fi
     fi
+
+    struct_kodo_t_main ""
 }
 export workspace_wargs_servers
 
@@ -250,6 +246,18 @@ function start_false3() {
     echo -e "$(collor_yellow "~")"
     echo "    ; \"invalid\" .. No .. False"
     echo
+
+    if [ "$SERVERS_INSTATUS" == 2 ]; then
+        IGNORE_ME pkill -15 -f "$toml_EXE_SERV"
+
+        if [ -f "$toml_LOG_SERV" ]; then
+            sleep 2 > /dev/null
+            cat "$toml_LOG_SERV"
+            echo
+        else
+            echo "# $toml_LOG_SERV not found."
+        fi
+    fi
 }
 export start_false3
 
