@@ -189,13 +189,16 @@ EOF
 }
 
 function __kodo_toml_load__() {
-    local yq_cmd="yq eval -I=0 -o=json"
+    local yq_cmd="yq eval -o=json"
 
     # paths
     toml_INCLUDE=$($yq_cmd '.paths.include_paths' kodo.toml | jq -r '.')
-    [[ "$toml_INCLUDE" == "null" ]] && print_red "error:" "failed to load \"include_paths\""
-
-    toml_INCLUDE_FIRST=$(echo "$toml_INCLUDE" | cut -d'/' -f1)
+    
+    if [[ -z "$toml_INCLUDE" ]]; then
+        print_red "error:" "failed to load \"include_paths\""
+    else
+        toml_INCLUDE_FIRST=$(echo "$toml_INCLUDE" | head -n 1 | cut -d'/' -f1)
+    fi
 
     toml_ZAPMAN_INCLUDE=$($yq_cmd '.paths.include_dir' kodo.toml | jq -r '.')
     [[ "$toml_ZAPMAN_INCLUDE" == "null" ]] && print_red "error:" "failed to load \"include_dir\""
@@ -236,10 +239,10 @@ function __kodo_toml_load__() {
     [[ "$toml_VIREON_TOKEN" == "null" ]] && print_red "error:" "failed to load \"token\""
 
     # compiler
-    toml_EXCLUDE=$($yq_cmd '.compiler.exclude_paths[]?' kodo.toml | jq -r '.' | xargs -I {} echo -n "-i\"{}\" ")
+    toml_EXCLUDE=$($yq_cmd '.compiler.exclude_paths // [] | .[]' kodo.toml | jq -r '.' | xargs -I {} echo -n "-i\"{}\" ")
     [[ -z "$toml_EXCLUDE" ]] && print_red "error:" "failed to load \"exclude_paths\""
 
-    toml_AMX_OPT_F=$($yq_cmd '.compiler.amx_flags[]?' kodo.toml | jq -r '.' | xargs)
+    toml_AMX_OPT_F=$($yq_cmd '.compiler.amx_flags // [] | .[]' kodo.toml | jq -r '.' | xargs)
     [[ -z "$toml_AMX_OPT_F" ]] && print_red "error:" "failed to load \"amx_flags\""
 }
 
@@ -350,12 +353,40 @@ function struct_kodo_t_main() {
 
     if [[ " ${kodo_t_missing_cmds[*]} " == *" yq "* ]]; then
         if ! command -v yq &>/dev/null; then
+            arch=$(uname -m)
+
             if command -v sudo &>/dev/null; then
-                sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
-                sudo chmod +x /usr/bin/yq
+                if [[ "$arch" == "x86_64" ]]; then
+                    sudo curl -L https://github.com/mikefarah/yq/releases/download/v4.45.1/yq_linux_amd64 -o /usr/bin/yq
+                    sudo chmod +x /usr/bin/yq
+                elif [[ "$arch" == "i386" ]]; then
+                    sudo curl -L https://github.com/mikefarah/yq/releases/download/v4.45.1/yq_linux_386 -o /usr/bin/yq
+                    sudo chmod +x /usr/bin/yq
+                elif [[ "$arch" == "arm64" ]]; then
+                    sudo curl -L https://github.com/mikefarah/yq/releases/download/v4.45.1/yq_linux_arm64 -o /usr/bin/yq
+                    sudo chmod +x /usr/bin/yq
+                elif [[ "$arch" == "armv7l" ]]; then
+                    sudo curl -L https://github.com/mikefarah/yq/releases/download/v4.45.1/yq_linux_arm -o /usr/bin/yq
+                    sudo chmod +x /usr/bin/yq
+                else
+                    echo "your arch unknown's: $arch.. can't download yq from cURL."
+                fi
             else
-                wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
-                chmod +x /usr/bin/yq
+                if [[ "$arch" == "x86_64" ]]; then
+                    curl -L https://github.com/mikefarah/yq/releases/download/v4.45.1/yq_linux_amd64 -o /usr/bin/yq
+                    chmod +x /usr/bin/yq
+                elif [[ "$arch" == "i386" ]]; then
+                    curl -L https://github.com/mikefarah/yq/releases/download/v4.45.1/yq_linux_386 -o /usr/bin/yq
+                    chmod +x /usr/bin/yq
+                elif [[ "$arch" == "arm64" ]]; then
+                    curl -L https://github.com/mikefarah/yq/releases/download/v4.45.1/yq_linux_arm64 -o /usr/bin/yq
+                    chmod +x /usr/bin/yq
+                elif [[ "$arch" == "armv7l" ]]; then
+                    curl -L https://github.com/mikefarah/yq/releases/download/v4.45.1/yq_linux_arm -o /usr/bin/yq
+                    chmod +x /usr/bin/yq
+                else
+                    echo "your arch unknown's: $arch.. can't download yq from cURL."
+                fi
             fi
         fi
     fi
@@ -463,7 +494,22 @@ function typeof() {
             echo
         fi
     fi
-    
+    echo "Include Paths: $toml_INCLUDE"
+    echo "First Include: $toml_INCLUDE_FIRST"
+    echo "Zapman Include: $toml_ZAPMAN_INCLUDE"
+    echo "Zapman Plugins: $toml_ZAPMAN_PLUGINS"
+    echo "Server Log: $toml_LOG_SERV"
+    echo "Server Config: $toml_SERVER_CONFIG"
+    echo "File Server: $toml_FILE_SERV"
+    echo "Executable Server: $toml_EXE_SERV"
+    echo "Remove Cache: $toml_RM_CACHE"
+    echo "Vireon AI Model: $toml_VIREON_AI_MODEL"
+    echo "Vireon Rest API: $toml_VIREON_REST_API"
+    echo "Vireon Model: $toml_VIREON_MODEL"
+    echo "Vireon Bio Data: $toml_VIREON_BIODATA"
+    echo "Vireon Token: $toml_VIREON_TOKEN"
+    echo "Exclude Paths: $toml_EXCLUDE"
+    echo "AMX Flags: $toml_AMX_OPT_F"
     HISTFILE="$HOME/kodo/.kodo.txt"
     touch "$HISTFILE"
 
