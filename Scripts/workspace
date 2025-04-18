@@ -980,7 +980,7 @@ function goto_mode_KODO() {
                 if [ -f "$shell_DIR/$1" ]; then
                     chmod +x "$shell_DIR/$1"
 
-                    echo "[DEBUG]: $1"
+                    echo "[DEBUGGING]: $1"
 
                     if [[ "$1" == ".kodo/python/wpython" ]]; then
                         python3 .kodo/python/wpython && print_yellow "Succes"
@@ -1047,7 +1047,7 @@ function goto_mode_KODO() {
                 ["autoinstall"]=":: Zapman Mode | AutoInstall Package -> Usage: autoinstall"
                 ["install"]=":: Zapman Mode | Install Package -> Usage: install | (+) [<args>] [url]"
                 ["remove"]=":: Zapman Mode | Remove Package -> Usage: remove | (+) [<args>] [target]"
-                ["sync"]=":: Sync (Upgrade) - Usage: sync | (+) [<args>] [update - only workspace]"
+                ["sync"]=":: Sync(hronization) - Usage: sync | (+) [<args>] [update - only workspace]"
                 ["modular"]=":: Modular Checking - Usage: modular | (+) [<args>] [target]"
                 ["fetch"]=":: Fetch Kodo -> Usage: fetch"
             )
