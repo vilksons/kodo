@@ -29,6 +29,14 @@ function workspace_servers() {
 
     cd "$shell_DIR" || echo
 
+    ldd ./"$toml_EXE_SERV" || {
+        print_red "Packages required not found!"
+        printf "Need help?, "
+        printf "\e]8;;https://github.com/vilksons/kodo/issues\e\\Click here.\e]8;;\e\\"
+        echo
+        end_kodo_t_main ""
+    }
+
     chmod 777 "$toml_EXE_SERV"
     ./"$toml_EXE_SERV" &
     local pid=$!
@@ -134,6 +142,13 @@ with open(kodo_conf_json, 'w') as file:
             esac
         done
     else
+        ldd ./"$toml_EXE_SERV" || {
+            print_red "Packages required not found!"
+            printf "Need help?, "
+            printf "\e]8;;https://github.com/vilksons/kodo/issues\e\\Click here.\e]8;;\e\\"
+            echo
+            end_kodo_t_main ""
+        }
         chmod 777 "$toml_EXE_SERV"
         ./"$toml_EXE_SERV" &
         local pid=$!
