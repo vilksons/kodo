@@ -14,7 +14,7 @@ function kodo_vireon()
         kodo_t_TITLE "Vireon Chat A.I | A.I Model: $toml_VIREON_AI_MODEL | Chat Model: $toml_VIREON_MODEL"
 
         : '
-            Builds JSON payload and sends it via curl POST request to AI API endpoint.
+            Builds JSON payload with jq and sends it via curl POST request to AI API endpoint.
             See docs/README.md for full structure breakdown.
         '
 
@@ -32,7 +32,7 @@ function kodo_vireon()
             - top_p: An alternative to temperature for sampling diversity (1 = full range).
             - stop: Set to null; used to define stopping criteria (not used in this request).
 
-            The JSON payload is piped into a POST request using \`curl\`, 
+            The JSON payload is piped into a POST request using \`curl\`, JSON payload using jq
             with the appropriate headers for content type and bearer token authentication.
 
             - See here for more: https://console.groq.com/docs/api-reference

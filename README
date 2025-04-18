@@ -43,7 +43,7 @@ cKodo is a Kodo Toolchain built on C without any connection to Shell/Bash. and a
 
 WHAT IS Vireon A.I?
 =====================
-Vireon A.I is an Artificial Intelligence created for Chat A.I dedicated to Kodo Toolchain. Kodo relies on the use of Data Managers such as cURL and Python as its integration of the json API response. which allows full management of users and freedom of modification with Python. and Vireon A.I has Encryption on Bot Token so that no one can copy and see your Bot Token other than in Vireon A.I with a complicated decrypt Pass.
+Vireon A.I is an Artificial Intelligence created for Chat A.I dedicated to Kodo Toolchain. Kodo relies on the use of Data Managers such as cURL, jq and Python as its integration of the json API response. which allows full management of users and freedom of modification with Python. and Vireon A.I has Encryption on A.I Token so that no one can copy and see your Bot Token other than in Vireon A.I with a complicated decrypt Pass.
 
 STABLE VERSION
 =====================
