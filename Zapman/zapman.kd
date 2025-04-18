@@ -86,15 +86,15 @@ function struct_ZAPMAN()
 
             local tb_zapman2_input_args="${zapman_table#"$tb_zapman2 "}"
 
-            local SAVE_QUICK=0
+            local ZAPMAN_INSTALL_WARGS=0
 
             local tb_zapman2_url_args=()
 
             if [[ -n "$tb_zapman2_input_args" && "$tb_zapman2_input_args" != "install" ]]; then
                 tb_zapman2_url_args=("$tb_zapman2_input_args")
-                SAVE_QUICK=1
+                ZAPMAN_INSTALL_WARGS=1
             else
-                SAVE_QUICK=0
+                ZAPMAN_INSTALL_WARGS=0
                 if [ -f "zapman.json" ] && [ -f "zapman.toml" ]; then
                     print_red "crit:" "zapman.json and zapman.toml Cannot be merged!. choose zapman.json.."
                 elif [ -f "zapman.json" ]; then
@@ -365,7 +365,7 @@ EOF
 
                 wait
 
-                if [ "$SAVE_QUICK" -eq 1 ]; then
+                if [ "$ZAPMAN_INSTALL_WARGS" -eq 1 ]; then
                     : '
                         Encrypts the installation package using AES-256-CBC.
                         Stores the encrypted data securely in cache if needed.
@@ -579,7 +579,7 @@ EOF
                             continue
                         fi
 
-                        added_any=false
+                        zapman_added_any_plugins="false"
 
                         : '
                             Adds both .so and .dll plugin versions if available.
@@ -588,21 +588,21 @@ EOF
                         if [[ -f "$toml_ZAPMAN_PLUGINS/$zapman_plugin_search.so" && -f "$toml_ZAPMAN_PLUGINS/$zapman_plugin_search.dll" ]]; then
                             print_yellow "dbg:" "adding $zapman_plugin_search.so and $zapman_plugin_search.dll to the plugins"
                             sed -i -E "s/^(plugins.*)/\1 $zapman_plugin_search.dll $zapman_plugin_search.so/" "$toml_SERVER_CONFIG"
-                            added_any=true
+                            zapman_added_any_plugins="true"
                         elif [[ -f "$toml_ZAPMAN_PLUGINS/$zapman_plugin_search.so" ]]; then
                             print_yellow "dbg:" "adding $zapman_plugin_search.so to the plugins"
                             sed -i -E "s/^(plugins.*)/\1 $zapman_plugin_search.so/" "$toml_SERVER_CONFIG"
-                            added_any=true
+                            zapman_added_any_plugins="true"
                         elif [[ -f "$toml_ZAPMAN_PLUGINS/$zapman_plugin_search.dll" ]]; then
                             print_yellow "dbg:" "adding $zapman_plugin_search.dll to the plugins"
                             sed -i -E "s/^(plugins.*)/\1 $zapman_plugin_search.dll/" "$toml_SERVER_CONFIG"
-                            added_any=true
+                            zapman_added_any_plugins="true"
                         fi
 
                         : '
                             Logs a message if the plugin was not found.
                         '
-                        if [[ "$added_any" = false ]]; then
+                        if [[ "$zapman_added_any_plugins" = "false" ]]; then
                             print_yellow "dbg:" "plugin $zapman_plugin_search not found in $toml_ZAPMAN_PLUGINS"
                         fi
                     done
@@ -633,7 +633,7 @@ EOF
                             continue
                         fi
 
-                        added_any=false
+                        zapman_added_any_plugins="false"
 
                         : '
                             Adds both .so and .dll plugin versions if they exist.
@@ -643,23 +643,23 @@ EOF
                             print_yellow "dbg:" "adding $zapman_plugin_search.so and $zapman_plugin_search.dll to pawn.legacy_plugins"
                             jq --arg so "$zapman_plugin_search.so" --arg dll "$zapman_plugin_search.dll" '.pawn.legacy_plugins += [$dll, $so]' "$toml_SERVER_CONFIG" > "$shell_DIR/.cache/.cache.json" &&
                                 mv "$shell_DIR/.cache/.cache.json" "$toml_SERVER_CONFIG"
-                            added_any=true
+                            zapman_added_any_plugins="true"
                         elif [[ -f "$toml_ZAPMAN_PLUGINS/$zapman_plugin_search.so" ]]; then
                             print_yellow "dbg:" "adding $zapman_plugin_search.so to pawn.legacy_plugins"
                             jq --arg so "$zapman_plugin_search.so" '.pawn.legacy_plugins += [$so]' "$toml_SERVER_CONFIG" > "$shell_DIR/.cache/.cache.json" &&
                                 mv "$shell_DIR/.cache/.cache.json" "$toml_SERVER_CONFIG"
-                            added_any=true
+                            zapman_added_any_plugins="true"
                         elif [[ -f "$toml_ZAPMAN_PLUGINS/$zapman_plugin_search.dll" ]]; then
                             print_yellow "dbg:" "adding $zapman_plugin_search.dll to pawn.legacy_plugins"
                             jq --arg dll "$zapman_plugin_search.dll" '.pawn.legacy_plugins += [$dll]' "$toml_SERVER_CONFIG" > "$shell_DIR/.cache/.cache.json" &&
                                 mv "$shell_DIR/.cache/.cache.json" "$toml_SERVER_CONFIG"
-                            added_any=true
+                            zapman_added_any_plugins="true"
                         fi
 
                         : '
                             Logs an error if the plugin was not found.
                         '
-                        if [[ "$added_any" = false ]]; then
+                        if [[ "$zapman_added_any_plugins" = "false" ]]; then
                             print_yellow "dbg:" "plugin $zapman_plugin_search not found in $toml_ZAPMAN_PLUGINS"
                         fi
                     done
