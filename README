@@ -77,6 +77,7 @@ Commands:
  remcac (remove cache ~/.cache/)
  vireon (Vireon, A.I Chat)
  toml (rebuild kodo.toml)
+ refresh (refresh terminal, kodo.toml, etc.)
  fetch (fetch of workspace)
  nano (run nano editor from terminal)
  | Zapman |
