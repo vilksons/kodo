@@ -637,9 +637,17 @@ function goto_mode_KODO() {
         "kill")
             terminal_SAVE_NOTICE=0
             terminal_KODO_NOTICES=0
+
             IGNORE_ME clear
+
             cd "$shell_DIR" || echo
             exec bash ./"$shell_NAME"
+            ;;
+        "refresh")
+            terminal_SAVE_NOTICE=0
+            terminal_SAVE_KTOML_LOADED=0
+
+            struct_kodo_t_main ""
             ;;
         "sync"*)
             if [[ "$kd_table" == "sync" ]]; then
@@ -965,6 +973,7 @@ function goto_mode_KODO() {
                 ["kill"]=":: Kill a Kodo Terminal - Usage: kill"
                 ["exit"]=":: Exit/End Kodo Terminal - Usage: exit"
                 ["toml"]=":: Rebuild kodo.toml - Usage: toml"
+                ["refresh"]=":: Refresh Terminal, kodo.toml, etc. - Usage: refresh"
                 ["directory"]=":: Display or Change Terminal Directory - Usage: directory | cd | ls"
                 ["remcac"]=":: Remove cache \".cache\" Kodo - Usage: remcac"
                 ["vireon"]=":: Vireon Chat - Usage: vireon"
@@ -1089,6 +1098,7 @@ function help_dialog_kd()
     echo " remcac (remove cache ~/.cache/)"
     echo " vireon (Vireon, A.I Chat)"
     echo " toml (rebuild kodo.toml)"
+    echo " refresh (refresh terminal, kodo.toml, etc.)"
     echo " fetch (fetch of workspace)"
     
     if command -v nano &> /dev/null; then
