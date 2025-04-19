@@ -71,7 +71,6 @@ function kodo_vireon()
         local message_lenght=""
 
         if [ "$vipython_exit_code" -eq 111 ] || [ "$vipython_exit_code" -eq 222 ] || [ "$vipython_exit_code" -eq 333 ]; then
-            print_red "Error: API response contains 'failed', 'error', or 'invalid':"
             echo "$vireon_response"
         else
             message_detection=$(echo "$vireon_response" | jq -r '.choices[].message.content' 2>/dev/null)

@@ -47,7 +47,10 @@ def load_color_groups_from_url(url):
             'gray': GRAY
         }
 
-        return {color_map[k]: v for k, v in raw.items() if k in color_map}
+        return {
+            color_map[k]: v for k,
+                v in raw.items() if k in color_map
+        }
     except Exception as e:
         print(f"Can't Get Request of: {e}", flush=True)
         return {}
@@ -130,12 +133,12 @@ def header_blue(match):
 
 def link_preview(match):
     """
-        This will display only the text inside [] in blue color and print the link destination
-        without showing the actual URL in the output. It will also provide the URL as a preview.
+        Shows markdown link with the text in cyan and appends the actual URL in gray.
+        Example: Google (https://google.com)
     """
     text = match.group(1)
     url = match.group(2)
-    return f'{CYAN}{text}{RESET}'
+    return f'{CYAN}{text}{RESET} {GRAY}({url}){RESET}'
 
 def vireon_process_text(text):
     """
@@ -184,7 +187,7 @@ def main():
         vireon_response = data.get('choices', [{}])[0].get('message', {}).get('content')
 
         if not vireon_response:
-            print('Error: Response API Failed. Token/Model/Profiles invalid.', flush=True)
+            print('\033[91mError: Response API Failed. Token/Model/Profiles invalid.\033[0m', flush=True)
             raise SystemExit(111)
 
         processed_vireon_response = vireon_process_text(vireon_response)
@@ -195,7 +198,7 @@ def main():
         print()
 
     except json.JSONDecodeError:
-        print('Error POST to application/json', flush=True)
+        print('\033[91mError POST to application/json.\033[0m', flush=True)
         raise SystemExit(222)
     except ValueError as e:
         print(e, flush=True)

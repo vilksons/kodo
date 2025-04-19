@@ -184,55 +184,55 @@ function __kodo_toml_load__() {
     toml_INCLUDE=$($yq_cmd '.paths.include_paths' kodo.toml | jq -r '.')
     
     if [[ -z "$toml_INCLUDE" ]]; then
-        print_red "error:" "failed to load \"include_paths\""
+        print_red "error:" "failed to load \"include_paths\"" && typeof ""
     else
         toml_INCLUDE_FIRST=$(echo "$toml_INCLUDE" | head -n 1 | cut -d'/' -f1)
     fi
 
     toml_ZAPMAN_INCLUDE=$($yq_cmd '.paths.include_dir' kodo.toml | jq -r '.')
-    [[ "$toml_ZAPMAN_INCLUDE" == "null" ]] && print_red "error:" "failed to load \"include_dir\""
+    [[ "$toml_ZAPMAN_INCLUDE" == "null" ]] && print_red "error:" "failed to load \"include_dir\"" && typeof ""
 
     toml_ZAPMAN_PLUGINS=$($yq_cmd '.paths.plugins_dir' kodo.toml | jq -r '.')
-    [[ "$toml_ZAPMAN_PLUGINS" == "null" ]] && print_red "error:" "failed to load \"plugins_dir\""
+    [[ "$toml_ZAPMAN_PLUGINS" == "null" ]] && print_red "error:" "failed to load \"plugins_dir\"" && typeof ""
 
     # server
     toml_LOG_SERV=$($yq_cmd '.server.log' kodo.toml | jq -r '.')
-    [[ "$toml_LOG_SERV" == "null" ]] && print_red "error:" "failed to load \"log\""
+    [[ "$toml_LOG_SERV" == "null" ]] && print_red "error:" "failed to load \"log\"" && typeof ""
 
     toml_SERVER_CONFIG=$($yq_cmd '.server.config' kodo.toml | jq -r '.')
-    [[ "$toml_SERVER_CONFIG" == "null" ]] && print_red "error:" "failed to load \"config\""
+    [[ "$toml_SERVER_CONFIG" == "null" ]] && print_red "error:" "failed to load \"config\"" && typeof ""
 
     toml_FILE_SERV=$($yq_cmd '.server.init' kodo.toml | jq -r '.')
-    [[ "$toml_FILE_SERV" == "null" ]] && print_red "error:" "failed to load \"init\""
+    [[ "$toml_FILE_SERV" == "null" ]] && print_red "error:" "failed to load \"init\"" && typeof ""
 
     toml_EXE_SERV=$($yq_cmd '.server.executable' kodo.toml | jq -r '.')
-    [[ "$toml_EXE_SERV" == "null" ]] && print_red "error:" "failed to load \"executable\""
+    [[ "$toml_EXE_SERV" == "null" ]] && print_red "error:" "failed to load \"executable\"" && typeof ""
 
     toml_RM_CACHE=$($yq_cmd '.server.remcache_auto' kodo.toml | jq -r '.')
-    [[ "$toml_RM_CACHE" == "null" ]] && print_red "error:" "failed to load \"remcache_auto\""
+    [[ "$toml_RM_CACHE" == "null" ]] && print_red "error:" "failed to load \"remcache_auto\"" && typeof ""
 
     # vireon
     toml_VIREON_AI_MODEL=$($yq_cmd '.vireon.ai_model' kodo.toml | jq -r '.')
-    [[ "$toml_VIREON_AI_MODEL" == "null" ]] && print_red "error:" "failed to load \"ai_model\""
+    [[ "$toml_VIREON_AI_MODEL" == "null" ]] && print_red "error:" "failed to load \"ai_model\"" && typeof ""
 
     toml_VIREON_REST_API=$($yq_cmd '.vireon.rest_api' kodo.toml | jq -r '.')
-    [[ "$toml_VIREON_REST_API" == "null" ]] && print_red "error:" "failed to load \"rest_api\""
+    [[ "$toml_VIREON_REST_API" == "null" ]] && print_red "error:" "failed to load \"rest_api\"" && typeof ""
 
     toml_VIREON_MODEL=$($yq_cmd '.vireon.model' kodo.toml | jq -r '.')
-    [[ "$toml_VIREON_MODEL" == "null" ]] && print_red "error:" "failed to load \"model\""
+    [[ "$toml_VIREON_MODEL" == "null" ]] && print_red "error:" "failed to load \"model\"" && typeof ""
 
     toml_VIREON_BIODATA=$($yq_cmd '.vireon.profile' kodo.toml | jq -r '.')
-    [[ "$toml_VIREON_BIODATA" == "null" ]] && print_red "error:" "failed to load \"profile\""
+    [[ "$toml_VIREON_BIODATA" == "null" ]] && print_red "error:" "failed to load \"profile\"" && typeof ""
 
     toml_VIREON_TOKEN=$($yq_cmd '.vireon.token' kodo.toml | jq -r '.')
-    [[ "$toml_VIREON_TOKEN" == "null" ]] && print_red "error:" "failed to load \"token\""
+    [[ "$toml_VIREON_TOKEN" == "null" ]] && print_red "error:" "failed to load \"token\"" && typeof ""
 
     # compiler
     toml_EXCLUDE=$($yq_cmd '.compiler.exclude_paths // [] | .[]' kodo.toml | jq -r '.' | xargs -I {} echo -n "-i\"{}\" ")
-    [[ -z "$toml_EXCLUDE" ]] && print_red "error:" "failed to load \"exclude_paths\""
+    [[ -z "$toml_EXCLUDE" ]] && print_red "error:" "failed to load \"exclude_paths\"" && typeof ""
 
     toml_AMX_OPT_F=$($yq_cmd '.compiler.amx_flags // [] | .[]' kodo.toml | jq -r '.' | xargs)
-    [[ -z "$toml_AMX_OPT_F" ]] && print_red "error:" "failed to load \"amx_flags\""
+    [[ -z "$toml_AMX_OPT_F" ]] && print_red "error:" "failed to load \"amx_flags\" && typeof """
 }
 
 function struct_kodo_t_main() {
@@ -242,26 +242,20 @@ function struct_kodo_t_main() {
 
     for cmd in "${kodo_t_missing_save_cmds[@]}"; do
         if ! command -v "$cmd" &>/dev/null; then
-            if command -v apt &>/dev/null || command -v pkg &>/dev/null; then
-                if [ "$cmd" = "awk" ]; then
+            case "$cmd" in
+                awk)
                     kodo_t_missing_cmds+=("gawk")
                     missing_cmds+=("gawk")
-                elif [ "$cmd" = "tr" ]; then
+                    ;;
+                tr)
                     kodo_t_missing_cmds+=("coreutils")
                     missing_cmds+=("coreutils")
-                else
+                    ;;
+                *)
                     kodo_t_missing_cmds+=("$cmd")
                     missing_cmds+=("$cmd")
-                fi
-            else
-                if [ "$cmd" = "tr" ]; then
-                    kodo_t_missing_cmds+=("coreutils")
-                    missing_cmds+=("coreutils")
-                else
-                    kodo_t_missing_cmds+=("$cmd")
-                    missing_cmds+=("$cmd")
-                fi
-            fi
+                    ;;
+            esac
         fi
     done
 
@@ -270,42 +264,20 @@ function struct_kodo_t_main() {
     fi
 
     local pkg_manager=""
-
-    if command -v apt &>/dev/null; then
-        pkg_manager="apt"
-    elif command -v pkg &>/dev/null; then
-        pkg_manager="pkg"
-    elif command -v dnf &>/dev/null; then
-        pkg_manager="dnf"
-    elif command -v pacman &>/dev/null; then
-        pkg_manager="pacman"
-    elif command -v zypper &>/dev/null; then
-        pkg_manager="zypper"
-    elif command -v yum &>/dev/null; then
-        pkg_manager="yum"
-    fi
+    for manager in apt pkg dnf pacman zypper yum; do
+        if command -v "$manager" &>/dev/null; then
+            pkg_manager="$manager"
+            break
+        fi
+    done
 
     for cmd in "${kodo_t_missing_cmds[@]}"; do
         case "$pkg_manager" in
-            apt)
+            apt|pkg|dnf|yum|zypper)
                 if command -v sudo &>/dev/null; then
-                    sudo apt install -y "$cmd"
+                    sudo "$pkg_manager" install -y "$cmd"
                 else
-                    apt install -y "$cmd"
-                fi
-                ;;
-            pkg)
-                if command -v sudo &>/dev/null; then
-                    sudo pkg install -y "$cmd"
-                else
-                    pkg install -y "$cmd"
-                fi
-                ;;
-            dnf)
-                if command -v sudo &>/dev/null; then
-                    sudo dnf install -y "$cmd"
-                else
-                    dnf install -y "$cmd"
+                    "$pkg_manager" install -y "$cmd"
                 fi
                 ;;
             pacman)
@@ -315,68 +287,37 @@ function struct_kodo_t_main() {
                     pacman -S --needed "$cmd"
                 fi
                 ;;
-            zypper)
-                if command -v sudo &>/dev/null; then
-                    sudo zypper install -y "$cmd"
-                else
-                    zypper install -y "$cmd"
-                fi
-                ;;
-            yum)
-                if command -v sudo &>/dev/null; then
-                    sudo yum install -y "$cmd"
-                else
-                    yum install -y "$cmd"
-                fi
-                ;;
             *)
-                print_red "error:" "Can't found Package Manager. only apt/pkg/dnf/pacman/zypper/yum.."
-                print_red " Missing packages:" "${kodo_t_missing_cmds[*]}"
-                printf "\e]8;;https://github.com/vilksons/kodo/wiki/Required-Packages\e\\ Please see here for more.\e]8;;\e\\"
-                echo
+                print_red "error:" "Can't find Package Manager. Only apt/pkg/dnf/pacman/zypper/yum supported."
+                print_red "Missing packages:" "${kodo_t_missing_cmds[*]}"
+                printf "\e]8;;https://github.com/vilksons/kodo/wiki/Required-Packages\e\\ Please see here for more.\e]8;;\e\\\n"
                 IGNORE_ME sleep 1.0
                 terminal_SAVE_NOTICE=2
                 ;;
         esac
     done
 
-    if [[ " ${kodo_t_missing_cmds[*]} " == *" yq "* ]]; then
-        if ! command -v yq &>/dev/null; then
-            arch=$(uname -m)
+    if [[ " ${kodo_t_missing_cmds[*]} " == *" yq "* ]] && ! command -v yq &>/dev/null; then
+        arch=$(uname -m)
+        yq_url=""
+        case "$arch" in
+            x86_64) yq_url="yq_linux_amd64" ;;
+            i386) yq_url="yq_linux_386" ;;
+            arm64) yq_url="yq_linux_arm64" ;;
+            armv7l) yq_url="yq_linux_arm" ;;
+            *) echo "unknown arch: $arch, can't download yq." ;;
+        esac
 
+        if [ -n "$yq_url" ]; then
             if command -v sudo &>/dev/null; then
-                if [[ "$arch" == "x86_64" ]]; then
-                    sudo curl -L https://github.com/mikefarah/yq/releases/download/v4.45.1/yq_linux_amd64 -o /usr/bin/yq
-                    sudo chmod +x /usr/bin/yq
-                elif [[ "$arch" == "i386" ]]; then
-                    sudo curl -L https://github.com/mikefarah/yq/releases/download/v4.45.1/yq_linux_386 -o /usr/bin/yq
-                    sudo chmod +x /usr/bin/yq
-                elif [[ "$arch" == "arm64" ]]; then
-                    sudo curl -L https://github.com/mikefarah/yq/releases/download/v4.45.1/yq_linux_arm64 -o /usr/bin/yq
-                    sudo chmod +x /usr/bin/yq
-                elif [[ "$arch" == "armv7l" ]]; then
-                    sudo curl -L https://github.com/mikefarah/yq/releases/download/v4.45.1/yq_linux_arm -o /usr/bin/yq
-                    sudo chmod +x /usr/bin/yq
-                else
-                    echo "your arch unknown's: $arch.. can't download yq from cURL."
-                fi
+                sudo curl -L "https://github.com/mikefarah/yq/releases/download/v4.45.1/$yq_url" -o /usr/bin/yq
+                wait && sudo chmod +x /usr/bin/yq
             else
-                if [[ "$arch" == "x86_64" ]]; then
-                    curl -L https://github.com/mikefarah/yq/releases/download/v4.45.1/yq_linux_amd64 -o /usr/bin/yq
-                    chmod +x /usr/bin/yq
-                elif [[ "$arch" == "i386" ]]; then
-                    curl -L https://github.com/mikefarah/yq/releases/download/v4.45.1/yq_linux_386 -o /usr/bin/yq
-                    chmod +x /usr/bin/yq
-                elif [[ "$arch" == "arm64" ]]; then
-                    curl -L https://github.com/mikefarah/yq/releases/download/v4.45.1/yq_linux_arm64 -o /usr/bin/yq
-                    chmod +x /usr/bin/yq
-                elif [[ "$arch" == "armv7l" ]]; then
-                    curl -L https://github.com/mikefarah/yq/releases/download/v4.45.1/yq_linux_arm -o /usr/bin/yq
-                    chmod +x /usr/bin/yq
-                else
-                    echo "your arch unknown's: $arch.. can't download yq from cURL."
-                fi
+                curl -L "https://github.com/mikefarah/yq/releases/download/v4.45.1/$yq_url" -o /usr/bin/yq
+                wait && chmod +x /usr/bin/yq
             fi
+
+            sleep 0.999 && SIGNAL_KILL ""
         fi
     fi
     
@@ -426,26 +367,36 @@ function struct_kodo_t_main() {
                 if [ "$3" = "end" ]; then
                     terminal_MODULAR_LOADED=1
                     terminal_SAVE_NOTICE=1
+
                     curl -L -o "$shell_DIR/$1" "$2" &>/dev/null &
                     clear && cd "$(dirname "$(realpath "$0")")" || echo
+                
                     print_yellow "install succes!"
                     print_green " killing.."
+
                     sleep 0.999 && SIGNAL_KILL "" && typeof ""
                 fi
             fi
         }
 
-        kodo_t_pack ".kodo/python/wpython" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/wpython" ""
-        kodo_t_pack ".kodo/python/vipython" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/vipython" ""
-        kodo_t_pack ".kodo/compat.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compat/compat.kd" "compat" 
-        kodo_t_pack ".kodo/compiler.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compiler/compiler.kd" "silent" 
-        kodo_t_pack ".kodo/zapman.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Zapman/zapman.kd" "silent" 
-        kodo_t_pack ".kodo/samp.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/samp.kd" "silent" 
-        kodo_t_pack ".kodo/pawncc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/pawncc.kd" "silent" 
-        kodo_t_pack ".kodo/misc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Misc/misc.kd" "silent"
-        kodo_t_pack ".kodo/vireon.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Vireon/vireon.kd" "silent" 
-        kodo_t_pack ".kodo/server.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Server/server.kd" "silent"
-        kodo_t_pack ".kodo/security.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Security/security.kd" "end" 
+        modules=(
+            ".kodo/python/wpython|https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/wpython|"
+            ".kodo/python/vipython|https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/vipython|"
+            ".kodo/compat.kd|https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compat/compat.kd|compat"
+            ".kodo/compiler.kd|https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compiler/compiler.kd|silent"
+            ".kodo/zapman.kd|https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Zapman/zapman.kd|silent"
+            ".kodo/samp.kd|https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/samp.kd|silent"
+            ".kodo/pawncc.kd|https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/pawncc.kd|silent"
+            ".kodo/misc.kd|https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Misc/misc.kd|silent"
+            ".kodo/vireon.kd|https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Vireon/vireon.kd|silent"
+            ".kodo/server.kd|https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Server/server.kd|silent"
+            ".kodo/security.kd|https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Security/security.kd|end"
+        )
+
+        for module in "${modules[@]}"; do
+            IFS="|" read -r path url flag <<< "$module"
+            kodo_t_pack "$path" "$url" "$flag"
+        done
 
         cd "$shell_DIR" >/dev/null 2>&1 || echo ""
 
