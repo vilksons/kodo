@@ -849,7 +849,7 @@ EOF
             goto_mode_ZAPMAN ""
             ;;
        "exit")
-            struct_kodo_t_main ""
+            typeof ""
             ;;
         *)
             echo "error: $zapman_table: command not found"

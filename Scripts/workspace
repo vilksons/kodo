@@ -604,7 +604,7 @@ function goto_mode_KODO() {
                 done
             fi
             
-            end_kodo_t_main ""
+            typeof ""
             ;;
         "directory"* | "cd"*)
             kodo_t_TITLE "Directory - $shell_DIR"
@@ -652,7 +652,7 @@ function goto_mode_KODO() {
             ;;
         "ls")
             ls -a
-            struct_kodo_t_main ""
+            typeof ""
             ;;
         "kill")
             terminal_SAVE_NOTICE=0
@@ -824,7 +824,7 @@ function goto_mode_KODO() {
 
             terminal_MODULAR_LOADED=0
             __kodo_toml_create__ ""
-            struct_kodo_t_main ""
+            typeof ""
             ;;
         "checksums"*)
             kodo_t_TITLE "Checksums"
@@ -959,7 +959,7 @@ function goto_mode_KODO() {
         "clear" | "c" | "C" | "cc")
             terminal_KODO_NOTICES=0
             clear; echo -ne "\033[3J"
-            struct_kodo_t_main ""
+            typeof ""
             ;;
         "modular"*)
             kodo_t_TITLE "Modular Checking | Debugging"
@@ -1005,7 +1005,7 @@ function goto_mode_KODO() {
                 kodo_t_modular_load ".kodo/server.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Server/server.kd" "end"
             fi
 
-            struct_kodo_t_main ""
+            typeof ""
             ;;
         "help"* | "$trigger_kd -h"* | "$trigger_kd --h"*)
             local commands_ARGS="${kd_table#"$trigger_kd -h "}"
@@ -1063,14 +1063,14 @@ function goto_mode_KODO() {
                 help_dialog_kd ""
             fi
 
-            struct_kodo_t_main ""
+            typeof ""
             ;;
         "$trigger_kd" | "user:~$:" | " ")
             echo "Hello there!"
-            struct_kodo_t_main ""
+            typeof ""
             ;;
         "")
-            struct_kodo_t_main ""
+            typeof ""
             ;;
         *)
             not_found_kd ""
