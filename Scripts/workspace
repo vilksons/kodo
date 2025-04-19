@@ -379,6 +379,7 @@ function struct_kodo_t_main() {
             fi
         }
 
+        local modules=()
         modules=(
             ".kodo/python/wpython|https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/wpython|"
             ".kodo/python/vipython|https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Scripts/vipython|"
@@ -945,15 +946,23 @@ function goto_mode_KODO() {
 
                 cd "$shell_DIR/.kodo" >/dev/null 2>&1 || echo ""
                 
-                kodo_t_modular_load ".kodo/security.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Security/security.kd" "silent" 
-                kodo_t_modular_load ".kodo/compat.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compat/compat.kd" "compat" 
-                kodo_t_modular_load ".kodo/compiler.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compiler/compiler.kd" "silent" 
-                kodo_t_modular_load ".kodo/zapman.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Zapman/zapman.kd" "silent" 
-                kodo_t_modular_load ".kodo/samp.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/samp.kd" "silent" 
-                kodo_t_modular_load ".kodo/pawncc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/pawncc.kd" "silent" 
-                kodo_t_modular_load ".kodo/misc.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Misc/misc.kd" "silent"
-                kodo_t_modular_load ".kodo/vireon.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Vireon/vireon.kd" "silent" 
-                kodo_t_modular_load ".kodo/server.kd" "https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Server/server.kd" "end"
+                local modules=()
+                modules=(
+                    ".kodo/security.kd|https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Security/security.kd|silent"
+                    ".kodo/compat.kd|https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compat/compat.kd|compat"
+                    ".kodo/compiler.kd|https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Compiler/compiler.kd|silent"
+                    ".kodo/zapman.kd|https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Zapman/zapman.kd|silent"
+                    ".kodo/samp.kd|https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/samp.kd|silent"
+                    ".kodo/pawncc.kd|https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Package/pawncc.kd|silent"
+                    ".kodo/misc.kd|https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Misc/misc.kd|silent"
+                    ".kodo/vireon.kd|https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Vireon/vireon.kd|silent"
+                    ".kodo/server.kd|https://raw.githubusercontent.com/vilksons/kodo/refs/heads/kodo/Server/server.kd|end"
+                )
+
+                for module in "${modules[@]}"; do
+                    IFS="|" read -r path url flag <<< "$module"
+                    kodo_t_pack "$path" "$url" "$flag"
+                done
             fi
 
             typeof ""
