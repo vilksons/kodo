@@ -1,4 +1,4 @@
-# README.md - Task Configuration Guide
+# Task Configuration Guide
 
 ## Overview
 
@@ -11,7 +11,7 @@ This configuration file defines tasks for Visual Studio Code (VS Code). It allow
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Run Shell Script",
+      "label": "Run Kodo/Workspace",
       "type": "shell",
       "command": "${workspaceRoot}/workspace",
       "group": {
