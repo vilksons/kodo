@@ -72,13 +72,13 @@ static inline int kd_sys(const char *cmd) {
 
 void handle_sigint(int sig)
 {
-    println("Exit?, You only exit with use a \"exit\"");
-    _kodo_(0);
+	println("Exit?, You only exit with use a \"exit\"");
+	_kodo_(0);
 }
 
 int exit_signal()
 {
-    fd_set fds;
+	fd_set fds;
     struct timeval timeout;
     int ret;
 

@@ -14,7 +14,7 @@ char pcc_found[PCC_MAX_PATH_COUNT][PCC_MAX_PATH_SIZE];
 
 int
 execute_sfpawncc(const char *pawncc_path,
-			     const char *pawncc_name)
+				const char *pawncc_name)
 {
 	char path_buf[PCC_MAX_PATH_SIZE];
 	struct dirent *entry;
