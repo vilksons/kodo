@@ -17,12 +17,18 @@ void kodo_server_stop_tasks(void)
         char *format_sys = malloc(126);
         size_t format_size = 126;
 
-        snprintf(format_sys, 126, "pkill -9 -f \"%s\" && pkill -9 -f \"%s\" && pkill -9 -f \"%s\" && pkill -9 -f \"%s\"",
-                "samp-server.exe",
-                "samp03svr",
-                "omp-server.exe",
-                "omp-server"
+        snprintf(
+            format_sys, 126,
+            "pkill -9 -f \"%s\" && "
+            "pkill -9 -f \"%s\" && "
+            "pkill -9 -f \"%s\" && "
+            "pkill -9 -f \"%s\"",
+            "samp-server.exe",
+            "samp03svr",
+            "omp-server.exe",
+            "omp-server"
         );
+        
         kodo_sys(format_sys);
 
         if (format_sys) {

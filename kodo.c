@@ -11,7 +11,7 @@
  * (default compile) - build with Make, Makefile.
  * build with `$ make`
  * (for windows) - build with Make, MinGW x86_64, Makefile.
- * moved or delete "Makefile" Linux and rename "wMakefile" to "Makefile" and use `$ make`
+ * moved or remove "Makefile" Linux and rename "wMakefile" to "Makefile" and use `$ make`
  *
  * If you want to open the code in the terminal without running it manually using the terminal, you can run the following commands.
     * nano ~/.bashrc - or zsh
