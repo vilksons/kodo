@@ -12,7 +12,7 @@ extern const char *kd_gamemode_output;
 extern const char *server_or_debug;
 
 struct struct_of {
-	int (*title)(const char *);
+    int (*title)(const char *);
 };
 
 struct struct_of init_kodo(void);
