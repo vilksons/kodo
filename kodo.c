@@ -67,7 +67,16 @@
 #include "server.h"
 
 static inline int kd_sys(const char *cmd) {
-    return system(cmd);
+    FILE *fp = popen(cmd, "r");
+    if (fp == NULL) {
+        return -1;
+    }
+    char kd_sys_buff[256];
+    while (fgets(kd_sys_buff, sizeof(kd_sys_buff), fp) != NULL)
+        printf("%s", kd_sys_buff);
+
+    int status = pclose(fp);
+    return status;
 }
 
 void handle_sigint(int sig)
@@ -76,69 +85,49 @@ void handle_sigint(int sig)
     _kodo_(0);
 }
 
-int exit_signal()
-{
-    fd_set fds;
-    struct timeval timeout;
-    int ret;
-
-    FD_ZERO(&fds);
-    FD_SET(STDIN_FILENO, &fds);
-
-    timeout.tv_sec = 2;
-    timeout.tv_usec = 0;
-    
-    fflush(stdout);
-
-    ret = select(STDIN_FILENO + 1, &fds, NULL, NULL, &timeout);
-
-    if (ret == -1) {
-        perror("select");
-        return 0;
-    } else if (ret == 0) {
-        return 1;
-    } else {
-        char *exit_put = readline("kodo:~$ ");
-        if (exit_put && strcmp(exit_put, "exit") == 0) {
-            free(exit_put);
-            return 1;
-        }
-        free(exit_put);
-    }
-
-    return 0;
-}
-
 void _kodo_(int sig_unused) {
-    (void)sig_unused; 
+    (void)sig_unused;
+
     struct struct_of kodo = init_kodo();
     kodo.title(NULL);
 
+    char *home = getenv("HOME");
+    if (home != NULL) {
+        char history_file[512];
+        snprintf(history_file, sizeof(history_file), "%s/.history", home);
+        read_history(history_file);
+    }
+    
     using_history();
+
     signal(SIGINT, handle_sigint);
 
     char *__vcommands__[] = { "exit", "clear", "kill", "title", "help",
                               "gamemode", "pawncc", "compile", "running",
                               "debug", "stop", "restart" };
-    int num_cmds = 
-        sizeof(__vcommands__) / sizeof(__vcommands__[0]);
+    int num_cmds = sizeof(__vcommands__) / sizeof(__vcommands__[0]);
 
     while (1) {
-        char *ptr_cmds = 
-            readline("kodo:~$ ");
-    
-        char *malloc_dynamic_str = 
-            (char *)malloc(256 * sizeof(char));  /* Allocating 256 bytes of memory */
-        if (malloc_dynamic_str == NULL) {
-            printf_color(COL_RED, "Memory allocation failed!\n");
-            break;  /* Exit the loop if memory allocation fails */
+        char *ptr_cmds = readline("kodo:~$ ");
+        if (ptr_cmds == NULL) {
+            break;
         }
 
-        if (ptr_cmds == NULL)
-            _kodo_(0); // return
-        if (strlen(ptr_cmds) > 0) 
+        char *malloc_dynamic_str = 
+            (char *)malloc(256 * sizeof(char));
+        if (malloc_dynamic_str == NULL) {
+            printf_color(COL_RED, "Memory allocation failed!\n");
+            break;
+        }
+        if (strlen(ptr_cmds) > 0) {
             add_history(ptr_cmds);
 
+            if (home != NULL) {
+                char history_file[512];
+                snprintf(history_file, sizeof(history_file), "%s/.history", home);
+                write_history(history_file);
+            }
+        }
         int c_distance = 
             INT_MAX;
         char *c_command = 
@@ -251,12 +240,7 @@ void _kodo_(int sig_unused) {
             clear:
                 kd_sys("clear");
         } else if (strcmp(ptr_cmds, "exit") == 0) {
-            kodo_title("Kodo Toolchain | @ exit");
-            printf("exit\n");
-        
-            if (exit_signal()) {
-                exit(1);
-            }
+            exit(1);
         }
          else if (strcmp(ptr_cmds, "kill") == 0) {
             kodo_title("Kodo Toolchain | @ kill");
@@ -367,11 +351,7 @@ void _kodo_(int sig_unused) {
                         }
                         
                         if (_compiler_) {
-                            int ret = kd_sys(_compiler_);
-        
-                            if (ret != 0) {
-                                printf_error("Err detected from compiler..");
-                            }
+                            kd_sys(_compiler_);
                         }
                     }
         
