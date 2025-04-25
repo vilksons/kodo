@@ -77,46 +77,40 @@ void handle_sigint(int sig)
 
 void _kodo_(int sig_unused) {
     (void)sig_unused;
+    signal(SIGINT, handle_sigint);
 
     struct struct_of kodo = init_kodo();
     kodo.title(NULL);
     
     using_history();
 
-    signal(SIGINT, handle_sigint);
-
-    char *__vcommands__[] = { "exit", "clear", "kill", "title", "help",
-                              "gamemode", "pawncc", "compile", "running",
-                              "debug", "stop", "restart" };
-    int num_cmds = sizeof(__vcommands__) / sizeof(__vcommands__[0]);
+    char *commands_ok[] = { "exit", "clear", "kill", "title", "help",
+                            "gamemode", "pawncc", "compile", "running",
+                            "debug", "stop", "restart" };
 
     while (1) {
-        char *ptr_cmds = readline("kodo:~$ ");
-        if (ptr_cmds == NULL) 
+        char *pattern_COMMANDS =
+            readline("kodo:~$ ");
+        if (pattern_COMMANDS == NULL) 
             break;
+        if (strlen(pattern_COMMANDS) > 0)
+            add_history(pattern_COMMANDS);
 
-        if (strlen(ptr_cmds) > 0)
-            add_history(ptr_cmds);
-
-        int c_distance = 
-            INT_MAX;
-        char *c_command = 
-            NULL;
-
+        int c_distance = INT_MAX;
+        char *c_command = NULL;
+        int num_cmds = sizeof(commands_ok) / sizeof(commands_ok[0]);
         for (int i = 0; i < num_cmds; i++) {
-            int dist_kodo_cmds;
-            dist_kodo_cmds = kodo_cmds_check(ptr_cmds, __vcommands__[i]);
+            int dist_kodo_cmds = kodo_cmds_check(pattern_COMMANDS, commands_ok[i]);
             if (dist_kodo_cmds < c_distance) {
-                c_distance = dist_kodo_cmds;
-                c_command = __vcommands__[i];
+                c_distance = dist_kodo_cmds; c_command = commands_ok[i];
             }
         }
 
-        if (strncmp(ptr_cmds, "help", 4) == 0) {
+        if (strncmp(pattern_COMMANDS, "help", 4) == 0) {
             kodo_title("Kodo Toolchain | @ help");
 
             static char *arg;
-                arg = ptr_cmds + 7;
+                arg = pattern_COMMANDS + 7;
             while (*arg == ' ') arg++;
 
             if (strlen(arg) == 0) {
@@ -149,7 +143,7 @@ void _kodo_(int sig_unused) {
             }
             
             continue;
-        } else if (strcmp(ptr_cmds, "pawncc") == 0) {
+        } else if (strcmp(pattern_COMMANDS, "pawncc") == 0) {
             kodo_title("Kodo Toolchain | @ pawncc");
 
             char platform;
@@ -176,7 +170,7 @@ void _kodo_(int sig_unused) {
             }
 
             continue;
-        } else if (strcmp(ptr_cmds, "gamemode") == 0) {
+        } else if (strcmp(pattern_COMMANDS, "gamemode") == 0) {
             kodo_title("Kodo Toolchain | @ gamemode");
 
             static
@@ -204,21 +198,20 @@ void _kodo_(int sig_unused) {
             }
 
             break;
-        } else if (strcmp(ptr_cmds, "clear") == 0) {
+        } else if (strcmp(pattern_COMMANDS, "clear") == 0) {
             kodo_title("Kodo Toolchain | @ clear");
 
             clear:
                 kodo_sys("clear");
-        } else if (strcmp(ptr_cmds, "exit") == 0) {
+        } else if (strcmp(pattern_COMMANDS, "exit") == 0) {
             exit(1);
-        }
-         else if (strcmp(ptr_cmds, "kill") == 0) {
+        } else if (strcmp(pattern_COMMANDS, "kill") == 0) {
             kodo_title("Kodo Toolchain | @ kill");
 
             goto clear;
             _kodo_(0);
-        } else if (strncmp(ptr_cmds, "title", 5) == 0) {
-            char *arg = ptr_cmds + 6;
+        } else if (strncmp(pattern_COMMANDS, "title", 5) == 0) {
+            char *arg = pattern_COMMANDS + 6;
             while (*arg == ' ') arg++;
         
             if (*arg == '\0') {
@@ -228,10 +221,10 @@ void _kodo_(int sig_unused) {
             }
         
             continue;
-        } else if (strncmp(ptr_cmds, "compile", 7) == 0) {
+        } else if (strncmp(pattern_COMMANDS, "compile", 7) == 0) {
             kodo_title("Kodo Toolchain | @ compile");
             static char *arg;
-            arg = ptr_cmds + 7;
+            arg = pattern_COMMANDS + 7;
             while (*arg == ' ') arg++;
         
             static char *compile_arg1;
@@ -261,15 +254,14 @@ void _kodo_(int sig_unused) {
                     }
                 }
         
-                const char *fname = "kodo.toml";
-                FILE *__fp = fopen(fname, "r");
-                if (!__fp) {
-                    printf_error("Can't read file %s\n", fname);
+                FILE *procc_f = fopen("kodo.toml", "r");
+                if (!procc_f) {
+                    printf_error("Can't read file %s\n", "kodo.toml");
                 }
         
                 char errbuf[256];
-                toml_table_t *config = toml_parse_file(__fp, errbuf, sizeof(errbuf));
-                fclose(__fp);
+                toml_table_t *config = toml_parse_file(procc_f, errbuf, sizeof(errbuf));
+                fclose(procc_f);
         
                 if (!config) {
                     printf_error("parsing TOML: %s\n", errbuf);
@@ -330,7 +322,8 @@ void _kodo_(int sig_unused) {
                                     kodo_c_output_f_container,
                                     kd_compiler_opt);
                             } else {
-                                println("Can't locate %s", kd_gamemode_input);
+                                printf_color(COL_RED, "Can't locate: ");
+                                printf("%s\n", kd_gamemode_input);
                                 continue;
                             }
                         } else {
@@ -355,7 +348,8 @@ void _kodo_(int sig_unused) {
                                     kodo_c_output_f_container,
                                     kd_compiler_opt);
                             } else {
-                                println("Can't locate %s", compile_arg1);
+                                printf_color(COL_RED, "Can't locate: ");
+                                printf("%s\n", compile_arg1);
                                 continue;
                             }
                         }
@@ -392,9 +386,9 @@ void _kodo_(int sig_unused) {
         
                 free(ptr_sigA);
             }
-        } else if (strncmp(ptr_cmds, "running", 7) == 0 || strncmp(ptr_cmds, "debug", 7) == 0) {
+        } else if (strncmp(pattern_COMMANDS, "running", 7) == 0 || strncmp(pattern_COMMANDS, "debug", 7) == 0) {
             _running_:
-                if (strcmp(ptr_cmds, "debug") == 0) {
+                if (strcmp(pattern_COMMANDS, "debug") == 0) {
                     server_or_debug="debug";
                     kodo_title("Kodo Toolchain | @ debug");    
                 } else {
@@ -402,7 +396,7 @@ void _kodo_(int sig_unused) {
                 }
 
                 static char *arg;
-                    arg = ptr_cmds + 7;
+                    arg = pattern_COMMANDS + 7;
                 while (*arg == ' ') arg++;
 
                 char *arg1 = strtok(arg, " ");
@@ -453,21 +447,23 @@ void _kodo_(int sig_unused) {
                         }
 
                         printf_color(COL_YELLOW, "running..\n");
-                        usleep(2);
 
-                        snprintf(format_prompt, 126, "chmod 777 %s", ptr_samp);
-                        kodo_sys(format_prompt);
+                        chmod(ptr_samp, 0777);
                         snprintf(format_prompt, 126, "./%s", ptr_samp);
                         kodo_sys(format_prompt);
+
+                        sleep(2);
 
                         printf_color(COL_YELLOW, "Press enter to print logs..");
                         getchar();
 
-                        if (server_log) {
-                            snprintf(format_prompt, 126, "cat %s", "server_log.txt");
-                            kodo_sys(format_prompt);
+                        if (!server_log) {
+                            return;
                         }
-
+                        int ch;
+                        while ((ch = fgetc(server_log)) != EOF) {
+                            putchar(ch);
+                        }
                         fclose(server_log);
                     } else {
                         printf_color(COL_YELLOW, "running..\n");
@@ -482,25 +478,29 @@ void _kodo_(int sig_unused) {
                         }
 
                         printf_color(COL_YELLOW, "running..\n");
-                        usleep(2);
 
-                        snprintf(format_prompt, 126, "chmod 777 %s", ptr_openmp);
-                        kodo_sys(format_prompt);
+                        chmod(ptr_openmp, 0777);
                         snprintf(format_prompt, 126, "./%s", ptr_openmp);
                         kodo_sys(format_prompt);
 
+                        sleep(2);
+                        
                         printf_color(COL_YELLOW, "Press enter to print logs..");
                         getchar();
 
                         if (server_log) {
-                            snprintf(format_prompt, 126, "cat %s", "log.txt");
-                            kodo_sys(format_prompt);
+                            if (!server_log) {
+                                return;
+                            }
+                            int ch;
+                            while ((ch = fgetc(server_log)) != EOF) {
+                                putchar(ch);
+                            }
+                            fclose(server_log);
                         }
-
-                        fclose(server_log);
                     } else {
                         printf_color(COL_YELLOW, "running..\n");
-                        kodo_server_openmp(arg1);
+                        kodo_server_openmp(arg1, ptr_openmp);
                     }
                 } else if (!find_for_omp || !find_for_samp) {
                     printf_error("samp-server/open.mp server not found!");
@@ -530,30 +530,30 @@ void _kodo_(int sig_unused) {
 
                 if (format_prompt) free(format_prompt);
 
-        } else if (strcmp(ptr_cmds, "stop") == 0) {
+        } else if (strcmp(pattern_COMMANDS, "stop") == 0) {
             kodo_title("Kodo Toolchain | @ stop");
             kodo_server_stop_tasks();
             continue;
-        } else if (strcmp(ptr_cmds, "restart") == 0) {
+        } else if (strcmp(pattern_COMMANDS, "restart") == 0) {
             kodo_server_stop_tasks();
 
             sleep(2);
 
             goto _running_
                 ;
-        } else if (strcmp(ptr_cmds, "kodo") == 0) {
-            printf("Hello there!\n");
-        } else if (strcmp(ptr_cmds, c_command) != 0 && c_distance <= 1) {
+        } else if (strcmp(pattern_COMMANDS, "kodo") == 0) {
+            printf("Hello There!\n");
+        } else if (strcmp(pattern_COMMANDS, c_command) != 0 && c_distance <= 1) {
             kodo_title("Kodo Toolchain | @ undefined");
             println("Did you mean: '%s'?", c_command);
         } else {
-            if (strlen(ptr_cmds) > 0) {
+            if (strlen(pattern_COMMANDS) > 0) {
                 kodo_title("Kodo Toolchain | @ not found");
-                println("%s not found!", ptr_cmds);
+                println("%s not found!", pattern_COMMANDS);
             }
         }
 
-        if (ptr_cmds) free(ptr_cmds);
+        if (pattern_COMMANDS) free(pattern_COMMANDS);
     }
 }
 

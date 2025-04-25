@@ -1,0 +1,18 @@
+# don't forget, you need a mingw pack and cmake pack.
+# RHEL based
+  x64: dnf install make cmake cmake-filesystem mingw64-gcc mingw64-gcc-c++
+  x32: dnf install make cmake cmake-filesystem mingw32-gcc mingw32-gcc-c++
+# DEB based
+  x64: sudo apt-get install make cmake cmake-filesystem mingw-w64 g++-mingw-w64
+  x32: sudo apt-get install make cmake cmake-filesystem mingw-w64 g++-mingw-w64-i686
+# SUSE based
+  x64: sudo zypper install make cmake cmake-filesystem mingw64-gcc mingw64-gcc-c++
+  x32: sudo zypper install make cmake cmake-filesystem mingw32-gcc mingw32-gcc-c++
+# ARCH based
+  x64: sudo pacman -S make cmake mingw-w64-gcc mingw-w64-gcc-libs
+  x32: sudo pacman -S make cmake mingw-w64-gcc-i686 mingw-w64-gcc-libs-i686
+
+# compile windows pawncc with cmake linux non gui:
+mkdir build_win && cd build_win # first, you can create folder for output and cd
+cmake .. -DCMAKE_TOOLCHAIN_FILE=../windows-mingw.cmake # create cmake build 
+make # start process building

@@ -146,14 +146,14 @@ int kodo_toml_data(void)
         }
     }
 
-    FILE *__fp = fopen(fname, "r");
-    if (!__fp) {
+    FILE *procc_f = fopen(fname, "r");
+    if (!procc_f) {
         printf_error("Can't __read file %ss\n", fname);
     }
 
     char errbuf[256];
-    toml_table_t *config = toml_parse_file(__fp, errbuf, sizeof(errbuf));
-    fclose(__fp);
+    toml_table_t *config = toml_parse_file(procc_f, errbuf, sizeof(errbuf));
+    fclose(procc_f);
 
     if (!config) {
         printf_error("parsing TOML: %s\n", errbuf);
@@ -225,7 +225,6 @@ int kodo_sef_fdir(const char *sef_path,
         snprintf(path_buff, sizeof(path_buff), "%s/%s",
             sef_path, entry->d_name);
         if (stat(path_buff, &statbuf) == -1) {
-            perror("stat");
             continue;
         }
         if (S_ISDIR(statbuf.st_mode)) {
@@ -404,10 +403,10 @@ void kodo_download_file(const char *url,
     CURLcode
         __res;
     FILE
-        *__fp;
+        *procc_f;
 
-    __fp = fopen(fname, "wb");
-    if (__fp == NULL) {
+    procc_f = fopen(fname, "wb");
+    if (procc_f == NULL) {
         printf_crit("failed to open file for writing in 'kodo_download_file'");
         _kodo_(0);
     }
@@ -419,7 +418,7 @@ void kodo_download_file(const char *url,
     if (__curl) {
         curl_easy_setopt(__curl, CURLOPT_URL, url);
         curl_easy_setopt(__curl, CURLOPT_WRITEFUNCTION, write_file);
-        curl_easy_setopt(__curl, CURLOPT_WRITEDATA, __fp);
+        curl_easy_setopt(__curl, CURLOPT_WRITEDATA, procc_f);
         curl_easy_setopt(__curl, CURLOPT_FOLLOWLOCATION, 1L);
         curl_easy_setopt(__curl, CURLOPT_XFERINFOFUNCTION, progress_callback);
         curl_easy_setopt(__curl, CURLOPT_NOPROGRESS, 0L);
@@ -430,7 +429,7 @@ void kodo_download_file(const char *url,
             printf_crit("failed to download the file: %s\n", curl_easy_strerror(__res));
             curl_easy_cleanup(__curl);
             curl_global_cleanup();
-            fclose(__fp);
+            fclose(procc_f);
             _kodo_(0);
         }
 
@@ -453,7 +452,7 @@ void kodo_download_file(const char *url,
             kodo_extract_zip(fname, zip_of_pos);
         }
 
-        fclose(__fp);
+        fclose(procc_f);
         curl_easy_cleanup(__curl);
     } else {
         fprintf(stderr, "[err]: Failed to initialize curl session\n");

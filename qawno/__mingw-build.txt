@@ -1,0 +1,22 @@
+# don't forget, you need a mingw pack and cmake pack.
+# RHEL based
+  x64: dnf install make cmake cmake-filesystem mingw64-gcc mingw64-gcc-c++ mingw64-qt5-qtbase
+  x32: dnf install make cmake cmake-filesystem mingw32-gcc mingw32-gcc-c++ mingw32-qt5-qtbase
+# DEB based
+  x64: sudo apt-get install make cmake cmake-filesystem mingw-w64 g++-mingw-w64 qttools5-dev-tools qtbase5-dev mingw-w64-tools
+  x32: sudo apt-get install make cmake cmake-filesystem mingw-w64 g++-mingw-w64-i686 qttools5-dev-tools qtbase5-dev mingw-w64-tools
+# SUSE based
+  x64: sudo zypper install make cmake cmake-filesystem mingw64-gcc mingw64-gcc-c++ mingw64-libqt5-qtbase-devel
+  x32: sudo zypper install make cmake cmake-filesystem mingw32-gcc mingw32-gcc-c++ mingw32-libqt5-qtbase-devel
+# ARCH based
+  x64: sudo pacman -S make cmake mingw-w64-gcc mingw-w64-gcc-libs mingw-w64-qt5-base
+  x32: sudo pacman -S make cmake mingw-w64-gcc-i686 mingw-w64-gcc-libs-i686 mingw-w64-qt5-base
+
+# compile windows pawncc with cmake linux non gui:
+mkdir build_win && cd build_win # first, you can create folder for output and cd
+cmake .. \
+  -DCMAKE_SYSTEM_NAME=Windows \
+  -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc \
+  -DCMAKE_CXX_COMPILER=x86_64-w64-mingw32-g++ \
+  -DCMAKE_PREFIX_PATH=/usr/x86_64-w64-mingw32/sys-root/mingw/lib/cmake
+make # start process building

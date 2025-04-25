@@ -1,0 +1,18 @@
+# don't forget, you need a cmake pack.
+# RHEL based
+  x64: dnf install make cmake cmake-filesystem qt5-qtbase-devel
+  x32: dnf install make cmake cmake-filesystem qt5-qtbase-devel
+# DEB based
+  x64: sudo apt-get install make cmake cmake-filesystem qtbase5-dev
+  x32: sudo apt-get install make cmake cmake-filesystem qtbase5-dev
+# SUSE based
+  x64: sudo zypper install make cmake cmake-filesystem libqt5-qtbase-devel
+  x32: sudo zypper install make cmake cmake-filesystem libqt5-qtbase-devel
+# ARCH based
+  x64: sudo pacman -S make cmake qt5-base
+  x32: sudo pacman -S make cmake qt5-base
+  
+mkdir build_linux && cd build_linux # first, you can create folder for output and cd.
+cd build_linux
+cmake .. -DCMAKE_PREFIX_PATH=/path/to/cmake/Qt5 # change path to your cmake Qt5 path.
+make -j$(nproc) # start process building

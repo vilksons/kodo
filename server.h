@@ -6,6 +6,7 @@ void
 kodo_server_samp(const char *gamemode_arg,
                  const char *server_bin);
 void
-kodo_server_openmp(const char *gamemode_arg);
+kodo_server_openmp(const char *gamemode_arg,
+    const char *server_bin);
 
 #endif

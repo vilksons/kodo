@@ -1,0 +1,17 @@
+# don't forget, you need a cmake pack.
+# RHEL based
+  x64: dnf install make cmake cmake-filesystem
+  x32: dnf install make cmake cmake-filesystem
+# DEB based
+  x64: sudo apt-get install make cmake cmake-filesystem
+  x32: sudo apt-get install make cmake cmake-filesystem
+# SUSE based
+  x64: sudo zypper install make cmake cmake-filesystem
+  x32: sudo zypper install make cmake cmake-filesystem
+# ARCH based
+  x64: sudo pacman -S make cmake
+  x32: sudo pacman -S make cmake
+  
+mkdir build_linux && cd build_linux # first, you can create folder for output and cd.
+cmake .. # create cmake build 
+make # start process building

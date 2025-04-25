@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <stddef.h>
+#include <unistd.h>
 
 #include "cJson/cJSON.h"
 
@@ -72,10 +73,11 @@ kodo_server_samp(const char *gamemode_arg,
     fclose(serv_in);
     fclose(serv_out);
 
-    snprintf(cmd_buf, sizeof(cmd_buf), "chmod 777 %s", server_bin);
-    kodo_sys(cmd_buf);
+    chmod(server_bin, 0777);
     snprintf(cmd_buf, sizeof(cmd_buf), "./%s", server_bin);
     kodo_sys(cmd_buf);
+
+    sleep(2);
 
     printf_color(COL_YELLOW, "Press enter to print logs..");
     getchar();
@@ -83,16 +85,23 @@ kodo_server_samp(const char *gamemode_arg,
     FILE *server_log = fopen("server_log.txt", "r");
 
     if (server_log) {
+        if (!server_log) {
+            return;
+        }
+        int ch;
+        while ((ch = fgetc(server_log)) != EOF) {
+            putchar(ch);
+        }
         fclose(server_log);
-        snprintf(cmd_buf, sizeof(cmd_buf), "cat %s", "server_log.txt");
-        kodo_sys(cmd_buf);
     }
 
     remove("server.cfg");
-    snprintf(cmd_buf, sizeof(cmd_buf), "mv .%s.bak %s", "server.cfg", "server.cfg");
+    rename(".server.cfg.bak", "server.cfg");
+
     kodo_sys(cmd_buf);
 
-    if (server_or_debug && !strcmp(server_or_debug, "debug")) {
+    if (server_or_debug &&
+        !strcmp(server_or_debug, "debug")) {
         server_or_debug = NULL;
         kodo_sys("pkill -9 -f \"samp-server.exe\" && pkill -9 -f \"samp03svr\"");
     }
@@ -101,7 +110,8 @@ kodo_server_samp(const char *gamemode_arg,
 }
 
 void
-kodo_server_openmp(const char *gamemode_arg)
+kodo_server_openmp(const char *gamemode_arg,
+                   const char *server_bin)
 {
     cJSON *root = NULL, *pawn = NULL, *main_scripts = NULL;
     FILE *fp = NULL;
@@ -147,22 +157,35 @@ kodo_server_openmp(const char *gamemode_arg)
     free(main_njson);
     fclose(fp);
 
+    chmod(server_bin, 0777);
+    snprintf(cmd_buf, sizeof(cmd_buf), "./%s", server_bin);
+    kodo_sys(cmd_buf);
+    
+    sleep(2);
+
     printf_color(COL_YELLOW, "Press enter to print logs..");
     getchar();
 
     FILE *server_log = fopen("log.txt", "r");
 
     if (server_log) {
+        if (!server_log) {
+            return;
+        }
+        int ch;
+        while ((ch = fgetc(server_log)) != EOF) {
+            putchar(ch);
+        }
         fclose(server_log);
-        snprintf(cmd_buf, sizeof(cmd_buf), "cat %s", "log.txt");
-        kodo_sys(cmd_buf);
     }
 
     remove("config.json");
-    snprintf(cmd, sizeof(cmd), "mv %s %s", ".config.json.bak", "config.json");
+    rename(".config.json.bak", "config.json");
+
     kodo_sys(cmd);
 
-    if (server_or_debug && !strcmp(server_or_debug, "debug")) {
+    if (server_or_debug &&
+        !strcmp(server_or_debug, "debug")) {
         server_or_debug = NULL;
         kodo_sys("pkill -9 -f \"omp-server.exe\" && pkill -9 -f \"omp-server\"");
     }
