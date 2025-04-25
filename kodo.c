@@ -80,13 +80,6 @@ void _kodo_(int sig_unused) {
 
     struct struct_of kodo = init_kodo();
     kodo.title(NULL);
-
-    char *home = getenv("HOME");
-    if (home != NULL) {
-        char history_file[512];
-        snprintf(history_file, sizeof(history_file), "%s/.history", home);
-        read_history(history_file);
-    }
     
     using_history();
 
@@ -99,25 +92,12 @@ void _kodo_(int sig_unused) {
 
     while (1) {
         char *ptr_cmds = readline("kodo:~$ ");
-        if (ptr_cmds == NULL) {
+        if (ptr_cmds == NULL) 
             break;
-        }
 
-        char *malloc_dynamic_str = 
-            (char *)malloc(256 * sizeof(char));
-        if (malloc_dynamic_str == NULL) {
-            printf_color(COL_RED, "Memory allocation failed!\n");
-            break;
-        }
-        if (strlen(ptr_cmds) > 0) {
+        if (strlen(ptr_cmds) > 0)
             add_history(ptr_cmds);
 
-            if (home != NULL) {
-                char history_file[512];
-                snprintf(history_file, sizeof(history_file), "%s/.history", home);
-                write_history(history_file);
-            }
-        }
         int c_distance = 
             INT_MAX;
         char *c_command = 
@@ -578,7 +558,6 @@ void _kodo_(int sig_unused) {
         }
 
         if (ptr_cmds) free(ptr_cmds);
-        if (malloc_dynamic_str) free(malloc_dynamic_str);
     }
 }
 
