@@ -77,27 +77,27 @@ kodo_download_samp(const char *platform) {
     
     VersionInfo versions[] = {
         { 'A', "SA-MP 0.3.DL R1", 
-            "https://github.com/vilksons/files.sa-mp.com-Archive/raw/refs/heads/master/samp03DLsvr_R1.tar.gz",
+            "https://github.com/KrustyKoyle/files.sa-mp.com-Archive/raw/refs/heads/master/samp03DLsvr_R1.tar.gz",
             "samp03DLsvr_R1.tar.gz",
-            "https://github.com/vilksons/files.sa-mp.com-Archive/raw/refs/heads/master/samp03DL_svr_R1_win32.zip",
+            "https://github.com/KrustyKoyle/files.sa-mp.com-Archive/raw/refs/heads/master/samp03DL_svr_R1_win32.zip",
             "samp03DL_svr_R1_win32.zip"
         },
         { 'B', "SA-MP 0.3.7 R3", 
-            "https://github.com/vilksons/files.sa-mp.com-Archive/raw/refs/heads/master/samp037svr_R3.tar.gz",
+            "https://github.com/KrustyKoyle/files.sa-mp.com-Archive/raw/refs/heads/master/samp037svr_R3.tar.gz",
             "samp037svr_R3.tar.gz",
-            "https://github.com/vilksons/files.sa-mp.com-Archive/raw/refs/heads/master/samp037_svr_R3_win32.zip",
+            "https://github.com/KrustyKoyle/files.sa-mp.com-Archive/raw/refs/heads/master/samp037_svr_R3_win32.zip",
             "samp037_svr_R3_win32.zip"
         },
         { 'C', "SA-MP 0.3.7 R2-2-1", 
-            "https://github.com/vilksons/files.sa-mp.com-Archive/raw/refs/heads/master/samp037svr_R2-2-1.tar.gz",
+            "https://github.com/KrustyKoyle/files.sa-mp.com-Archive/raw/refs/heads/master/samp037svr_R2-2-1.tar.gz",
             "samp037svr_R2-2-1.tar.gz",
-            "https://github.com/vilksons/files.sa-mp.com-Archive/raw/refs/heads/master/samp037_svr_R2-1-1_win32.zip",
+            "https://github.com/KrustyKoyle/files.sa-mp.com-Archive/raw/refs/heads/master/samp037_svr_R2-1-1_win32.zip",
             "samp037_svr_R2-2-1_win32.zip"
         },
         { 'D', "SA-MP 0.3.7 R2-1-1", 
-            "https://github.com/vilksons/files.sa-mp.com-Archive/raw/refs/heads/master/samp037svr_R2-1.tar.gz",
+            "https://github.com/KrustyKoyle/files.sa-mp.com-Archive/raw/refs/heads/master/samp037svr_R2-1.tar.gz",
             "samp037svr_R2-1.tar.gz",
-            "https://github.com/vilksons/files.sa-mp.com-Archive/raw/refs/heads/master/samp037_svr_R2-1-1_win32.zip",
+            "https://github.com/KrustyKoyle/files.sa-mp.com-Archive/raw/refs/heads/master/samp037_svr_R2-1-1_win32.zip",
             "samp037_svr_R2-1-1_win32.zip"
         },
         { 'E', "OPEN.MP v1.4.0.2779",

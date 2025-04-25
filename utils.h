@@ -5,6 +5,15 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#define SEF_MAX_PATH_COUNT 28
+#define SEF_MAX_PATH_SIZE 128
+
+extern int kodo_sef_count;
+extern char kodo_sef_found[SEF_MAX_PATH_COUNT][SEF_MAX_PATH_SIZE];
+
+int kodo_sef_fdir(const char *sef_path,
+    const char *sef_name);
+
 extern const char *kodo_os;
 extern const char *kd_compiler_opt;
 extern const char *kd_gamemode_input;

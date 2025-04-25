@@ -28,6 +28,9 @@
 #include "utils.h"
 #include "kodo.h"
 
+int kodo_sef_count = 0;
+char kodo_sef_found[SEF_MAX_PATH_COUNT][SEF_MAX_PATH_SIZE];
+
 const char *kodo_os = NULL;
 const char *server_or_debug = NULL;
 const char *kd_compiler_opt = NULL;
@@ -203,6 +206,41 @@ int kodo_cmds_check(const char *_str1, const char *_str2)
     return kodo_res;
 }
 
+int kodo_sef_fdir(const char *sef_path,
+                  const char *sef_name)
+{
+    char path_buff[SEF_MAX_PATH_SIZE];
+    struct dirent *entry;
+    struct stat statbuf;
+    int found = 0;
+    DIR *dir;
+    if ((dir = opendir(sef_path)) == NULL) {
+        perror("opendir");
+        _kodo_(0);
+    }
+    while ((entry = readdir(dir)) != NULL && kodo_sef_count < SEF_MAX_PATH_COUNT) {
+        if (!strcmp(entry->d_name, ".") ||
+            !strcmp(entry->d_name, ".."))
+            continue;
+        snprintf(path_buff, sizeof(path_buff), "%s/%s",
+            sef_path, entry->d_name);
+        if (stat(path_buff, &statbuf) == -1) {
+            perror("stat");
+            continue;
+        }
+        if (S_ISDIR(statbuf.st_mode)) {
+            found += kodo_sef_fdir(path_buff, sef_name);
+        } else if (strcmp(entry->d_name, sef_name) == 0) {
+            strncpy(kodo_sef_found[kodo_sef_count], path_buff, SEF_MAX_PATH_SIZE);
+            kodo_sef_count++;
+            found++;
+        }
+    }
+
+    closedir(dir);
+    return found; 
+}
+
 int arch_copy_data(
               struct archive *ar, struct archive *aw)
 {
@@ -245,7 +283,7 @@ int kodo_extract_tar_gz(const char *tar_files) {
 
     __read = archive_read_open_filename(__arch, tar_files, 10240);
     if (__read != ARCHIVE_OK) {
-        printf_crit("Can't resume. sys can't write/open file %s", tar_files);
+        printf("Can't resume. sys can't write/open file %s\n", tar_files);
         _kodo_(0);
     }
 
@@ -280,7 +318,7 @@ int kodo_extract_zip(
     archive_read_support_filter_all(__arch);
 
     if ((__read = archive_read_open_filename(__arch, zip_path, 10240))) {
-        printf_crit("Can't resume. sys can't write/open file %s", archive_error_string(__arch));
+        printf("Can't resume. sys can't write/open file %s\n", archive_error_string(__arch));
         _kodo_(0);
     }
 

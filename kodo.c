@@ -8,18 +8,18 @@
  * Compile with GCC or CLANG
  * Required Library: build-essential, clang. libcurl4-openssl-dev, libncurses-dev, libarchive-dev
  * 
- * (default compile) -> gcc -D_GNU_SOURCE -g -Os -s kodo.c utils.c package.c compiler.c server.c \
+ * (default compile) -> gcc -D_GNU_SOURCE -g -Os -s kodo.c utils.c package.c server.c \
     tomlc99/toml.c cJson/cJSON.c -o kodo \
         -lm -lcurl -lncurses -lreadline -larchive
  * (with checking) -> gcc -D_GNU_SOURCE -g -fsanitize=address -fno-omit-frame-pointer -Os \
-    -s kodo.c utils.c package.c compiler.c server.c \
+    -s kodo.c utils.c package.c server.c \
         tomlc99/toml.c cJson/cJSON.c -o kodo \
             -lm -lcurl -lncurses -lreadline -larchive
- * (default compile) -> clang -D_GNU_SOURCE -g -Os -s kodo.c utils.c package.c compiler.c server.c \
+ * (default compile) -> clang -D_GNU_SOURCE -g -Os -s kodo.c utils.c package.c server.c \
     tomlc99/toml.c cJson/cJSON.c -o kodo \
         -lm -lcurl -lncurses -lreadline -larchive
     (with checking) -> clang -D_GNU_SOURCE -g -fsanitize=address -fno-omit-frame-pointer -Os \
-    -s kodo.c utils.c package.c compiler.c server.c \
+    -s kodo.c utils.c package.c server.c \
         tomlc99/toml.c cJson/cJSON.c -o kodo \
             -lm -lcurl -lncurses -lreadline -larchive
  
@@ -62,7 +62,6 @@
 #include "color.h"
 #include "utils.h"
 #include "package.h"
-#include "compiler.h"
 #include "kodo.h"
 #include "server.h"
 
@@ -261,7 +260,6 @@ void _kodo_(int sig_unused) {
             continue;
         } else if (strncmp(ptr_cmds, "compile", 7) == 0) {
             kodo_title("Kodo Toolchain | @ compile");
-        
             static char *arg;
             arg = ptr_cmds + 7;
             while (*arg == ' ') arg++;
@@ -275,8 +273,12 @@ void _kodo_(int sig_unused) {
                 ptr_pawncc = "pawncc.exe";
             else if (__kodo_os__ == 0)
                 ptr_pawncc = "pawncc";
+
+            char kodo_c_output_f_container[520];
+            int format_size_c_f_container = sizeof(kodo_c_output_f_container);
         
-            int find_pawncc = execute_sfpawncc(".", ptr_pawncc);
+            int find_pawncc = kodo_sef_fdir(".", ptr_pawncc);
+
             if (find_pawncc == 1) {
                 static char *_compiler_ = NULL;
                 static size_t format_size_compiler = 276;
@@ -336,24 +338,60 @@ void _kodo_(int sig_unused) {
                             if (kodo_gmodes.ok) {
                                 kd_gamemode_input = kodo_gmodes.u.s;
                             }
-                            snprintf(_compiler_, format_size_compiler, "%s %s \"%s\" -o\"%s\" \"%s\"",
-                                pcc_found[0],
-                                all_paths,
-                                kd_gamemode_input,
-                                kd_gamemode_output,
-                                kd_compiler_opt);
+                            
+                            int find_gamemodes = kodo_sef_fdir(".", kd_gamemode_input);
+
+                            if (find_gamemodes == 1) {
+                                char* container_output = strdup(kodo_sef_found[1]);
+                                char* f_last_slash_container = strrchr(container_output, '/');
+                                if (f_last_slash_container != NULL && *(f_last_slash_container + 1) != '\0') {
+                                    *(f_last_slash_container + 1) = '\0';
+                                }
+
+                                snprintf(kodo_c_output_f_container, format_size_c_f_container, "%s%s",
+                                    container_output, kd_gamemode_output);
+
+                                kd_gamemode_input=strdup(kodo_sef_found[1]);
+
+                                snprintf(_compiler_, format_size_compiler, "%s %s \"%s\" -o\"%s\" \"%s\"",
+                                    kodo_sef_found[0],
+                                    all_paths,
+                                    kd_gamemode_input,
+                                    kodo_c_output_f_container,
+                                    kd_compiler_opt);
+                            } else {
+                                println("Can't locate %s", kd_gamemode_input);
+                                continue;
+                            }
                         } else {
-                            snprintf(_compiler_, format_size_compiler, "%s %s \"%s\" -o\"%s\" \"%s\"",
-                                pcc_found[0],
-                                all_paths,
-                                compile_arg1,
-                                kd_gamemode_output,
-                                kd_compiler_opt);
+                            int find_gamemodes_arg1 = kodo_sef_fdir(".", compile_arg1);
+
+                            if (find_gamemodes_arg1 == 1) {
+                                char* container_output = strdup(kodo_sef_found[1]);
+                                char* f_last_slash_container = strrchr(container_output, '/');
+                                if (f_last_slash_container != NULL && *(f_last_slash_container + 1) != '\0') {
+                                    *(f_last_slash_container + 1) = '\0';
+                                }
+
+                                snprintf(kodo_c_output_f_container, format_size_c_f_container, "%s%s",
+                                    container_output, kd_gamemode_output);
+
+                                compile_arg1=strdup(kodo_sef_found[1]);
+
+                                snprintf(_compiler_, format_size_compiler, "%s %s \"%s\" -o\"%s\" \"%s\"",
+                                    kodo_sef_found[0],
+                                    all_paths,
+                                    compile_arg1,
+                                    kodo_c_output_f_container,
+                                    kd_compiler_opt);
+                            } else {
+                                println("Can't locate %s", compile_arg1);
+                                continue;
+                            }
                         }
                         
-                        if (_compiler_) {
+                        if (_compiler_) 
                             kodo_fork_sys(_compiler_);
-                        }
                     }
         
                     if (_compiler_)
