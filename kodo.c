@@ -9,7 +9,7 @@
  * Required Library: build-essential, clang. libcurl4-openssl-dev, libncurses-dev, libarchive-dev
  * 
  * (default compile) - build with Make, Makefile.
- * `make`
+ * build with `$ make`
  * (for windows) - build with Make, MinGW x86_64, Makefile.
  * moved or delete "Makefile" Linux and rename "wMakefile" to "Makefile" and use `$ make`
  *
