@@ -65,18 +65,8 @@
 #include "kodo.h"
 #include "server.h"
 
-int kodo_fork_sys(const char *cmd) {
-    FILE *fp = popen(cmd, "r");
-    if (fp == NULL) {
-        perror("Error:");
-        return -1;
-    }
-    char kd_sys_buff[256];
-    while (fgets(kd_sys_buff, sizeof(kd_sys_buff), fp) != NULL)
-        printf("%s", kd_sys_buff);
-
-    int status = pclose(fp);
-    return status;
+inline int kodo_sys(const char *cmd) {
+    return system(cmd);
 }
 
 void handle_sigint(int sig)
@@ -238,7 +228,7 @@ void _kodo_(int sig_unused) {
             kodo_title("Kodo Toolchain | @ clear");
 
             clear:
-                kodo_fork_sys("clear");
+                kodo_sys("clear");
         } else if (strcmp(ptr_cmds, "exit") == 0) {
             exit(1);
         }
@@ -391,7 +381,7 @@ void _kodo_(int sig_unused) {
                         }
                         
                         if (_compiler_) 
-                            kodo_fork_sys(_compiler_);
+                            kodo_sys(_compiler_);
                     }
         
                     if (_compiler_)
@@ -465,15 +455,9 @@ void _kodo_(int sig_unused) {
                     ptr_samp="samp03svr";
                     ptr_openmp="omp-server";
                 }
-
-                static FILE
-                    *file_s = NULL;
-                if (file_s == NULL)
-                    fopen(ptr_samp, "r");
-                FILE
-                    *file_m = NULL;
-                if (file_m == NULL)
-                    fopen(ptr_samp, "r");
+                
+                FILE *file_s = fopen(ptr_samp, "r");
+                FILE *file_m = fopen(ptr_openmp, "r");
 
                 if (file_s)
                     find_for_samp=0x1;
@@ -492,22 +476,23 @@ void _kodo_(int sig_unused) {
                             remove(srv_log_samp);
                         }
 
-                        printf_color(COL_YELLOW, "running...");
-                        usleep(500000);
+                        printf_color(COL_YELLOW, "running..\n");
+                        usleep(2);
 
                         snprintf(format_prompt, 126, "chmod 777 %s", ptr_samp);
-                        kodo_fork_sys(format_prompt);
+                        kodo_sys(format_prompt);
                         snprintf(format_prompt, 126, "./%s", ptr_samp);
-                        kodo_fork_sys(format_prompt);
+                        kodo_sys(format_prompt);
 
                         printf_color(COL_YELLOW, "Press enter to print logs..");
                         getchar();
 
                         if (__samp_log) {
                             snprintf(format_prompt, 126, "cat %s", srv_log_samp);
-                            kodo_fork_sys(format_prompt);
+                            kodo_sys(format_prompt);
                         }
                     } else {
+                        printf_color(COL_YELLOW, "running..\n");
                         kodo_server_samp(arg1, ptr_samp);
                     }
                 } else if (find_for_omp == 0x1) {
@@ -522,22 +507,23 @@ void _kodo_(int sig_unused) {
                             remove(srv_log_omp);
                         }
 
-                        printf_color(COL_YELLOW, "running...");
-                        usleep(500000);
+                        printf_color(COL_YELLOW, "running..\n");
+                        usleep(2);
 
                         snprintf(format_prompt, 126, "chmod 777 %s", ptr_openmp);
-                        kodo_fork_sys(format_prompt);
+                        kodo_sys(format_prompt);
                         snprintf(format_prompt, 126, "./%s", ptr_openmp);
-                        kodo_fork_sys(format_prompt);
+                        kodo_sys(format_prompt);
 
                         printf_color(COL_YELLOW, "Press enter to print logs..");
                         getchar();
 
                         if (__omp_log) {
                             snprintf(format_prompt, 126, "cat %s", srv_log_omp);
-                            kodo_fork_sys(format_prompt);
+                            kodo_sys(format_prompt);
                         }
                     } else {
+                        printf_color(COL_YELLOW, "running..\n");
                         kodo_server_openmp(arg1);
                     }
                 } else if (!find_for_omp || !find_for_samp) {
@@ -575,7 +561,7 @@ void _kodo_(int sig_unused) {
         } else if (strcmp(ptr_cmds, "restart") == 0) {
             kodo_server_stop_tasks();
 
-            usleep(500000);
+            sleep(2);
 
             goto _running_
                 ;
@@ -600,5 +586,6 @@ int main(void) {
     /* main is not using. */
     kodo_toml_data();
     _kodo_(0);
+
     return 0;
 }

@@ -50,64 +50,46 @@ struct struct_of init_kodo(void) {
     return kodo;
 }
 
-void printf_error(const char *format, ...) {
+void printf_color(
+                  const char *color, const char *format, ...)
+{
     va_list args;
     va_start(args, format);
 
-    printf("%s", COL_RED);
-    printf("error: ");
+    printf("%s", color);
     vprintf(format, args);
     printf("%s", COL_DEFAULT);
 
     va_end(args);
 }
 
-void printf_success(const char *format, ...) {
+void println(const char* fmt, ...) {
     va_list args;
-    va_start(args, format);
-
-    printf("%s", COL_YELLOW);
-    printf("success: ");
-    vprintf(format, args);
-    printf("%s", COL_DEFAULT);
-
+    va_start(args, fmt);
+    vprintf(fmt, args);
+    printf("\n");
     va_end(args);
 }
 
+void printf_succes(const char *format, ...) {
+    printf_color(COL_YELLOW, "succes: ");
+    printf_color(COL_DEFAULT, "%s\n", format);
+}
 void printf_info(const char *format, ...) {
-    va_list args;
-    va_start(args, format);
-
-    printf("%s", COL_YELLOW);
-    printf("info: ");
-    vprintf(format, args);
-    printf("%s", COL_DEFAULT);
-
-    va_end(args);
+    printf_color(COL_YELLOW, "info: ");
+    printf_color(COL_DEFAULT, "%s\n", format);
 }
-
 void printf_warning(const char *format, ...) {
-    va_list args;
-    va_start(args, format);
-
-    printf("%s", COL_GREEN);
-    printf("warning: ");
-    vprintf(format, args);
-    printf("%s", COL_DEFAULT);
-
-    va_end(args);
+    printf_color(COL_GREEN, "warning: ");
+    printf_color(COL_DEFAULT, "%s\n", format);
 }
-
+void printf_error(const char *format, ...) {
+    printf_color(COL_RED, "error: ");
+    printf_color(COL_DEFAULT, "%s\n", format);
+}
 void printf_crit(const char *format, ...) {
-    va_list args;
-    va_start(args, format);
-
-    printf("%s", COL_RED);
-    printf("critical: ");
-    vprintf(format, args);
-    printf("%s", COL_DEFAULT);
-
-    va_end(args);
+    printf_color(COL_RED, "crit: ");
+    printf_color(COL_DEFAULT, "%s\n", format);
 }
 
 int kodo_is_windows(void) {

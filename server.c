@@ -24,7 +24,7 @@ void kodo_server_stop_tasks(void)
             "omp-server.exe", // theree - omp windows
             "omp-server" // four - omp linux
     );
-    kodo_fork_sys(format_sys);
+    kodo_sys(format_sys);
 
     if (format_sys) {
         free(format_sys);
@@ -43,7 +43,7 @@ kodo_server_samp(const char *gamemode_arg,
     char g_line[64];
 
     snprintf(cmd_buf, sizeof(cmd_buf), "cp %s .%s.bak", "server.cfg", "server.cfg");
-    kodo_fork_sys(cmd_buf);
+    kodo_sys(cmd_buf);
 
     serv_in = fopen(".server.cfg.bak", "r");
     if (!serv_in) {
@@ -73,23 +73,23 @@ kodo_server_samp(const char *gamemode_arg,
     fclose(serv_out);
 
     snprintf(cmd_buf, sizeof(cmd_buf), "chmod 777 %s", server_bin);
-    kodo_fork_sys(cmd_buf);
+    kodo_sys(cmd_buf);
     snprintf(cmd_buf, sizeof(cmd_buf), "./%s", server_bin);
-    kodo_fork_sys(cmd_buf);
+    kodo_sys(cmd_buf);
 
     serv_log = fopen("server_log.txt", "r");
     if (serv_log) {
         fclose(serv_log);
-        kodo_fork_sys("cat server_log.txt");
+        kodo_sys("cat server_log.txt");
     }
 
     remove("server.cfg");
     snprintf(cmd_buf, sizeof(cmd_buf), "mv .%s.bak %s", "server.cfg", "server.cfg");
-    kodo_fork_sys(cmd_buf);
+    kodo_sys(cmd_buf);
 
     if (!strcmp(server_or_debug, "debug")) {
         server_or_debug = NULL;
-        kodo_fork_sys("pkill -9 -f \"samp-server.exe\" && pkill -9 -f \"samp03svr\"");
+        kodo_sys("pkill -9 -f \"samp-server.exe\" && pkill -9 -f \"samp03svr\"");
     }
 
 serv_out:
@@ -105,7 +105,7 @@ kodo_server_openmp(const char *gamemode_arg)
     char cmd[128];
 
     snprintf(cmd, sizeof(cmd), "cp %s %s", "config.json", ".config.json.bak");
-    kodo_fork_sys(cmd);
+    kodo_sys(cmd);
 
     fp = fopen("config.json", "r");
     if (!fp) {
@@ -144,15 +144,15 @@ kodo_server_openmp(const char *gamemode_arg)
     printf_color(COL_YELLOW, "Press enter to print logs..");
     getchar();
     snprintf(cmd, sizeof(cmd), "cat log.txt");
-    kodo_fork_sys(cmd);
+    kodo_sys(cmd);
 
     remove("config.json");
     snprintf(cmd, sizeof(cmd), "mv %s %s", ".config.json.bak", "config.json");
-    kodo_fork_sys(cmd);
+    kodo_sys(cmd);
 
     if (!strcmp(server_or_debug, "debug")) {
         server_or_debug = NULL;
-        kodo_fork_sys("pkill -9 -f \"omp-server.exe\" && pkill -9 -f \"omp-server\"");
+        kodo_sys("pkill -9 -f \"omp-server.exe\" && pkill -9 -f \"omp-server\"");
     }
 
     cJSON_Delete(root);
