@@ -66,7 +66,7 @@
 #include "kodo.h"
 #include "server.h"
 
-static inline int kodo_fork_sys(const char *cmd) {
+int kodo_fork_sys(const char *cmd) {
     FILE *fp = popen(cmd, "r");
     if (fp == NULL) {
         return -1;
