@@ -73,9 +73,16 @@ kodo_server_samp(const char *gamemode_arg,
     fclose(serv_in);
     fclose(serv_out);
 
+#ifdef _WIN32
+    char cmd_path[128];
+    snprintf(cmd_path, sizeof(cmd_path), "%s", server_bin);
+    kodo_sys(cmd_path);
+#else
     chmod(server_bin, 0777);
-    snprintf(cmd_buf, sizeof(cmd_buf), "./%s", server_bin);
-    kodo_sys(cmd_buf);
+    char cmd_path[128];
+    snprintf(cmd_path, sizeof(cmd_path), "./%s", server_bin);
+    kodo_sys(cmd_path);
+#endif
 
     sleep(2);
 
@@ -157,10 +164,17 @@ kodo_server_openmp(const char *gamemode_arg,
     free(main_njson);
     fclose(fp);
 
+#ifdef _WIN32
+    char cmd_path[128];
+    snprintf(cmd_path, sizeof(cmd_path), "%s", server_bin);
+    kodo_sys(cmd_path);
+#else
     chmod(server_bin, 0777);
-    snprintf(cmd_buf, sizeof(cmd_buf), "./%s", server_bin);
-    kodo_sys(cmd_buf);
-    
+    char cmd_path[128];
+    snprintf(cmd_path, sizeof(cmd_path), "./%s", server_bin);
+    kodo_sys(cmd_path);
+#endif
+
     sleep(2);
 
     printf_color(COL_YELLOW, "Press enter to print logs..");

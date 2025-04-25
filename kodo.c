@@ -11,18 +11,16 @@
  * (default compile) -> gcc -D_GNU_SOURCE -g -Os -s kodo.c utils.c package.c server.c \
     tomlc99/toml.c cJson/cJSON.c -o kodo \
         -lm -lcurl -lncurses -lreadline -larchive
- * (with checking) -> gcc -D_GNU_SOURCE -g -fsanitize=address -fno-omit-frame-pointer -Os \
-    -s kodo.c utils.c package.c server.c \
-        tomlc99/toml.c cJson/cJSON.c -o kodo \
-            -lm -lcurl -lncurses -lreadline -larchive
+ * (windows .exe) -> gcc -D_GNU_SOURCE -g -Os -s kodo.c utils.c package.c server.c \
+    tomlc99/toml.c cJson/cJSON.c -o kodo.exe \
+        -lm -lcurl -lncurses -lreadline -larchive
  * (default compile) -> clang -D_GNU_SOURCE -g -Os -s kodo.c utils.c package.c server.c \
     tomlc99/toml.c cJson/cJSON.c -o kodo \
         -lm -lcurl -lncurses -lreadline -larchive
-    (with checking) -> clang -D_GNU_SOURCE -g -fsanitize=address -fno-omit-frame-pointer -Os \
-    -s kodo.c utils.c package.c server.c \
-        tomlc99/toml.c cJson/cJSON.c -o kodo \
-            -lm -lcurl -lncurses -lreadline -larchive
- 
+ * (windows .exe) -> clang -D_GNU_SOURCE -g -Os -s kodo.c utils.c package.c server.c \
+    tomlc99/toml.c cJson/cJSON.c -o kodo.exe \
+        -lm -lcurl -lncurses -lreadline -larchive
+ *
  * If you want to open the code in the terminal without running it manually using the terminal, you can run the following commands.
     * nano ~/.bashrc - or zsh
     * put this at the bottom: alias kodo='/path/to/program/of/kodo'
@@ -448,9 +446,16 @@ void _kodo_(int sig_unused) {
 
                         printf_color(COL_YELLOW, "running..\n");
 
-                        chmod(ptr_samp, 0777);
-                        snprintf(format_prompt, 126, "./%s", ptr_samp);
-                        kodo_sys(format_prompt);
+#ifdef _WIN32
+                            char cmd_path[128];
+                            snprintf(cmd_path, sizeof(cmd_path), "%s", ptr_samp);
+                            kodo_sys(cmd_path);
+#else
+                            chmod(ptr_samp, 0777);
+                            char cmd_path[128];
+                            snprintf(cmd_path, sizeof(cmd_path), "./%s", ptr_samp);
+                            kodo_sys(cmd_path);
+#endif
 
                         sleep(2);
 
@@ -479,12 +484,19 @@ void _kodo_(int sig_unused) {
 
                         printf_color(COL_YELLOW, "running..\n");
 
-                        chmod(ptr_openmp, 0777);
-                        snprintf(format_prompt, 126, "./%s", ptr_openmp);
-                        kodo_sys(format_prompt);
+#ifdef _WIN32
+                            char cmd_path[128];
+                            snprintf(cmd_path, sizeof(cmd_path), "%s", ptr_openmp);
+                            kodo_sys(cmd_path);
+#else
+                            chmod(ptr_openmp, 0777);
+                            char cmd_path[128];
+                            snprintf(cmd_path, sizeof(cmd_path), "./%s", ptr_openmp);
+                            kodo_sys(cmd_path);
+#endif
 
                         sleep(2);
-                        
+
                         printf_color(COL_YELLOW, "Press enter to print logs..");
                         getchar();
 
