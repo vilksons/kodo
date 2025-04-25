@@ -82,10 +82,6 @@ void _kodo_(int sig_unused) {
     
     using_history();
 
-    char *commands_ok[] = { "exit", "clear", "kill", "title", "help",
-                            "gamemode", "pawncc", "compile", "running",
-                            "debug", "stop", "restart" };
-
     while (1) {
         char *pattern_COMMANDS =
             readline("kodo:~$ ");
@@ -94,6 +90,10 @@ void _kodo_(int sig_unused) {
         if (strlen(pattern_COMMANDS) > 0)
             add_history(pattern_COMMANDS);
 
+        char *commands_ok[] = { "exit", "clear", "kill", "title", "help",
+                                "gamemode", "pawncc", "compile", "running",
+                                "debug", "stop", "restart"
+                              };
         int c_distance = INT_MAX;
         char *c_command = NULL;
         int num_cmds = sizeof(commands_ok) / sizeof(commands_ok[0]);
@@ -446,7 +446,10 @@ void _kodo_(int sig_unused) {
 
                         printf_color(COL_YELLOW, "running..\n");
 
-#ifdef _WIN32
+#if defined __WIN32__ || \
+    defined _WIN32 || \
+    defined WIN32 || \
+    defined __NT__
                             char cmd_path[128];
                             snprintf(cmd_path, sizeof(cmd_path), "%s", ptr_samp);
                             kodo_sys(cmd_path);
@@ -484,7 +487,10 @@ void _kodo_(int sig_unused) {
 
                         printf_color(COL_YELLOW, "running..\n");
 
-#ifdef _WIN32
+#if defined __WIN32__ || \
+    defined _WIN32 || \
+    defined WIN32 || \
+    defined __NT__
                             char cmd_path[128];
                             snprintf(cmd_path, sizeof(cmd_path), "%s", ptr_openmp);
                             kodo_sys(cmd_path);
