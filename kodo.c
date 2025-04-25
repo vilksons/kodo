@@ -66,7 +66,7 @@
 #include "kodo.h"
 #include "server.h"
 
-static inline int kd_sys(const char *cmd) {
+static inline int kodo_fork_sys(const char *cmd) {
     FILE *fp = popen(cmd, "r");
     if (fp == NULL) {
         return -1;
@@ -238,7 +238,7 @@ void _kodo_(int sig_unused) {
             kodo_title("Kodo Toolchain | @ clear");
 
             clear:
-                kd_sys("clear");
+                kodo_fork_sys("clear");
         } else if (strcmp(ptr_cmds, "exit") == 0) {
             exit(1);
         }
@@ -351,7 +351,7 @@ void _kodo_(int sig_unused) {
                         }
                         
                         if (_compiler_) {
-                            kd_sys(_compiler_);
+                            kodo_fork_sys(_compiler_);
                         }
                     }
         
@@ -457,16 +457,16 @@ void _kodo_(int sig_unused) {
                         usleep(500000);
 
                         snprintf(format_prompt, 126, "chmod 777 %s", ptr_samp);
-                        kd_sys(format_prompt);
+                        kodo_fork_sys(format_prompt);
                         snprintf(format_prompt, 126, "./%s", ptr_samp);
-                        kd_sys(format_prompt);
+                        kodo_fork_sys(format_prompt);
 
                         printf_color(COL_YELLOW, "Press enter to print logs..");
                         getchar();
 
                         if (__samp_log) {
                             snprintf(format_prompt, 126, "cat %s", srv_log_samp);
-                            kd_sys(format_prompt);
+                            kodo_fork_sys(format_prompt);
                         }
                     } else {
                         kodo_server_samp(arg1, ptr_samp);
@@ -487,16 +487,16 @@ void _kodo_(int sig_unused) {
                         usleep(500000);
 
                         snprintf(format_prompt, 126, "chmod 777 %s", ptr_openmp);
-                        kd_sys(format_prompt);
+                        kodo_fork_sys(format_prompt);
                         snprintf(format_prompt, 126, "./%s", ptr_openmp);
-                        kd_sys(format_prompt);
+                        kodo_fork_sys(format_prompt);
 
                         printf_color(COL_YELLOW, "Press enter to print logs..");
                         getchar();
 
                         if (__omp_log) {
                             snprintf(format_prompt, 126, "cat %s", srv_log_omp);
-                            kd_sys(format_prompt);
+                            kodo_fork_sys(format_prompt);
                         }
                     } else {
                         kodo_server_openmp(arg1);
