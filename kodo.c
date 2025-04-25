@@ -446,14 +446,10 @@ void _kodo_(int sig_unused) {
 
                 if (find_for_samp == 0x1) {
                     if (*arg == '\0') {
-                        const char *srv_log_samp = "server_log.txt";
-                        static
-                            FILE *__samp_log = NULL;
-                        if (__samp_log == NULL)
-                            fopen(srv_log_samp, "r");
+                        FILE *server_log = fopen("server_log.txt", "r");
 
-                        if (__samp_log) {
-                            remove(srv_log_samp);
+                        if (server_log) {
+                            remove("server_log.txt");
                         }
 
                         printf_color(COL_YELLOW, "running..\n");
@@ -467,24 +463,22 @@ void _kodo_(int sig_unused) {
                         printf_color(COL_YELLOW, "Press enter to print logs..");
                         getchar();
 
-                        if (__samp_log) {
-                            snprintf(format_prompt, 126, "cat %s", srv_log_samp);
+                        if (server_log) {
+                            snprintf(format_prompt, 126, "cat %s", "server_log.txt");
                             kodo_sys(format_prompt);
                         }
+
+                        fclose(server_log);
                     } else {
                         printf_color(COL_YELLOW, "running..\n");
                         kodo_server_samp(arg1, ptr_samp);
                     }
                 } else if (find_for_omp == 0x1) {
                     if (*arg == '\0') {
-                        const char *srv_log_omp = "log.txt";
-                        static
-                            FILE *__omp_log = NULL;
-                        if (__omp_log == NULL)
-                            fopen(srv_log_omp, "r");
+                        FILE *server_log = fopen("log.txt", "r");
 
-                        if (__omp_log) {
-                            remove(srv_log_omp);
+                        if (server_log) {
+                            remove("log.txt");
                         }
 
                         printf_color(COL_YELLOW, "running..\n");
@@ -498,10 +492,12 @@ void _kodo_(int sig_unused) {
                         printf_color(COL_YELLOW, "Press enter to print logs..");
                         getchar();
 
-                        if (__omp_log) {
-                            snprintf(format_prompt, 126, "cat %s", srv_log_omp);
+                        if (server_log) {
+                            snprintf(format_prompt, 126, "cat %s", "log.txt");
                             kodo_sys(format_prompt);
                         }
+
+                        fclose(server_log);
                     } else {
                         printf_color(COL_YELLOW, "running..\n");
                         kodo_server_openmp(arg1);

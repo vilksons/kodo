@@ -37,7 +37,7 @@ void
 kodo_server_samp(const char *gamemode_arg,
                  const char *server_bin)
 {
-    FILE *serv_in = NULL, *serv_out = NULL, *serv_log = NULL;
+    FILE *serv_in = NULL, *serv_out = NULL;
     int found_gamemode = 0;
     char cmd_buf[256];
     char g_line[64];
@@ -48,13 +48,13 @@ kodo_server_samp(const char *gamemode_arg,
     serv_in = fopen(".server.cfg.bak", "r");
     if (!serv_in) {
         printf_error("failed to open backup config");
-        goto serv_out;
+        _kodo_(0);
     }
     serv_out = fopen("server.cfg", "w");
     if (!serv_out) {
         printf_error("failed to write new config");
         fclose(serv_in);
-        goto serv_out;
+        _kodo_(0);
     }
 
     while (fgets(g_line, sizeof(g_line), serv_in)) {
@@ -77,22 +77,26 @@ kodo_server_samp(const char *gamemode_arg,
     snprintf(cmd_buf, sizeof(cmd_buf), "./%s", server_bin);
     kodo_sys(cmd_buf);
 
-    serv_log = fopen("server_log.txt", "r");
-    if (serv_log) {
-        fclose(serv_log);
-        kodo_sys("cat server_log.txt");
+    printf_color(COL_YELLOW, "Press enter to print logs..");
+    getchar();
+
+    FILE *server_log = fopen("server_log.txt", "r");
+
+    if (server_log) {
+        fclose(server_log);
+        snprintf(cmd_buf, sizeof(cmd_buf), "cat %s", "server_log.txt");
+        kodo_sys(cmd_buf);
     }
 
     remove("server.cfg");
     snprintf(cmd_buf, sizeof(cmd_buf), "mv .%s.bak %s", "server.cfg", "server.cfg");
     kodo_sys(cmd_buf);
 
-    if (!strcmp(server_or_debug, "debug")) {
+    if (server_or_debug && !strcmp(server_or_debug, "debug")) {
         server_or_debug = NULL;
         kodo_sys("pkill -9 -f \"samp-server.exe\" && pkill -9 -f \"samp03svr\"");
     }
 
-serv_out:
     _kodo_(0);
 }
 
@@ -103,6 +107,7 @@ kodo_server_openmp(const char *gamemode_arg)
     FILE *fp = NULL;
     char *json_data = NULL;
     char cmd[128];
+    char cmd_buf[256];
 
     snprintf(cmd, sizeof(cmd), "cp %s %s", "config.json", ".config.json.bak");
     kodo_sys(cmd);
@@ -128,7 +133,8 @@ kodo_server_openmp(const char *gamemode_arg)
         return;
     }
 
-    pawn = cJSON_GetObjectItem(root, "pawn"); cJSON_DeleteItemFromObject(pawn, "main_scripts");
+    pawn = cJSON_GetObjectItem(root, "pawn");
+    cJSON_DeleteItemFromObject(pawn, "main_scripts");
 
     main_scripts = cJSON_CreateArray();
     snprintf(cmd, sizeof(cmd), "%s 1", gamemode_arg);
@@ -136,21 +142,27 @@ kodo_server_openmp(const char *gamemode_arg)
     cJSON_AddItemToObject(pawn, "main_scripts", main_scripts);
 
     fp = fopen("config.json", "w");
-    char *new_json = cJSON_Print(root);
-    fputs(new_json, fp);
-    free(new_json);
+    char *main_njson = cJSON_Print(root);
+    fputs(main_njson, fp);
+    free(main_njson);
     fclose(fp);
 
     printf_color(COL_YELLOW, "Press enter to print logs..");
     getchar();
-    snprintf(cmd, sizeof(cmd), "cat log.txt");
-    kodo_sys(cmd);
+
+    FILE *server_log = fopen("log.txt", "r");
+
+    if (server_log) {
+        fclose(server_log);
+        snprintf(cmd_buf, sizeof(cmd_buf), "cat %s", "log.txt");
+        kodo_sys(cmd_buf);
+    }
 
     remove("config.json");
     snprintf(cmd, sizeof(cmd), "mv %s %s", ".config.json.bak", "config.json");
     kodo_sys(cmd);
 
-    if (!strcmp(server_or_debug, "debug")) {
+    if (server_or_debug && !strcmp(server_or_debug, "debug")) {
         server_or_debug = NULL;
         kodo_sys("pkill -9 -f \"omp-server.exe\" && pkill -9 -f \"omp-server\"");
     }
