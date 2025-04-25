@@ -73,10 +73,11 @@ kodo_server_samp(const char *gamemode_arg,
     fclose(serv_in);
     fclose(serv_out);
 
-#if defined __WIN32__ || \
-    defined _WIN32 || \
-    defined WIN32 || \
-    defined __NT__
+#if defined(__WIN32__) || \
+    defined(_WIN32) || \
+    defined(WIN32) || \
+    defined(__NT__) || \
+    defined(_WIN64)
     char cmd_path[128];
     snprintf(cmd_path, sizeof(cmd_path), "%s", server_bin);
     kodo_sys(cmd_path);
@@ -167,10 +168,11 @@ kodo_server_openmp(const char *gamemode_arg,
     free(main_njson);
     fclose(fp);
 
-#if defined __WIN32__ || \
-    defined _WIN32 || \
-    defined WIN32 || \
-    defined __NT__
+#if defined(__WIN32__) || \
+    defined(_WIN32) || \
+    defined(WIN32) || \
+    defined(__NT__) || \
+    defined(_WIN64)
     char cmd_path[128];
     snprintf(cmd_path, sizeof(cmd_path), "%s", server_bin);
     kodo_sys(cmd_path);

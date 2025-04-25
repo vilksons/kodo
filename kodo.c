@@ -8,18 +8,10 @@
  * Compile with GCC or CLANG
  * Required Library: build-essential, clang. libcurl4-openssl-dev, libncurses-dev, libarchive-dev
  * 
- * (default compile) -> gcc -D_GNU_SOURCE -g -Os -s kodo.c utils.c package.c server.c \
-    tomlc99/toml.c cJson/cJSON.c -o kodo \
-        -lm -lcurl -lncurses -lreadline -larchive
- * (windows .exe) -> gcc -D_GNU_SOURCE -g -Os -s kodo.c utils.c package.c server.c \
-    tomlc99/toml.c cJson/cJSON.c -o kodo.exe \
-        -lm -lcurl -lncurses -lreadline -larchive
- * (default compile) -> clang -D_GNU_SOURCE -g -Os -s kodo.c utils.c package.c server.c \
-    tomlc99/toml.c cJson/cJSON.c -o kodo \
-        -lm -lcurl -lncurses -lreadline -larchive
- * (windows .exe) -> clang -D_GNU_SOURCE -g -Os -s kodo.c utils.c package.c server.c \
-    tomlc99/toml.c cJson/cJSON.c -o kodo.exe \
-        -lm -lcurl -lncurses -lreadline -larchive
+ * (default compile) - build with Make, Makefile.
+ * `make`
+ * (for windows) - build with Make, MinGW x86_64, Makefile.
+ * moved or delete "Makefile" Linux and rename "wMakefile" to "Makefile" and use `$ make`
  *
  * If you want to open the code in the terminal without running it manually using the terminal, you can run the following commands.
     * nano ~/.bashrc - or zsh
@@ -446,18 +438,19 @@ void _kodo_(int sig_unused) {
 
                         printf_color(COL_YELLOW, "running..\n");
 
-#if defined __WIN32__ || \
-    defined _WIN32 || \
-    defined WIN32 || \
-    defined __NT__
-                            char cmd_path[128];
-                            snprintf(cmd_path, sizeof(cmd_path), "%s", ptr_samp);
-                            kodo_sys(cmd_path);
+#if defined(__WIN32__) || \
+    defined(_WIN32) || \
+    defined(WIN32) || \
+    defined(__NT__) || \
+    defined(_WIN64)
+                        char cmd_path[128];
+                        snprintf(cmd_path, sizeof(cmd_path), "%s", ptr_samp);
+                        kodo_sys(cmd_path);
 #else
-                            chmod(ptr_samp, 0777);
-                            char cmd_path[128];
-                            snprintf(cmd_path, sizeof(cmd_path), "./%s", ptr_samp);
-                            kodo_sys(cmd_path);
+                        chmod(ptr_samp, 0777);
+                        char cmd_path[128];
+                        snprintf(cmd_path, sizeof(cmd_path), "./%s", ptr_samp);
+                        kodo_sys(cmd_path);
 #endif
 
                         sleep(2);
@@ -487,18 +480,19 @@ void _kodo_(int sig_unused) {
 
                         printf_color(COL_YELLOW, "running..\n");
 
-#if defined __WIN32__ || \
-    defined _WIN32 || \
-    defined WIN32 || \
-    defined __NT__
-                            char cmd_path[128];
-                            snprintf(cmd_path, sizeof(cmd_path), "%s", ptr_openmp);
-                            kodo_sys(cmd_path);
+#if defined(__WIN32__) || \
+    defined(_WIN32) || \
+    defined(WIN32) || \
+    defined(__NT__) || \
+    defined(_WIN64)
+                        char cmd_path[128];
+                        snprintf(cmd_path, sizeof(cmd_path), "%s", ptr_openmp);
+                        kodo_sys(cmd_path);
 #else
-                            chmod(ptr_openmp, 0777);
-                            char cmd_path[128];
-                            snprintf(cmd_path, sizeof(cmd_path), "./%s", ptr_openmp);
-                            kodo_sys(cmd_path);
+                        chmod(ptr_openmp, 0777);
+                        char cmd_path[128];
+                        snprintf(cmd_path, sizeof(cmd_path), "./%s", ptr_openmp);
+                        kodo_sys(cmd_path);
 #endif
 
                         sleep(2);
