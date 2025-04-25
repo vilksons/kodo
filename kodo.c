@@ -69,6 +69,7 @@
 int kodo_fork_sys(const char *cmd) {
     FILE *fp = popen(cmd, "r");
     if (fp == NULL) {
+        perror("Error:");
         return -1;
     }
     char kd_sys_buff[256];
