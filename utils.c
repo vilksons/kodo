@@ -110,7 +110,7 @@ const char* kodo_detect_os(void) {
         return "windows";
 
     if (getenv("WSL_INTEROP") || getenv("WSL_DISTRO_NAME"))
-        return "windows (WSL)";
+        return "windows";
 
     struct utsname sys_info;
     if (!uname(&sys_info)) {
