@@ -107,8 +107,8 @@ int is_running_in_docker(void) {
 
 const char* kodo_detect_os(void) {
     #define WINDOWS_PATH \
-        "/c/windows/System32" \
-        "/windows/System32" \
+        "/c/windows/System32," \
+        "/windows/System32", \
         "C:\\Windows\\System32"
         
         const char*
