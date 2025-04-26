@@ -92,13 +92,11 @@ int is_running_in_docker(void) {
 
         if (cgroup_open) {
                 char size_line[128];
-                while (fgets(size_line, sizeof(size_line), cgroup_open)) {
-                    if (strstr(size_line, "docker") ||
-                        strstr(size_line, "containerd")) {
+                while (fgets(size_line, sizeof(size_line), cgroup_open)) if (strstr(size_line, "docker") || strstr(size_line, "containerd")) {
                             fclose(cgroup_open);
                             return 1;
                         }
-                }
+                
                 fclose(cgroup_open);
         }
 

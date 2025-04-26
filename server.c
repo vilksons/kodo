@@ -18,24 +18,19 @@ void kodo_server_stop_tasks(void)
         size_t format_size = 126;
 
         snprintf(
-            format_sys, 126,
-            "pkill -9 -f \"%s\" && "
-            "pkill -9 -f \"%s\" && "
-            "pkill -9 -f \"%s\" && "
-            "pkill -9 -f \"%s\"",
-            "samp-server.exe",
-            "samp03svr",
-            "omp-server.exe",
-            "omp-server"
+                format_sys, 126,
+                "pkill -9 -f \"%s\" && "
+                "pkill -9 -f \"%s\" && "
+                "pkill -9 -f \"%s\" && "
+                "pkill -9 -f \"%s\"",
+                "samp-server.exe",
+                "samp03svr",
+                "omp-server.exe",
+                "omp-server"
         );
         
         kodo_sys(format_sys);
-
-        if (format_sys) {
-            free(format_sys);
-        }
-
-        /* void */
+        if (format_sys) free(format_sys);
 }
 
 void
@@ -50,63 +45,59 @@ kodo_server_samp(const char *gamemode_arg,
 
         serv_in = fopen(".server.cfg.bak", "r");
         if (!serv_in) {
-            printf_error("failed to open backup config");
-            kodo_main(0);
+                printf_error("failed to open backup config");
+                kodo_main(0);
         }
         serv_out = fopen("server.cfg", "w");
         if (!serv_out) {
-            printf_error("failed to write new config");
-            fclose(serv_in);
-            kodo_main(0);
+                printf_error("failed to write new config");
+                fclose(serv_in);
+                kodo_main(0);
         }
 
         while (fgets(g_line, sizeof(g_line), serv_in)) {
-            if (!strncmp(g_line, "gamemode0 ", 10)) {
-                fprintf(serv_out, "gamemode0 %s\n", gamemode_arg);
-                found_gamemode = 1;
-            } else {
-                fputs(g_line, serv_out);
-            }
+                if (!strncmp(g_line, "gamemode0 ", 10)) {
+                        fprintf(serv_out, "gamemode0 %s\n", gamemode_arg);
+                        found_gamemode = 1;
+                } else fputs(g_line, serv_out);
         }
 
         if (!found_gamemode)
-            fprintf(serv_out, "gamemode0 %s\n", gamemode_arg);
+                fprintf(serv_out, "gamemode0 %s\n", gamemode_arg);
 
         fclose(serv_in);
         fclose(serv_out);
         
-        char snprintf_ptrS[128];
         chmod(server_bin, 0777);
+
+        char snprintf_ptrS[128];
         snprintf(snprintf_ptrS, sizeof(snprintf_ptrS), "./%s", server_bin);
         int running_FAIL = kodo_sys(snprintf_ptrS);
         if (running_FAIL == 0) {
-            sleep(2);
+                sleep(2);
+                printf_color(COL_YELLOW, "Press enter to print logs..");
+                getchar();
 
-            printf_color(COL_YELLOW, "Press enter to print logs..");
-            getchar();
-
-            FILE *server_log = fopen("server_log.txt", "r");
-            if (!server_log)
-                printf_error("Can't found server_log.txt!");
-            else {
-                int ch;
-                while ((ch = fgetc(server_log)) != EOF) {
-                    putchar(ch);
+                FILE *server_log = fopen("server_log.txt", "r");
+                if (!server_log)
+                        printf_error("Can't found server_log.txt!");
+                else {
+                        int ch;
+                        while ((ch = fgetc(server_log)) != EOF)
+                                putchar(ch);
+                        fclose(server_log);
                 }
-                fclose(server_log);
-            }
         } else {
-            printf_color(COL_RED, "running failed! ");
-            printf("need help?, go here: https://github.com/vilksons/kodo/issues\n");
+                printf_color(COL_RED, "running failed! ");
+                printf("need help?, go here: https://github.com/vilksons/kodo/issues\n");
         }
 
         remove("server.cfg");
         rename(".server.cfg.bak", "server.cfg");
 
-        if (server_or_debug &&
-            !strcmp(server_or_debug, "debug")) {
-            server_or_debug = NULL;
-            kodo_sys("pkill -9 -f \"samp-server.exe\" && pkill -9 -f \"samp03svr\"");
+        if (server_or_debug && !strcmp(server_or_debug, "debug")) {
+                server_or_debug = NULL;
+                kodo_sys("pkill -9 -f \"samp-server.exe\" && pkill -9 -f \"samp03svr\"");
         }
 
         kodo_main(0);
@@ -126,8 +117,8 @@ kodo_server_openmp(const char *gamemode_arg,
 
         fp = fopen("config.json", "r");
         if (!fp) {
-            printf_error("failed to open config.json");
-            return;
+                printf_error("failed to open config.json");
+                return;
         }
 
         fseek(fp, 0, SEEK_END);
@@ -140,9 +131,9 @@ kodo_server_openmp(const char *gamemode_arg,
 
         root = cJSON_Parse(json_data);
         if (!root) {
-            printf_error("JSON parse error: [%s]", cJSON_GetErrorPtr());
-            free(json_data);
-            return;
+                printf_error("JSON parse error: [%s]", cJSON_GetErrorPtr());
+                free(json_data);
+                return;
         }
 
         pawn = cJSON_GetObjectItem(root, "pawn");
@@ -159,37 +150,36 @@ kodo_server_openmp(const char *gamemode_arg,
         free(main_njson);
         fclose(fp);
 
-        char snprintf_ptrS[128];
         chmod(server_bin, 0777);
+
+        char snprintf_ptrS[128];
         snprintf(snprintf_ptrS, sizeof(snprintf_ptrS), "./%s", server_bin);
         int running_FAIL = kodo_sys(snprintf_ptrS);
         if (running_FAIL == 0) {
-            sleep(2);
+                sleep(2);
+                printf_color(COL_YELLOW, "Press enter to print logs..");
+                getchar();
 
-            printf_color(COL_YELLOW, "Press enter to print logs..");
-            getchar();
-
-            FILE *server_log = fopen("log.txt", "r");
-            if (!server_log)
-                printf_error("Can't found log.txt!");
-            else {
-                int ch;
-                while ((ch = fgetc(server_log)) != EOF) {
-                    putchar(ch);
+                FILE *server_log = fopen("log.txt", "r");
+                if (!server_log)
+                        printf_error("Can't found log.txt!");
+                else {
+                        int ch;
+                        while ((ch = fgetc(server_log)) != EOF)
+                                putchar(ch);
+                        fclose(server_log);
                 }
-                fclose(server_log);
-            }
         } else {
-            printf_color(COL_RED, "running failed! ");
-            printf("need help?, go here: https://github.com/vilksons/kodo/issues\n");
+                printf_color(COL_RED, "running failed! ");
+                printf("need help?, go here: https://github.com/vilksons/kodo/issues\n");
         }
 
         remove("config.json");
         rename(".config.json.bak", "config.json");
 
         if (server_or_debug && !strcmp(server_or_debug, "debug")) {
-            server_or_debug = NULL;
-            kodo_sys("pkill -9 -f \"omp-server.exe\" && pkill -9 -f \"omp-server\"");
+                server_or_debug = NULL;
+                kodo_sys("pkill -9 -f \"omp-server.exe\" && pkill -9 -f \"omp-server\"");
         }
 
         cJSON_Delete(root);
