@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -D_GNU_SOURCE -g -Os -s
+CFLAGS = -fPIE -D_GNU_SOURCE -g -Os -s
 LDFLAGS = -lm -lcurl -lncurses -lreadline -larchive
 
 TARGET = kodo
@@ -11,7 +11,7 @@ OBJS = $(SRCS:.c=.o)
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-	$(CC) $(OBJS) -o $(TARGET) $(LDFLAGS)
+	$(CC) $(CFLAGS) $(OBJS) -o $(TARGET) $(LDFLAGS)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
