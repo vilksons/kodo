@@ -106,22 +106,22 @@ int is_running_in_docker(void) {
 }
 
 const char* kodo_detect_os(void) {
-    if (getenv("OS") && strstr(getenv("OS"), "Windows_NT"))
-        return "windows";
+        if (getenv("OS") && strstr(getenv("OS"), "Windows_NT"))
+                return "windows";
 
-    if (getenv("WSL_INTEROP") || getenv("WSL_DISTRO_NAME"))
-        return "windows";
+        if (getenv("WSL_INTEROP") || getenv("WSL_DISTRO_NAME"))
+                return "windows";
 
-    struct utsname sys_info;
-    if (!uname(&sys_info)) {
-        if (strstr(sys_info.sysname, "Linux")) {
-            if (is_running_in_docker()) 
-                return "linux";
-            return "linux";
+        struct utsname sys_info;
+        if (!uname(&sys_info)) {
+                if (strstr(sys_info.sysname, "Linux")) {
+                        if (is_running_in_docker()) 
+                                return "linux";
+                        return "linux";
+                }
         }
-    }
 
-    return "unknown";
+        return "unknown";
 }
 
 int signal_system_os(void) {
