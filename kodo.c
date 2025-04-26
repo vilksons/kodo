@@ -6,7 +6,7 @@
  * See the LICENSE file for details.
  *
  * Compile with GCC or CLANG
- * Required Library: build-essential, clang. libcurl4-openssl-dev, libncurses-dev, libarchive-dev
+ * Required Library: -lm -lcurl -lncurses -lreadline -larchive
  * 
  * (default compile) - build with GCC, Make, Makefile.
  * ~ build with `make`
