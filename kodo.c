@@ -410,21 +410,26 @@ void kodo_main(int sig_unused) {
                         char snprintf_ptrS[128];
                         chmod(ptr_samp, 0777);
                         snprintf(snprintf_ptrS, sizeof(snprintf_ptrS), "./%s", ptr_samp);
-                        kodo_sys(snprintf_ptrS);
+                        int running_OK = kodo_sys(snprintf_ptrS);
+                        if (running_OK == 0) {
+                            sleep(2);
 
-                        sleep(2);
+                            printf_color(COL_YELLOW, "Press enter to print logs..");
+                            getchar();
 
-                        printf_color(COL_YELLOW, "Press enter to print logs..");
-                        getchar();
-
-                        if (!server_log)
-                            printf_error("Can't found server_logs!");
-                        else {
-                            int ch;
-                            while ((ch = fgetc(server_log)) != EOF) {
-                                putchar(ch);
+                            FILE *server_log = fopen("server_log.txt", "r");
+                            if (!server_log)
+                                printf_error("Can't found server_log.txt!");
+                            else {
+                                int ch;
+                                while ((ch = fgetc(server_log)) != EOF) {
+                                    putchar(ch);
+                                }
+                                fclose(server_log);
                             }
-                            fclose(server_log);
+                        } else {
+                            printf_color(COL_RED, "running failed! ");
+                            printf("need help?, go here: https://github.com/vilksons/kodo/issues\n");
                         }
                         continue;
                     } else {
@@ -441,23 +446,28 @@ void kodo_main(int sig_unused) {
                         printf_color(COL_YELLOW, "running..\n");
 
                         char snprintf_ptrS[128];
-                        chmod(ptr_samp, 0777);
+                        chmod(ptr_openmp, 0777);
                         snprintf(snprintf_ptrS, sizeof(snprintf_ptrS), "./%s", ptr_openmp);
-                        kodo_sys(snprintf_ptrS);
+                        int running_OK = kodo_sys(snprintf_ptrS);
+                        if (running_OK == 0) {
+                            sleep(2);
 
-                        sleep(2);
+                            printf_color(COL_YELLOW, "Press enter to print logs..");
+                            getchar();
 
-                        printf_color(COL_YELLOW, "Press enter to print logs..");
-                        getchar();
-
-                        if (!server_log)
-                            printf_error("Can't found server_logs!");
-                        else {
-                            int ch;
-                            while ((ch = fgetc(server_log)) != EOF) {
-                                putchar(ch);
+                            FILE *server_log = fopen("log.txt", "r");
+                            if (!server_log)
+                                printf_error("Can't found log.txt!");
+                            else {
+                                int ch;
+                                while ((ch = fgetc(server_log)) != EOF) {
+                                    putchar(ch);
+                                }
+                                fclose(server_log);
                             }
-                            fclose(server_log);
+                        } else {
+                            printf_color(COL_RED, "running failed! ");
+                            printf("need help?, go here: https://github.com/vilksons/kodo/issues\n");
                         }
                         continue;
                     } else {

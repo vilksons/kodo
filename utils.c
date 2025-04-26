@@ -261,6 +261,25 @@ int kodo_sef_fdir(const char *sef_path,
         return found; 
 }
 
+int kodo_sef_wcopy(const char *c_src, const char *c_dest) {
+        FILE *src_FILE = fopen(c_src, "rb");
+        if (src_FILE == NULL)
+            return 1;
+        FILE *dest_FILE = fopen(c_dest, "wb");
+        if (dest_FILE == NULL)
+            return 1;
+
+        char src_buff[520];
+        size_t bytes;
+        while ((bytes = fread(src_buff, 1, sizeof(src_buff), src_FILE)) > 0)
+            fwrite(src_buff, 1, bytes, dest_FILE);
+
+        fclose(src_FILE);
+        fclose(dest_FILE);
+
+        return 0;
+}
+
 int arch_copy_data(
               struct archive *ar, struct archive *aw)
 {

@@ -44,11 +44,9 @@ kodo_server_samp(const char *gamemode_arg,
 {
         FILE *serv_in = NULL, *serv_out = NULL;
         int found_gamemode = 0;
-        char cmd_buf[256];
         char g_line[64];
 
-        snprintf(cmd_buf, sizeof(cmd_buf), "cp %s .%s.bak", "server.cfg", "server.cfg");
-        kodo_sys(cmd_buf);
+        kodo_sef_wcopy("server.cfg", ".server.cfg.bak");
 
         serv_in = fopen(".server.cfg.bak", "r");
         if (!serv_in) {
@@ -80,29 +78,30 @@ kodo_server_samp(const char *gamemode_arg,
         char snprintf_ptrS[128];
         chmod(server_bin, 0777);
         snprintf(snprintf_ptrS, sizeof(snprintf_ptrS), "./%s", server_bin);
-        kodo_sys(snprintf_ptrS);
+        int running_OK = kodo_sys(snprintf_ptrS);
+        if (running_OK == 0) {
+            sleep(2);
 
-        sleep(2);
+            printf_color(COL_YELLOW, "Press enter to print logs..");
+            getchar();
 
-        printf_color(COL_YELLOW, "Press enter to print logs..");
-        getchar();
-
-        FILE *server_log = fopen("server_log.txt", "r");
-        if (server_log) {
-            if (!server_log) {
-                return;
+            FILE *server_log = fopen("server_log.txt", "r");
+            if (!server_log)
+                printf_error("Can't found server_log.txt!");
+            else {
+                int ch;
+                while ((ch = fgetc(server_log)) != EOF) {
+                    putchar(ch);
+                }
+                fclose(server_log);
             }
-            int ch;
-            while ((ch = fgetc(server_log)) != EOF) {
-                putchar(ch);
-            }
-            fclose(server_log);
+        } else {
+            printf_color(COL_RED, "running failed! ");
+            printf("need help?, go here: https://github.com/vilksons/kodo/issues\n");
         }
 
         remove("server.cfg");
         rename(".server.cfg.bak", "server.cfg");
-
-        kodo_sys(cmd_buf);
 
         if (server_or_debug &&
             !strcmp(server_or_debug, "debug")) {
@@ -123,8 +122,7 @@ kodo_server_openmp(const char *gamemode_arg,
         char cmd[128];
         char cmd_buf[256];
 
-        snprintf(cmd, sizeof(cmd), "cp %s %s", "config.json", ".config.json.bak");
-        kodo_sys(cmd);
+        kodo_sef_wcopy("config.json", ".config.json.bak");
 
         fp = fopen("config.json", "r");
         if (!fp) {
@@ -164,22 +162,26 @@ kodo_server_openmp(const char *gamemode_arg,
         char snprintf_ptrS[128];
         chmod(server_bin, 0777);
         snprintf(snprintf_ptrS, sizeof(snprintf_ptrS), "./%s", server_bin);
-        kodo_sys(snprintf_ptrS);
+        int running_OK = kodo_sys(snprintf_ptrS);
+        if (running_OK == 0) {
+            sleep(2);
 
-        sleep(2);
+            printf_color(COL_YELLOW, "Press enter to print logs..");
+            getchar();
 
-        printf_color(COL_YELLOW, "Press enter to print logs..");
-        getchar();
-
-        FILE *server_log = fopen("log.txt", "r");
-        if (!server_log)
-            printf_error("Can't found server_logs!");
-        else {
-            int ch;
-            while ((ch = fgetc(server_log)) != EOF) {
-                putchar(ch);
+            FILE *server_log = fopen("log.txt", "r");
+            if (!server_log)
+                printf_error("Can't found log.txt!");
+            else {
+                int ch;
+                while ((ch = fgetc(server_log)) != EOF) {
+                    putchar(ch);
+                }
+                fclose(server_log);
             }
-            fclose(server_log);
+        } else {
+            printf_color(COL_RED, "running failed! ");
+            printf("need help?, go here: https://github.com/vilksons/kodo/issues\n");
         }
 
         remove("config.json");
