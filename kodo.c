@@ -8,7 +8,7 @@
  * Compile with GCC or CLANG
  * Required Library: build-essential, clang. libcurl4-openssl-dev, libncurses-dev, libarchive-dev
  * 
- * (default compile) - build with Make, Makefile.
+ * (default compile) - build with GCC, Make, Makefile.
  * ~ build with `make`
  *
  */
