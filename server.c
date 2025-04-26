@@ -78,19 +78,9 @@ kodo_server_samp(const char *gamemode_arg,
         fclose(serv_out);
         
         char snprintf_ptrS[128];
-
-#if defined(__WIN32__) || \
-    defined(_WIN32) || \
-    defined(WIN32) || \
-    defined(__NT__) || \
-    defined(_WIN64)
-        snprintf(snprintf_ptrS, sizeof(snprintf_ptrS), "%s", server_bin);
-        kodo_sys(snprintf_ptrS);
-    #else
         chmod(server_bin, 0777);
         snprintf(snprintf_ptrS, sizeof(snprintf_ptrS), "./%s", server_bin);
         kodo_sys(snprintf_ptrS);
-    #endif
 
         sleep(2);
 
@@ -98,7 +88,6 @@ kodo_server_samp(const char *gamemode_arg,
         getchar();
 
         FILE *server_log = fopen("server_log.txt", "r");
-
         if (server_log) {
             if (!server_log) {
                 return;
@@ -173,19 +162,9 @@ kodo_server_openmp(const char *gamemode_arg,
         fclose(fp);
 
         char snprintf_ptrS[128];
-
-#if defined(__WIN32__) || \
-    defined(_WIN32) || \
-    defined(WIN32) || \
-    defined(__NT__) || \
-    defined(_WIN64)
-        snprintf(snprintf_ptrS, sizeof(snprintf_ptrS), "%s", server_bin);
-        kodo_sys(snprintf_ptrS);
-    #else
         chmod(server_bin, 0777);
         snprintf(snprintf_ptrS, sizeof(snprintf_ptrS), "./%s", server_bin);
         kodo_sys(snprintf_ptrS);
-    #endif
 
         sleep(2);
 
@@ -193,7 +172,6 @@ kodo_server_openmp(const char *gamemode_arg,
         getchar();
 
         FILE *server_log = fopen("log.txt", "r");
-
         if (!server_log)
             printf_error("Can't found server_logs!");
         else {

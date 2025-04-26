@@ -9,15 +9,7 @@
  * Required Library: build-essential, clang. libcurl4-openssl-dev, libncurses-dev, libarchive-dev
  * 
  * (default compile) - build with Make, Makefile.
- * build with `$ make`
- * (for windows) - build with Make, MinGW x86_64, Makefile.
- * moved or remove "Makefile" Linux and rename "wMakefile" to "Makefile" and use `$ make`
- *
- * If you want to open the code in the terminal without running it manually using the terminal, you can run the following commands.
-    * nano ~/.bashrc - or zsh
-    * put this at the bottom: alias kodo='/path/to/program/of/kodo'
-    * exit with CTRL+X and Yes and Enter.
-    * run the `kodo` command anywhere in Terminal. it will automatically run the Kodo Program according to where the program path location has been set.
+ * ~ build with `make`
  *
  */
 
@@ -416,16 +408,8 @@ void kodo_main(int sig_unused) {
                         printf_color(COL_YELLOW, "running..\n");
 
                         char snprintf_ptrS[128];
-#if defined(__WIN32__) || \
-    defined(_WIN32) || \
-    defined(WIN32) || \
-    defined(__NT__) || \
-    defined(_WIN64)
-                        snprintf(snprintf_ptrS, sizeof(snprintf_ptrS), "%s", ptr_samp);
-#else
                         chmod(ptr_samp, 0777);
                         snprintf(snprintf_ptrS, sizeof(snprintf_ptrS), "./%s", ptr_samp);
-#endif
                         kodo_sys(snprintf_ptrS);
 
                         sleep(2);
@@ -457,16 +441,8 @@ void kodo_main(int sig_unused) {
                         printf_color(COL_YELLOW, "running..\n");
 
                         char snprintf_ptrS[128];
-#if defined(__WIN32__) || \
-    defined(_WIN32) || \
-    defined(WIN32) || \
-    defined(__NT__) || \
-    defined(_WIN64)
-                        snprintf(snprintf_ptrS, sizeof(snprintf_ptrS), "%s", ptr_openmp);
-#else
-                        chmod(ptr_openmp, 0777);
+                        chmod(ptr_samp, 0777);
                         snprintf(snprintf_ptrS, sizeof(snprintf_ptrS), "./%s", ptr_openmp);
-#endif
                         kodo_sys(snprintf_ptrS);
 
                         sleep(2);
