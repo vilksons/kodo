@@ -94,10 +94,10 @@ int is_running_in_docker(void) {
                 char size_line[128];
                 while (fgets(size_line, sizeof(size_line), cgroup_open)) {
                     if (strstr(size_line, "docker") ||
-                            strstr(size_line, "containerd")) {
+                        strstr(size_line, "containerd")) {
                             fclose(cgroup_open);
                             return 1;
-                    }
+                        }
                 }
                 fclose(cgroup_open);
         }
@@ -106,29 +106,22 @@ int is_running_in_docker(void) {
 }
 
 const char* kodo_detect_os(void) {
-    #define WINDOWS_PATH \
-        "/c/windows/System32," \
-        "/windows/System32", \
-        "C:\\Windows\\System32"
-        
-        const char* wPath[] = { WINDOWS_PATH };
-        for (int i = 0; i < sizeof(wPath) / sizeof(wPath[0]); i++) if (!access(wPath[i], F_OK))
-                return "windows";
+    if (getenv("OS") && strstr(getenv("OS"), "Windows_NT"))
+        return "windows";
 
-        if (getenv("WSL_INTEROP") != NULL ||
-            getenv("WSL_DISTRO_NAME") != NULL)
-                return "windows (WSL)";
+    if (getenv("WSL_INTEROP") || getenv("WSL_DISTRO_NAME"))
+        return "windows (WSL)";
 
-        struct utsname sys_info;
-        if (!uname(&sys_info)) {
-                if (strstr(sys_info.sysname, "Linux") != NULL) {
-                        if (is_running_in_docker()) 
-                                return "linux (docker)";
-                        return "linux";
-                }
+    struct utsname sys_info;
+    if (!uname(&sys_info)) {
+        if (strstr(sys_info.sysname, "Linux")) {
+            if (is_running_in_docker()) 
+                return "linux";
+            return "linux";
         }
+    }
 
-        return "unknown";
+    return "unknown";
 }
 
 int signal_system_os(void) {
@@ -174,8 +167,7 @@ int kodo_toml_data(void)
         toml_table_t *_kodo_general = toml_table_in(config, "general");
         if (_kodo_general) {
                 toml_datum_t os_val = toml_string_in(_kodo_general, "os");
-                if (os_val.ok)
-                    kodo_os = os_val.u.s;
+                if (os_val.ok) kodo_os = os_val.u.s;
         }
 
         return 0;
@@ -239,7 +231,7 @@ int kodo_sef_fdir(const char *sef_path,
             if (stat(path_buff, &statbuf) == -1)
                     continue;
             if (S_ISDIR(statbuf.st_mode))
-                    found += kodo_sef_fdir(path_buff, sef_name);
+                found += kodo_sef_fdir(path_buff, sef_name);
             else if (strcmp(entry->d_name, sef_name) == 0) {
                     strncpy(kodo_sef_found[kodo_sef_count], path_buff, SEF_MAX_PATH_SIZE);
                     kodo_sef_count++;
