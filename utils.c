@@ -83,19 +83,53 @@ void printf_crit(const char *format, ...) {
         printf_color(COL_DEFAULT, "%s\n", format);
 }
 
-const char* kodo_detect_os(void) {
-        const char *__win__[] = { "/c/windows/System32", "/windows/System32" };
-        for (int i = 0; i < 3; i++) if (access(__win__[i], F_OK) == 0) return "windows";
-        if (getenv("WSL_INTEROP") != NULL) return "windows";
+int is_running_in_docker(void) {
+        if (access("/.dockerenv", F_OK) == 0)
+            return 1;
 
-        struct utsname buf;
-        if (uname(&buf) == 0) {
-            if (strstr(buf.sysname, "Linux") != NULL) {
+        FILE *cgroup_open;
+        cgroup_open = fopen("/proc/1/cgroup", "r");
+
+        if (cgroup_open) {
+            char size_line[128];
+            while (fgets(size_line, sizeof(size_line), cgroup_open)) {
+                if (strstr(size_line, "docker") ||
+                    strstr(size_line, "containerd")) {
+                    fclose(cgroup_open);
+                    return 1;
+                }
+            }
+            fclose(cgroup_open);
+        }
+
+        return 0;
+}
+
+const char* kodo_detect_os(void) {
+    #define WINDOWS_PATH \
+        "/c/windows/System32" \
+        "/windows/System32" \
+        "C:\\Windows\\System32"
+        
+        const char*
+            wPath[] = { WINDOWS_PATH };
+        for (int i = 0; i < sizeof(wPath) / sizeof(wPath[0]); i++) if (!access(wPath[i], F_OK)) return "windows";
+
+        if (getenv("WSL_INTEROP") != NULL ||
+            getenv("WSL_DISTRO_NAME") != NULL)
+            return "windows (WSL)";
+
+        struct utsname sys_info;
+        if (!uname(&sys_info)) {
+            if (strstr(sys_info.sysname, "Linux") != NULL) {
+                if (is_running_in_docker()) {
+                    return "linux (docker)";
+                }
                 return "linux";
             }
         }
 
-        return "unknowns";
+        return "unknown";
 }
 
 int signal_system_os(void) {
