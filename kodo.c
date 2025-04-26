@@ -410,8 +410,8 @@ void kodo_main(int sig_unused) {
                         char snprintf_ptrS[128];
                         chmod(ptr_samp, 0777);
                         snprintf(snprintf_ptrS, sizeof(snprintf_ptrS), "./%s", ptr_samp);
-                        int running_OK = kodo_sys(snprintf_ptrS);
-                        if (running_OK == 0) {
+                        int running_FAIL = kodo_sys(snprintf_ptrS);
+                        if (running_FAIL == 0) {
                             sleep(2);
 
                             printf_color(COL_YELLOW, "Press enter to print logs..");
@@ -448,8 +448,8 @@ void kodo_main(int sig_unused) {
                         char snprintf_ptrS[128];
                         chmod(ptr_openmp, 0777);
                         snprintf(snprintf_ptrS, sizeof(snprintf_ptrS), "./%s", ptr_openmp);
-                        int running_OK = kodo_sys(snprintf_ptrS);
-                        if (running_OK == 0) {
+                        int running_FAIL = kodo_sys(snprintf_ptrS);
+                        if (running_FAIL == 0) {
                             sleep(2);
 
                             printf_color(COL_YELLOW, "Press enter to print logs..");

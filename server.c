@@ -78,8 +78,8 @@ kodo_server_samp(const char *gamemode_arg,
         char snprintf_ptrS[128];
         chmod(server_bin, 0777);
         snprintf(snprintf_ptrS, sizeof(snprintf_ptrS), "./%s", server_bin);
-        int running_OK = kodo_sys(snprintf_ptrS);
-        if (running_OK == 0) {
+        int running_FAIL = kodo_sys(snprintf_ptrS);
+        if (running_FAIL == 0) {
             sleep(2);
 
             printf_color(COL_YELLOW, "Press enter to print logs..");
@@ -162,8 +162,8 @@ kodo_server_openmp(const char *gamemode_arg,
         char snprintf_ptrS[128];
         chmod(server_bin, 0777);
         snprintf(snprintf_ptrS, sizeof(snprintf_ptrS), "./%s", server_bin);
-        int running_OK = kodo_sys(snprintf_ptrS);
-        if (running_OK == 0) {
+        int running_FAIL = kodo_sys(snprintf_ptrS);
+        if (running_FAIL == 0) {
             sleep(2);
 
             printf_color(COL_YELLOW, "Press enter to print logs..");
