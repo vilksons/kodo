@@ -64,24 +64,48 @@ void println(const char* fmt, ...) {
 }
 
 void printf_succes(const char *format, ...) {
+        va_list args;
+        va_start(args, format);
         printf_color(COL_YELLOW, "succes: ");
-        printf_color(COL_DEFAULT, "%s\n", format);
+        vprintf(format, args);
+        printf("\n");
+        va_end(args);
 }
+
 void printf_info(const char *format, ...) {
+        va_list args;
+        va_start(args, format);
         printf_color(COL_YELLOW, "info: ");
-        printf_color(COL_DEFAULT, "%s\n", format);
+        vprintf(format, args);
+        printf("\n");
+        va_end(args);
 }
+
 void printf_warning(const char *format, ...) {
+        va_list args;
+        va_start(args, format);
         printf_color(COL_GREEN, "warning: ");
-        printf_color(COL_DEFAULT, "%s\n", format);
+        vprintf(format, args);
+        printf("\n");
+        va_end(args);
 }
+
 void printf_error(const char *format, ...) {
+        va_list args;
+        va_start(args, format);
         printf_color(COL_RED, "error: ");
-        printf_color(COL_DEFAULT, "%s\n", format);
+        vprintf(format, args);
+        printf("\n");
+        va_end(args);
 }
+
 void printf_crit(const char *format, ...) {
+        va_list args;
+        va_start(args, format);
         printf_color(COL_RED, "crit: ");
-        printf_color(COL_DEFAULT, "%s\n", format);
+        vprintf(format, args);
+        printf("\n");
+        va_end(args);
 }
 
 const char* kodo_detect_os(void) {
@@ -137,7 +161,7 @@ int kodo_toml_data(void)
         toml_table_t *config = toml_parse_file(procc_f, errbuf, sizeof(errbuf));
         fclose(procc_f);
 
-        if (!config) printf_error("parsing TOML: %s\n", errbuf);
+        if (!config) printf_error("error parsing TOML: %s\n", errbuf);
 
         toml_table_t *_kodo_general = toml_table_in(config, "general");
         if (_kodo_general) {

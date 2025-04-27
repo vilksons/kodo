@@ -244,7 +244,7 @@ void kodo_main(int sig_unused) {
                     fclose(procc_f);
             
                     if (!config)
-                        printf_error("parsing TOML: %s\n", errbuf);
+                        printf_error("error parsing TOML: %s\n", errbuf);
             
                     toml_table_t *kodo_compiler = toml_table_in(config, "compiler");
                     if (kodo_compiler) {
