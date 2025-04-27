@@ -214,9 +214,9 @@ void kodo_main(int sig_unused) {
             
                 const char *ptr_pawncc;
                 int __kodo_os__ = signal_system_os();
-                if (__kodo_os__ == 1) 
+                if (__kodo_os__ == 0x01) 
                     ptr_pawncc = "pawncc.exe";
-                else if (__kodo_os__ == 0)
+                else if (__kodo_os__ == 0x00)
                     ptr_pawncc = "pawncc";
 
                 char kodo_c_output_f_container[128];
@@ -342,9 +342,9 @@ void kodo_main(int sig_unused) {
             
                     while (1) {
                         if (strcmp(ptr_sigA, "Y") == 0 || strcmp(ptr_sigA, "y") == 0) {
-                            if (__kodo_os__ == 1) {
+                            if (__kodo_os__ == 0x01) {
                                 kodo_download_pawncc("windows");
-                            } else if (__kodo_os__ == 0) {
+                            } else if (__kodo_os__ == 0x00) {
                                 kodo_download_pawncc("linux");
                             }
                             break;
@@ -389,10 +389,10 @@ void kodo_main(int sig_unused) {
                 static int __kodo_os__;
                     __kodo_os__ = signal_system_os();
                 
-                if (__kodo_os__ == 1) {
+                if (__kodo_os__ == 0x01) {
                     ptr_samp="samp-server.exe"; ptr_openmp="omp-server.exe";
                 }
-                else if (__kodo_os__ == 0) {
+                else if (__kodo_os__ == 0x00) {
                     ptr_samp="samp03svr"; ptr_openmp="omp-server";
                 }
                 
@@ -486,9 +486,9 @@ void kodo_main(int sig_unused) {
 
                     while (1) {
                         if (strcmp(ptr_sigA, "Y") == 0 || strcmp(ptr_sigA, "y") == 0) {
-                            if (__kodo_os__ == 1) {
+                            if (__kodo_os__ == 0x01) {
                                 kodo_download_samp("windows");
-                            } else if (__kodo_os__ == 0) {
+                            } else if (__kodo_os__ == 0x00) {
                                 kodo_download_samp("linux");
                             }
                             break;
@@ -521,7 +521,7 @@ void kodo_main(int sig_unused) {
                 printf("Hello There!\n");
             } else if (strcmp(pattern_COMMANDS, c_command) != 0 && c_distance <= 1) {
                 kodo_title("Kodo Toolchain | @ undefined");
-                println("Did you mean: '%s'?", c_command);
+                println("Did you mean: \"%s\"?", c_command);
             } else {
                 if (strlen(pattern_COMMANDS) > 0) {
                     kodo_title("Kodo Toolchain | @ not found");

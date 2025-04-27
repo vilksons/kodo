@@ -29,6 +29,8 @@
 int kodo_sef_count = 0;
 char kodo_sef_found[SEF_MAX_PATH_COUNT][SEF_MAX_PATH_SIZE];
 
+int initialize_ipawncc = 0;
+
 const char *kodo_os = NULL;
 const char *server_or_debug = NULL;
 const char *kd_compiler_opt = NULL;
@@ -124,9 +126,9 @@ const char* kodo_detect_os(void) {
 
 int signal_system_os(void) {
         if (strcmp(kodo_os, "windows") == 0)
-                return 1;
+                return 0x01;
         else if (strcmp(kodo_os, "linux") == 0)
-                return 0;
+                return 0x00;
         
         return 0;
 }
@@ -207,7 +209,60 @@ int kodo_sef_fdir(const char *sef_path,
         return found; 
 }
 
-int kodo_sef_wcopy(const char *c_src, const char *c_dest) {
+int kodo_sef_wmv(const char *c_src,
+                 const char *c_dest)
+{
+        FILE *src_FILE = fopen(c_src, "rb");
+        if (src_FILE == NULL)
+            return 1;
+        
+        FILE *dest_FILE = fopen(c_dest, "wb");
+        if (dest_FILE == NULL) {
+            fclose(src_FILE);
+            return 1;
+        }
+    
+        char src_buff[520];
+        size_t bytes;
+        while ((bytes = fread(src_buff, 1, sizeof(src_buff), src_FILE)) > 0)
+            fwrite(src_buff, 1, bytes, dest_FILE);
+    
+        fclose(src_FILE);
+        fclose(dest_FILE);
+    
+        return 0;
+}
+
+int kodo_sef_wmwrm(const char *c_src,
+                   const char *c_dest)
+{
+        FILE *src_FILE = fopen(c_src, "rb");
+        if (src_FILE == NULL)
+            return 1;
+        
+        FILE *dest_FILE = fopen(c_dest, "wb");
+        if (dest_FILE == NULL) {
+            fclose(src_FILE);
+            return 1;
+        }
+    
+        char src_buff[520];
+        size_t bytes;
+        while ((bytes = fread(src_buff, 1, sizeof(src_buff), src_FILE)) > 0)
+            fwrite(src_buff, 1, bytes, dest_FILE);
+    
+        fclose(src_FILE);
+        fclose(dest_FILE);
+        
+        if (remove(c_src) != 0)
+                return 1; 
+
+        return 0;
+}
+
+int kodo_sef_wcopy(const char *c_src,
+                   const char *c_dest)
+{
         FILE *src_FILE = fopen(c_src, "rb");
         if (src_FILE == NULL)
                 return 1;
@@ -327,6 +382,7 @@ int kodo_extract_zip(
                                 if (!has_error) {
                                         printf_error("reading block from archive: %s\n", archive_error_string(archives));
                                         has_error = 0x1;
+                                        kodo_main(0);
                                 }
                         }
                         a_read = archive_write_data_block(archive_write, a_buff, size, offset);
@@ -334,6 +390,7 @@ int kodo_extract_zip(
                                 if (!has_error) {
                                         printf_error("writing block to destination: %s\n", archive_error_string(archive_write));
                                         has_error = 0x1;
+                                        kodo_main(0);
                                 }
                         }
                     }
@@ -367,6 +424,137 @@ int progress_callback(void *ptr,
                 fflush(stdout);
         }
         return 0;
+}
+
+void install_pawncc_now(void) {
+        int __kodo_os__ = signal_system_os();
+        int find_pawncc_exe = kodo_sef_fdir(".", "pawncc.exe");
+        int find_pawncc = kodo_sef_fdir(".", "pawncc");
+        int find_pawndisasm_exe = kodo_sef_fdir(".", "pawndisasm.exe");
+        int find_pawndisasm = kodo_sef_fdir(".", "pawndisasm");
+
+        int dir_pawno=0, dir_qawno=0;
+
+        char *dest_path = NULL;
+        char str_dest_path[256];
+
+        struct stat st;
+        if (stat("pawno", &st) == 0 && S_ISDIR(st.st_mode)) {
+                dir_pawno=1;
+                dest_path="pawno";
+        } if (stat("qawno", &st) == 0 && S_ISDIR(st.st_mode)) {
+                dir_qawno=1;
+                dest_path="qawno";
+        }
+        if (!dir_pawno && !dir_qawno)
+                if (mkdir("pawno", 0755) == 0)
+                        dest_path="pawno";
+        
+        sleep(2);
+
+        char str_finstall[1502];
+
+        if (find_pawncc_exe == 1 && find_pawncc == 1) {
+                snprintf(str_finstall, sizeof(str_finstall), "%s", kodo_sef_found[0]);
+                snprintf(str_dest_path, sizeof(str_dest_path), "%s/pawncc.exe", dest_path);
+                kodo_sef_wmv(str_finstall, str_dest_path);
+                snprintf(str_finstall, sizeof(str_finstall), "%s", kodo_sef_found[1]);
+                snprintf(str_dest_path, sizeof(str_dest_path), "%s/pawncc", dest_path);
+                kodo_sef_wmv(str_finstall, str_dest_path);
+        } else if (find_pawncc_exe == 1) {
+                snprintf(str_finstall, sizeof(str_finstall), "%s", kodo_sef_found[0]);
+                snprintf(str_dest_path, sizeof(str_dest_path), "%s/pawncc.exe", dest_path);
+                kodo_sef_wmv(str_finstall, str_dest_path);
+        } else if (find_pawncc == 1) {
+                snprintf(str_finstall, sizeof(str_finstall), "%s", kodo_sef_found[0]);
+                snprintf(str_dest_path, sizeof(str_dest_path), "%s/pawncc", dest_path);
+                kodo_sef_wmv(str_finstall, str_dest_path);
+        }
+
+        if (find_pawndisasm_exe == 1 && find_pawndisasm == 1) {
+                snprintf(str_finstall, sizeof(str_finstall), "%s", kodo_sef_found[3]);
+                snprintf(str_dest_path, sizeof(str_dest_path), "%s/pawndisasm.exe", dest_path);
+                kodo_sef_wmv(str_finstall, str_dest_path);
+                snprintf(str_finstall, sizeof(str_finstall), "%s", kodo_sef_found[4]);
+                snprintf(str_dest_path, sizeof(str_dest_path), "%s/pawndisasm", dest_path);
+                kodo_sef_wmv(str_finstall, str_dest_path);
+        } else if (find_pawndisasm_exe == 1) {
+                snprintf(str_finstall, sizeof(str_finstall), "%s", kodo_sef_found[3]);
+                snprintf(str_dest_path, sizeof(str_dest_path), "%s/pawndisasm.exe", dest_path);
+                kodo_sef_wmv(str_finstall, str_dest_path);
+        } else if (find_pawndisasm == 1) {
+                snprintf(str_finstall, sizeof(str_finstall), "%s", kodo_sef_found[4]);
+                snprintf(str_dest_path, sizeof(str_dest_path), "%s/pawndisasm", dest_path);
+                kodo_sef_wmv(str_finstall, str_dest_path);
+        }
+
+        if (__kodo_os__ == 0x00) {
+                char *str_lib_path = NULL;
+                char str_full_dest_path[1502];
+
+                int find_libpawnc = kodo_sef_fdir(".", "libpawnc.so");
+
+                struct stat st;
+                if (stat("/usr/local/lib", &st) == 0 && S_ISDIR(st.st_mode)) {
+                        str_lib_path="/usr/local/lib";
+                }
+                if (stat("/data/data/com.termux/files/usr/local/lib/", &st) == 0 && S_ISDIR(st.st_mode)) {
+                        str_lib_path="/data/data/com.termux/files/usr/local/lib/";
+                }
+
+                snprintf(str_finstall, sizeof(str_finstall), "%s", kodo_sef_found[5]);
+
+                if (find_libpawnc == 1) {
+                        snprintf(str_full_dest_path, sizeof(str_full_dest_path), "%s/libpawnc.so", str_lib_path);
+                        kodo_sef_wmv(str_finstall, str_full_dest_path);
+                }
+
+                if (strcmp(str_lib_path, "/usr/local/lib") == 0) {
+                        int sys_sudo = system("sudo");
+                        if (sys_sudo == 0) kodo_sys("sudo ldconfig");
+                        else kodo_sys("ldconfig");
+
+                        kodo_sys("export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH");
+                        kodo_sys("source ~/.bashrc");
+
+                        FILE *procc_f;
+                        char buff[520];
+                        int found = 0;
+
+                        procc_f = popen("ldconfig -p | grep libpawnc", "r");
+                        if (procc_f == NULL) {
+                                perror("popen failed");
+                                kodo_main(0);
+                        }
+                        while (fgets(buff, sizeof(buff), procc_f) != NULL) found = 1;
+
+                        pclose(procc_f);
+                        if (!found)  {
+                                printf_error("libpawnc NOT found.\n");
+                                struct stat st;
+                                if (stat("/usr/local/lib32", &st) == 0 && S_ISDIR(st.st_mode)) { 
+                                        printf_info("moving libpawnc.so to /usr/local/lib32");
+
+                                        int find_libpawnc_new = kodo_sef_fdir("/usr/local/lib", "libpawnc.so");
+
+                                        if (find_libpawnc_new == 1) kodo_sef_wmwrm(kodo_sef_found[6], "/usr/local/lib32");
+
+                                        if (sys_sudo == 0) kodo_sys("sudo ldconfig");
+                                        else kodo_sys("ldconfig");
+
+                                        kodo_sys("export LD_LIBRARY_PATH=/usr/local/lib32:$LD_LIBRARY_PATH");
+                                        kodo_sys("source ~/.bashrc");
+                                }
+                        }
+                } else if (strcmp(str_lib_path, "/data/data/com.termux/files/usr/local/lib/") == 0) {
+                        kodo_sys("export LD_LIBRARY_PATH=/data/data/com.termux/files/usr/local/lib:$LD_LIBRARY_PATH");
+                        kodo_sys("source ~/.bashrc");
+                }
+        }
+
+        printf_color(COL_YELLOW, "apply finished!\n");
+
+        kodo_main(0);
 }
 
 void kodo_download_file(const char *url,
@@ -417,6 +605,24 @@ void kodo_download_file(const char *url,
 
                 fclose(procc_f);
                 curl_easy_cleanup(__curl);
+
+                if (initialize_ipawncc == 1) {
+                        initialize_ipawncc=0;
+
+                        char *ptr_sigA;
+                        ptr_sigA = readline("apply pawncc now? [Y/n]: ");
+            
+                        while (1) {
+                                if (ptr_sigA == NULL || strlen(ptr_sigA) == 0 || strcmp(ptr_sigA, "Y") == 0 || strcmp(ptr_sigA, "y") == 0) {
+                                        install_pawncc_now();
+                                } else if (strcmp(ptr_sigA, "N") == 0 || strcmp(ptr_sigA, "n") == 0) {
+                                        break;
+                                } else break;
+                        }
+
+                        if (ptr_sigA)
+                                free(ptr_sigA);
+                }
         } else fprintf(stderr, "[err]: Failed to initialize curl session\n");
 
         curl_global_cleanup();

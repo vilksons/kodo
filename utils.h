@@ -11,6 +11,8 @@
 extern int kodo_sef_count;
 extern char kodo_sef_found[SEF_MAX_PATH_COUNT][SEF_MAX_PATH_SIZE];
 
+extern int initialize_ipawncc;
+
 extern const char *kodo_os;
 extern const char *kd_compiler_opt;
 extern const char *kd_gamemode_input;
@@ -34,6 +36,10 @@ int kodo_toml_data(void);
 int kodo_cmds_check(const char *_str1, const char *_str2);
 int kodo_sef_fdir(const char *sef_path, const char *sef_name);
 int kodo_sef_wcopy(const char *c_src, const char *c_dest);
+int kodo_sef_wmv(const char *c_src, const char *c_dest);
+int kodo_sef_wmwrm(const char *c_src, const char *c_dest);
+int kodo_sef_wcopy(const char *c_src, const char *c_dest);
+
 int kodo_extract_tar_gz(const char *fname);
 int kodo_extract_zip(const char *zip_path, const char *dest_path);
 size_t write_file(void *ptr, size_t size, size_t nmemb, FILE *stream);

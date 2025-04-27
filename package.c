@@ -21,11 +21,10 @@ typedef struct {
 void
 kodo_download_pawncc(const char *platform) {
         char selection, version_selection;
-        char url[256], fname[256];
+        char url[300], fname[256];
 
         const char *versions[] = {
-            "3.10.10", "3.10.9", "3.10.8", "3.10.7", "3.10.6",
-            "3.10.5", "3.10.4", "3.10.3", "3.10.2", "3.10.1"
+            "3.10.10", "3.10.9"
         };
 
         printf(":: Do you want to continue downloading PawnCC? (Yy/Nn)\n>> ");
@@ -59,6 +58,8 @@ kodo_download_pawncc(const char *platform) {
         sprintf(url, "https://github.com/pawn-lang/compiler/releases/download/v%s/pawnc-%s-%s.%s",
                 versions[index], versions[index], platform, archive_write);
         sprintf(fname, "pawnc-%s-%s.%s", versions[index], platform, archive_write);
+
+        initialize_ipawncc=1;
 
         kodo_download_file(url, fname);
 }
