@@ -51,8 +51,7 @@ Linux - libpawnc.so installation
         sudo mv libpawnc.so /usr/local/lib32/
         sudo ldconfig
    
-notice 
-######
-you can use automatic install pawncc without running manual commands here by "apply install pawncc" after the installation of pawncc archive from `pawncc` is complete.
-------
-in WSL/WSL2 system, you can still maintain the .exe binary for pawncc or samp-server/open-mp server without having to use or replace it with this linux binary only applies without Docker on WSL/WSL2.
+notice
+======
+- you can use automatic install pawncc without running manual commands here by "apply install pawncc" after the installation of pawncc archive from `pawncc` is complete.
+- in WSL/WSL2 system, you can still maintain the .exe binary for pawncc or samp-server/open-mp server without having to use or replace it with this linux binary only applies without Docker on WSL/WSL2.

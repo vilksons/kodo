@@ -37,31 +37,31 @@ kodo_download_pawncc(const char *platform) {
         }
 
         printf("Select the PawnCC version to download:\n");
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 3 && i < sizeof(versions)/sizeof(versions[0]); i++) {
             printf("[%c/%c] PawnCC %s\n", 'A'+i, 'a'+i, versions[i]);
         }
-
+        
         printf(">> ");
         if (scanf(" %c", &version_selection) != 1) {
             return;
         }
-        int index = (version_selection >= 'A' && version_selection <= 'J') ? version_selection - 'A'
-                : (version_selection >= 'a' && version_selection <= 'j') ? version_selection - 'a' : -1;
+        int index = (version_selection >= 'B' ) ? version_selection - 'A'
+                : (version_selection >= 'b' ) ? version_selection - 'a' : -1;
 
-        if (index < 0 || index >= 10) {
+        if (index < 0 || index >= 3) {
             printf("Invalid selection.\n");
             return;
+        } else {
+            const char *archive_write = strcmp(platform, "linux") == 0 ? "tar.gz" : "zip";
+
+            sprintf(url, "https://github.com/pawn-lang/compiler/releases/download/v%s/pawnc-%s-%s.%s",
+                    versions[index], versions[index], platform, archive_write);
+            sprintf(fname, "pawnc-%s-%s.%s", versions[index], platform, archive_write);
+    
+            initialize_ipawncc=1;
+    
+            kodo_download_file(url, fname);
         }
-
-        const char *archive_write = strcmp(platform, "linux") == 0 ? "tar.gz" : "zip";
-
-        sprintf(url, "https://github.com/pawn-lang/compiler/releases/download/v%s/pawnc-%s-%s.%s",
-                versions[index], versions[index], platform, archive_write);
-        sprintf(fname, "pawnc-%s-%s.%s", versions[index], platform, archive_write);
-
-        initialize_ipawncc=1;
-
-        kodo_download_file(url, fname);
 }
 
 void
@@ -150,10 +150,10 @@ kodo_download_samp(const char *platform) {
             printf("Invalid selection\n");
             kodo_main(0);
             return;
+        } else {
+            const char *url = strcmp(platform, "linux") == 0 ? chosen->linux_url : chosen->windows_url;
+            const char *fname = strcmp(platform, "linux") == 0 ? chosen->linux_file : chosen->windows_file;
+
+            kodo_download_file(url, fname);
         }
-
-        const char *url = strcmp(platform, "linux") == 0 ? chosen->linux_url : chosen->windows_url;
-        const char *fname = strcmp(platform, "linux") == 0 ? chosen->linux_file : chosen->windows_file;
-
-        kodo_download_file(url, fname);
 }

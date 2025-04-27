@@ -44,14 +44,6 @@
 #include "kodo.h"
 #include "server.h"
 
-inline int kodo_sys(const char *cmd) { return system(cmd); }
-
-void handle_sigint(int sig)
-{
-        println("Exit?, You only exit with use a \"exit\"");
-        kodo_main(0);
-}
-
 void kodo_main(int sig_unused) {
         (void)sig_unused;
         signal(SIGINT, handle_sigint);
@@ -61,25 +53,18 @@ void kodo_main(int sig_unused) {
         using_history();
 
         while (1) {
-            char* pattern_COMMANDS =
-                readline("kodo:~$ ");
-            if (pattern_COMMANDS == NULL)
-                break;
-            if (strlen(pattern_COMMANDS) > 0)
-                add_history(pattern_COMMANDS);
-
-        #define COMMANDS \
-                "exit", "clear", "kill", "title", "help", \
-                "gamemode", "pawncc", "compile", "running", \
+            char* pattern_COMMANDS = readline("kodo:~$ ");
+            if (pattern_COMMANDS == NULL) break;
+            if (strlen(pattern_COMMANDS) > 0) add_history(pattern_COMMANDS);
+            const char* commands_ok[] = {
+                "exit", "clear", "kill", "title", "help",
+                "gamemode", "pawncc", "compile", "running",
                 "debug", "stop", "restart"
-
-            const char* commands_ok[] = { COMMANDS };
-
+            };
             int c_distance = INT_MAX;
             const char* c_command = NULL;
             int for_num_cmds;
             for_num_cmds = sizeof(commands_ok) / sizeof(commands_ok[0]);
-
             for (int i = 0; i < for_num_cmds; i++) {
                 const char* _str1 = pattern_COMMANDS;
                 const char* _str2 = commands_ok[i];

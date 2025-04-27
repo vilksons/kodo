@@ -27,7 +27,7 @@
 #include "kodo.h"
 
 int kodo_sef_count = 0;
-char kodo_sef_found[SEF_MAX_PATH_COUNT][SEF_MAX_PATH_SIZE];
+char kodo_sef_found[SEF_PATH_COUNT][SEF_PATH_SIZE];
 
 int initialize_ipawncc = 0;
 
@@ -36,6 +36,14 @@ const char *server_or_debug = NULL;
 const char *kd_compiler_opt = NULL;
 const char *kd_gamemode_input = NULL;
 const char *kd_gamemode_output = NULL;
+
+inline int kodo_sys(const char *cmd) { return system(cmd); }
+
+void handle_sigint(int sig)
+{
+        println("Exit?, You only exit with use a \"exit\"");
+        kodo_main(0);
+}
 
 int kodo_title(const char *__title)
 {
@@ -177,7 +185,7 @@ int kodo_toml_data(void)
 int kodo_sef_fdir(const char *sef_path,
                   const char *sef_name)
 {
-        char path_buff[SEF_MAX_PATH_SIZE];
+        char path_buff[SEF_PATH_SIZE];
         struct dirent *entry;
         struct stat statbuf;
         int found = 0;
@@ -188,7 +196,7 @@ int kodo_sef_fdir(const char *sef_path,
                 kodo_main(0);
         }
         
-        while ((entry = readdir(dir)) != NULL && kodo_sef_count < SEF_MAX_PATH_COUNT) {
+        while ((entry = readdir(dir)) != NULL && kodo_sef_count < SEF_PATH_COUNT) {
             if (!strcmp(entry->d_name, ".") ||
                 !strcmp(entry->d_name, ".."))
                     continue;
@@ -199,7 +207,7 @@ int kodo_sef_fdir(const char *sef_path,
             if (S_ISDIR(statbuf.st_mode))
                 found += kodo_sef_fdir(path_buff, sef_name);
             else if (strcmp(entry->d_name, sef_name) == 0) {
-                    strncpy(kodo_sef_found[kodo_sef_count], path_buff, SEF_MAX_PATH_SIZE);
+                    strncpy(kodo_sef_found[kodo_sef_count], path_buff, SEF_PATH_SIZE);
                     kodo_sef_count++;
                     found++;
             }
@@ -495,12 +503,10 @@ void install_pawncc_now(void) {
                 int find_libpawnc = kodo_sef_fdir(".", "libpawnc.so");
 
                 struct stat st;
-                if (stat("/usr/local/lib", &st) == 0 && S_ISDIR(st.st_mode)) {
+                if (stat("/usr/local/lib", &st) == 0 && S_ISDIR(st.st_mode))
                         str_lib_path="/usr/local/lib";
-                }
-                if (stat("/data/data/com.termux/files/usr/local/lib/", &st) == 0 && S_ISDIR(st.st_mode)) {
+                if (stat("/data/data/com.termux/files/usr/local/lib/", &st) == 0 && S_ISDIR(st.st_mode))
                         str_lib_path="/data/data/com.termux/files/usr/local/lib/";
-                }
 
                 snprintf(str_finstall, sizeof(str_finstall), "%s", kodo_sef_found[5]);
 
@@ -536,7 +542,6 @@ void install_pawncc_now(void) {
                                         printf_info("moving libpawnc.so to /usr/local/lib32");
 
                                         int find_libpawnc_new = kodo_sef_fdir("/usr/local/lib", "libpawnc.so");
-
                                         if (find_libpawnc_new == 1) kodo_sef_wmwrm(kodo_sef_found[6], "/usr/local/lib32");
 
                                         if (sys_sudo == 0) kodo_sys("sudo ldconfig");

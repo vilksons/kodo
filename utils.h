@@ -5,11 +5,11 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#define SEF_MAX_PATH_COUNT 28
-#define SEF_MAX_PATH_SIZE 1024
+#define SEF_PATH_COUNT 28
+#define SEF_PATH_SIZE 1024
 
 extern int kodo_sef_count;
-extern char kodo_sef_found[SEF_MAX_PATH_COUNT][SEF_MAX_PATH_SIZE];
+extern char kodo_sef_found[SEF_PATH_COUNT][SEF_PATH_SIZE];
 
 extern int initialize_ipawncc;
 
@@ -22,6 +22,8 @@ extern const char *server_or_debug;
 struct struct_of { int (*title)(const char *); };
 struct struct_of init_kodo(void);
 
+int kodo_sys(const char *cmd);
+void handle_sigint(int sig);
 int kodo_title(const char *__title);
 void printf_color(const char *color, const char *format, ...);
 void println(const char* fmt, ...);
@@ -39,7 +41,6 @@ int kodo_sef_wcopy(const char *c_src, const char *c_dest);
 int kodo_sef_wmv(const char *c_src, const char *c_dest);
 int kodo_sef_wmwrm(const char *c_src, const char *c_dest);
 int kodo_sef_wcopy(const char *c_src, const char *c_dest);
-
 int kodo_extract_tar_gz(const char *fname);
 int kodo_extract_zip(const char *zip_path, const char *dest_path);
 size_t write_file(void *ptr, size_t size, size_t nmemb, FILE *stream);
