@@ -16,8 +16,9 @@ Linux - libpawnc.so installation
    If you're using a different distribution, make sure to install the appropriate `x86_64` or `lib32` packages.
 
 2. **Step-by-Step installation of libpawnc.so on Linux Env.**
+
    - **On Linux**:
-   
+
      .. code-block:: bash
     
         sudo cp libpawnc.so /usr/local/lib/
@@ -43,15 +44,10 @@ Linux - libpawnc.so installation
 
 3. **If No Library is Detected, Move it to `/usr/local/lib32/`**
 
-   If your library is not detected after running `ldconfig -p`, try moving it to the `/usr/local/lib32/` directory for 32-bit libraries. Use the following command:
+- If your library is not detected after running `ldconfig -p`, try moving it to the `/usr/local/lib32/` directory for 32-bit libraries. Use the following command:
 
    .. code-block:: bash
     
         sudo mv libpawnc.so /usr/local/lib32/
-
-   Then run `ldconfig` again:
-
-    .. code-block:: bash
-
         sudo ldconfig
    
