@@ -26,7 +26,8 @@
 #include "utils.h"
 #include "kodo.h"
 
-int kodo_sef_count = 0; char kodo_sef_found[SEF_MAX_PATH_COUNT][SEF_MAX_PATH_SIZE];
+int kodo_sef_count = 0;
+char kodo_sef_found[SEF_MAX_PATH_COUNT][SEF_MAX_PATH_SIZE];
 
 const char *kodo_os = NULL;
 const char *server_or_debug = NULL;
@@ -83,43 +84,18 @@ void printf_crit(const char *format, ...) {
         printf_color(COL_DEFAULT, "%s\n", format);
 }
 
-int is_running_in_docker(void) {
-        if (access("/.dockerenv", F_OK) == 0)
-            return 1;
-
-        FILE *cgroup_open;
-        cgroup_open = fopen("/proc/1/cgroup", "r");
-
-        if (cgroup_open) {
-                char size_line[128];
-                while (fgets(size_line, sizeof(size_line), cgroup_open)) if (strstr(size_line, "docker") || strstr(size_line, "containerd")) {
-                            fclose(cgroup_open);
-                            return 1;
-                        }
-                
-                fclose(cgroup_open);
-        }
-
-        return 0;
-}
-
 const char* kodo_detect_os(void) {
-        if (getenv("OS") && strstr(getenv("OS"), "Windows_NT"))
-                return "windows";
+        char *os;
+        os="unknown";
 
-        if (getenv("WSL_INTEROP") || getenv("WSL_DISTRO_NAME"))
-                return "windows";
+        if (getenv("OS") && strstr(getenv("OS"), "Windows_NT") ||
+            getenv("WSL_INTEROP") || getenv("WSL_DISTRO_NAME"))
+                os="windows";
 
         struct utsname sys_info;
-        if (!uname(&sys_info)) {
-                if (strstr(sys_info.sysname, "Linux")) {
-                        if (is_running_in_docker()) 
-                                return "linux";
-                        return "linux";
-                }
-        }
+        if (!uname(&sys_info)) if (strstr(sys_info.sysname, "Linux")) os="linux";
 
-        return "unknown";
+        return os;
 }
 
 int signal_system_os(void) {
@@ -127,6 +103,7 @@ int signal_system_os(void) {
                 return 1;
         else if (strcmp(kodo_os, "linux") == 0)
                 return 0;
+        
         return 0;
 }
 
@@ -169,41 +146,6 @@ int kodo_toml_data(void)
         }
 
         return 0;
-}
-
-int kodo_cmds_check(const char *_str1, const char *_str2)
-{
-        int len1 = strlen(_str1);
-        int len2 = strlen(_str2);
-        
-        int **dist;
-        dist = (int **)malloc((len1 + 1) * sizeof(int *));
-        for (int i = 0; i <= len1; i++) 
-                dist[i] = (int *)malloc((len2 + 1) * sizeof(int));
-
-        for (int i = 0; i <= len1; i++) for (int j = 0; j <= len2; j++) {
-                if (i == 0) {
-                        dist[i][j] = j;
-                } else if (j == 0) {
-                        dist[i][j] = i;
-                } else {
-                        int cost = (_str1[i - 1] == _str2[j - 1]) ? 0 : 1;
-                        dist[i][j] = fmin(
-                                fmin(dist[i - 1][j] + 1,
-                                    dist[i][j - 1] + 1),
-                                dist[i - 1][j - 1] + cost
-                        );
-                }
-        }
-
-        int kodo_res = dist[len1][len2];
-        
-        for (int i = 0; i <= len1; i++)
-                free(dist[i]);
-
-        free(dist);
-
-        return kodo_res;
 }
 
 int kodo_sef_fdir(const char *sef_path,

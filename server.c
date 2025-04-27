@@ -108,26 +108,29 @@ kodo_server_openmp(const char *gamemode_arg,
                    const char *server_bin)
 {
         cJSON *root = NULL, *pawn = NULL, *main_scripts = NULL;
-        FILE *fp = NULL;
+        FILE *procc_f = NULL;
         char *json_data = NULL;
         char cmd[128];
         char cmd_buf[256];
 
         kodo_sef_wcopy("config.json", ".config.json.bak");
 
-        fp = fopen("config.json", "r");
-        if (!fp) {
+        procc_f = fopen("config.json", "r");
+        if (!procc_f) {
                 printf_error("failed to open config.json");
                 return;
         }
 
-        fseek(fp, 0, SEEK_END);
-        long file_len = ftell(fp);
-        fseek(fp, 0, SEEK_SET);
+        fseek(procc_f, 0, SEEK_END);
+        long file_len = ftell(procc_f);
+        fseek(procc_f, 0, SEEK_SET);
         json_data = malloc(file_len + 1);
-        fread(json_data, 1, file_len, fp);
+        size_t bytes_read = fread(json_data, 1, file_len, procc_f);
+        if (bytes_read != file_len) {
+                perror("Failed to read the whole file");
+        }
         json_data[file_len] = '\0';
-        fclose(fp);
+        fclose(procc_f);
 
         root = cJSON_Parse(json_data);
         if (!root) {
@@ -144,11 +147,11 @@ kodo_server_openmp(const char *gamemode_arg,
         cJSON_AddItemToArray(main_scripts, cJSON_CreateString(cmd_buf));
         cJSON_AddItemToObject(pawn, "main_scripts", main_scripts);
 
-        fp = fopen("config.json", "w");
+        procc_f = fopen("config.json", "w");
         char *main_njson = cJSON_Print(root);
-        fputs(main_njson, fp);
+        fputs(main_njson, procc_f);
         free(main_njson);
-        fclose(fp);
+        fclose(procc_f);
 
         chmod(server_bin, 0777);
 

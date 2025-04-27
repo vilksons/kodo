@@ -30,6 +30,7 @@
 #include <ftw.h>
 #include <sys/file.h>
 #include <fcntl.h>
+#include <math.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <readline/readline.h>
@@ -56,37 +57,60 @@ void kodo_main(int sig_unused) {
         signal(SIGINT, handle_sigint);
 
         kodo_title(NULL);
-        
         kodo_toml_data();
         using_history();
 
         while (1) {
-            char *pattern_COMMANDS =
+            char* pattern_COMMANDS =
                 readline("kodo:~$ ");
-            if (pattern_COMMANDS == NULL) 
+            if (pattern_COMMANDS == NULL)
                 break;
             if (strlen(pattern_COMMANDS) > 0)
                 add_history(pattern_COMMANDS);
 
-            #define APPLY_COMMANDS_LISTS \
+        #define COMMANDS \
                 "exit", "clear", "kill", "title", "help", \
                 "gamemode", "pawncc", "compile", "running", \
                 "debug", "stop", "restart"
 
-                const char *commands_ok[] = { APPLY_COMMANDS_LISTS };
+            const char* commands_ok[] = { COMMANDS };
 
-                int c_distance = INT_MAX;
-                const char *c_command = NULL;
-                int num_cmds = sizeof(commands_ok) / sizeof(commands_ok[0]);
-                
-                for (int i = 0; i < num_cmds; i++) {
-                    int dist_kodo_cmds = kodo_cmds_check(pattern_COMMANDS, commands_ok[i]);
-                    if (dist_kodo_cmds < c_distance) {
-                        c_distance = dist_kodo_cmds;
-                        c_command = commands_ok[i];
+            int c_distance = INT_MAX;
+            const char* c_command = NULL;
+            int for_num_cmds;
+            for_num_cmds = sizeof(commands_ok) / sizeof(commands_ok[0]);
+
+            for (int i = 0; i < for_num_cmds; i++) {
+                const char* _str1 = pattern_COMMANDS;
+                const char* _str2 = commands_ok[i];
+                int len1 = strlen(_str1);
+                int len2 = strlen(_str2);
+                int** dist = (int**)malloc((len1 + 1) * sizeof(int*));
+                for (int i = 0; i <= len1; i++)
+                    dist[i] = (int*)malloc((len2 + 1) * sizeof(int));
+                for (int i = 0; i <= len1; i++) for (int j = 0; j <= len2; j++) {
+                    if (i == 0)
+                        dist[i][j] = j;
+                    else if (j == 0)
+                        dist[i][j] = i;
+                    else {
+                        int cost = (_str1[i - 1] == _str2[j - 1]) ? 0 : 1;
+                        dist[i][j] = fmin(
+                            fmin(dist[i - 1][j] + 1, dist[i][j - 1] + 1),
+                            dist[i - 1][j - 1] + cost
+                        );
                     }
                 }
-
+                int of_dist_kodo_cmds = dist[len1][len2];
+                if (of_dist_kodo_cmds < c_distance) {
+                    c_distance = of_dist_kodo_cmds;
+                    c_command = commands_ok[i];
+                }
+                for (int i = 0; i <= len1; i++)
+                    free(dist[i]);
+                free(dist);
+            }
+        
             if (strncmp(pattern_COMMANDS, "help", 4) == 0) {
                 kodo_title("Kodo Toolchain | @ help");
 
@@ -110,66 +134,55 @@ void kodo_main(int sig_unused) {
                 } else if (strcmp(arg, "debug") == 0) { println("debug: debugging your project. | Usage: \"debug\" | [<args>]");
                 } else if (strcmp(arg, "stop") == 0) { println("stop: stopped server task. | Usage: \"stop\"");
                 } else if (strcmp(arg, "restart") == 0) { println("restart: restart server task. | Usage: \"restart\"");
-                } else {
-                    println("help not found for: '%s'", arg);
-                }
+                } else println("help not found for: '%s'", arg);
                 
                 continue;
             } else if (strcmp(pattern_COMMANDS, "pawncc") == 0) {
                 kodo_title("Kodo Toolchain | @ pawncc");
-
-                char platform;
-
+                static
+                    char platform = 0;
                 ret_pcc:
                     println("Select platform:");
                     println("[L/l] Linux");
                     println("[W/w] Windows");
                     printf(">> ");
 
-                if (scanf(" %c", &platform) != 1) {
+                if (scanf(" %c", &platform) != 1)
                     return;
-                }
 
                 signal(SIGINT, kodo_main);
 
-                if (platform == 'L' || platform == 'l') {
+                if (platform == 'L' || platform == 'l')
                     kodo_download_pawncc("linux");
-                } else if (platform == 'W' || platform == 'w') {
+                else if (platform == 'W' || platform == 'w')
                     kodo_download_pawncc("windows");
-                } else {
+                else {
                     printf("Invalid platform selection. use C^ to exit.\n");
                     goto ret_pcc;
                 }
-
-                continue;
             } else if (strcmp(pattern_COMMANDS, "gamemode") == 0) {
                 kodo_title("Kodo Toolchain | @ gamemode");
-
                 static
                     char platform = 0;
-
                 ret_gm:
                     println("Select platform:");
                     println("[L/l] Linux");
                     println("[W/w] Windows");
                     printf(">> ");
 
-                if (scanf(" %c", &platform) != 1) {
+                if (scanf(" %c", &platform) != 1)
                     return;
-                }
 
                 signal(SIGINT, kodo_main);
 
-                if (platform == 'L' || platform == 'l') {
+                if (platform == 'L' || platform == 'l')
                     kodo_download_samp("linux");
-                } else if (platform == 'W' || platform == 'w') {
+                else if (platform == 'W' || platform == 'w')
                     kodo_download_samp("windows");
-                } else {
+                else {
                     printf("Invalid platform selection. use C^ to exit.\n");
                     goto ret_gm;
                 }
-
-                break;
             } else if (strcmp(pattern_COMMANDS, "clear") == 0) {
                 kodo_title("Kodo Toolchain | @ clear");
                 clear:
@@ -179,7 +192,7 @@ void kodo_main(int sig_unused) {
                 exit(1);
             } else if (strcmp(pattern_COMMANDS, "kill") == 0) {
                 kodo_title("Kodo Toolchain | @ kill");
-                goto clear;
+                kodo_sys("clear");
                 kodo_main(0);
             } else if (strncmp(pattern_COMMANDS, "title", 5) == 0) {
                 char *arg = pattern_COMMANDS + 6;
@@ -206,14 +219,13 @@ void kodo_main(int sig_unused) {
                 else if (__kodo_os__ == 0)
                     ptr_pawncc = "pawncc";
 
-                char kodo_c_output_f_container[520];
+                char kodo_c_output_f_container[128];
                 int format_size_c_f_container = sizeof(kodo_c_output_f_container);
             
                 int find_pawncc = kodo_sef_fdir(".", ptr_pawncc);
-
                 if (find_pawncc == 1) {
                     static char *_compiler_ = NULL;
-                    static size_t format_size_compiler = 276;
+                    static size_t format_size_compiler = 2048;
 
                     if (_compiler_ == NULL) {
                         _compiler_ = malloc(format_size_compiler);
@@ -224,17 +236,15 @@ void kodo_main(int sig_unused) {
                     }
             
                     FILE *procc_f = fopen("kodo.toml", "r");
-                    if (!procc_f) {
+                    if (!procc_f)
                         printf_error("Can't read file %s\n", "kodo.toml");
-                    }
             
                     char errbuf[256];
                     toml_table_t *config = toml_parse_file(procc_f, errbuf, sizeof(errbuf));
                     fclose(procc_f);
             
-                    if (!config) {
+                    if (!config)
                         printf_error("parsing TOML: %s\n", errbuf);
-                    }
             
                     toml_table_t *kodo_compiler = toml_table_in(config, "compiler");
                     if (kodo_compiler) {
@@ -251,14 +261,13 @@ void kodo_main(int sig_unused) {
                         toml_array_t *include_paths = toml_array_in(kodo_compiler, "include_path");
                         if (include_paths) {
                             int array_size = toml_array_nelem(include_paths);
-                            char all_paths[256] = {0};
+                            char all_paths[250] = {0};
             
                             for (int i = 0; i < array_size; i++) {
                                 toml_datum_t path_val = toml_string_at(include_paths, i);
                                 if (path_val.ok) {
-                                    if (i > 0) {
+                                    if (i > 0)
                                         strcat(all_paths, " ");
-                                    }
                                     snprintf(all_paths + strlen(all_paths), sizeof(all_paths) - strlen(all_paths), "-i\"%s\"", path_val.u.s);
                                 }
                             }
@@ -271,13 +280,11 @@ void kodo_main(int sig_unused) {
                                 }
                                 
                                 int find_gamemodes = kodo_sef_fdir(".", kd_gamemode_input);
-
                                 if (find_gamemodes == 1) {
                                     char* container_output = strdup(kodo_sef_found[1]);
                                     char* f_last_slash_container = strrchr(container_output, '/');
-                                    if (f_last_slash_container != NULL && *(f_last_slash_container + 1) != '\0') {
+                                    if (f_last_slash_container != NULL && *(f_last_slash_container + 1) != '\0')
                                         *(f_last_slash_container + 1) = '\0';
-                                    }
 
                                     snprintf(kodo_c_output_f_container, format_size_c_f_container, "%s%s",
                                         container_output, kd_gamemode_output);
@@ -297,13 +304,11 @@ void kodo_main(int sig_unused) {
                                 }
                             } else {
                                 int find_gamemodes_arg1 = kodo_sef_fdir(".", compile_arg1);
-
                                 if (find_gamemodes_arg1 == 1) {
                                     char* container_output = strdup(kodo_sef_found[1]);
                                     char* f_last_slash_container = strrchr(container_output, '/');
-                                    if (f_last_slash_container != NULL && *(f_last_slash_container + 1) != '\0') {
+                                    if (f_last_slash_container != NULL && *(f_last_slash_container + 1) != '\0')
                                         *(f_last_slash_container + 1) = '\0';
-                                    }
 
                                     snprintf(kodo_c_output_f_container, format_size_c_f_container, "%s%s",
                                         container_output, kd_gamemode_output);
@@ -326,7 +331,6 @@ void kodo_main(int sig_unused) {
                             if (_compiler_) 
                                 kodo_sys(_compiler_);
                         }
-            
                         if (_compiler_)
                             free(_compiler_);
                     }
