@@ -55,6 +55,13 @@ kodo_server_samp(const char *gamemode_arg,
                 kodo_main(0);
         }
 
+        int find_gamemodes = kodo_sef_fdir(".", gamemode_arg);
+        if (find_gamemodes != 1) {
+                printf_color(COL_RED, "Can't locate: ");
+                printf("%s\n", gamemode_arg);
+                kodo_main(0);
+        }
+        
         while (fgets(g_line, sizeof(g_line), serv_in)) {
                 if (!strncmp(g_line, "gamemode0 ", 10)) {
                         fprintf(serv_out, "gamemode0 %s\n", gamemode_arg);
@@ -119,6 +126,13 @@ kodo_server_openmp(const char *gamemode_arg,
         if (!procc_f) {
                 printf_error("failed to open config.json");
                 return;
+        }
+
+        int find_gamemodes = kodo_sef_fdir(".", gamemode_arg);
+        if (find_gamemodes != 1) {
+                printf_color(COL_RED, "Can't locate: ");
+                printf("%s\n", gamemode_arg);
+                kodo_main(0);
         }
 
         fseek(procc_f, 0, SEEK_END);

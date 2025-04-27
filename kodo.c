@@ -273,7 +273,7 @@ void kodo_main(int sig_unused) {
                             }
             
                             static char kd_gamemode[56];
-                            if (*arg == '\0') {
+                            if (*arg == '\0' || arg == ".") {
                                 toml_datum_t kodo_gmodes = toml_string_in(kodo_compiler, "input");
                                 if (kodo_gmodes.ok) {
                                     kd_gamemode_input = kodo_gmodes.u.s;
@@ -404,7 +404,7 @@ void kodo_main(int sig_unused) {
                     find_for_omp=0x1;
 
                 if (find_for_samp == 0x1) {
-                    if (*arg == '\0') {
+                    if (*arg == '\0' || arg == ".") {
                         FILE *server_log = fopen("server_log.txt", "r");
                         if (server_log)
                             remove("server_log.txt");
@@ -441,7 +441,7 @@ void kodo_main(int sig_unused) {
                         kodo_server_samp(arg1, ptr_samp);
                     }
                 } else if (find_for_omp == 0x1) {
-                    if (*arg == '\0') {
+                    if (*arg == '\0' || arg == ".") {
                         FILE *server_log = fopen("log.txt", "r");
 
                         if (server_log) 
