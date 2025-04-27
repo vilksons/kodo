@@ -15,7 +15,7 @@ I. **x86_64 Package Support (For 64-bit Systems)**
 
    If you're using a different distribution, make sure to install the appropriate `x86_64` or `lib32` packages.
 
-I. **Step-by-Step installation of libpawnc.so on Linux Env.**
+II. **Step-by-Step installation of libpawnc.so on Linux Env.**
    - **On Linux**:
      .. code-block:: bash
     
@@ -39,7 +39,7 @@ I. **Step-by-Step installation of libpawnc.so on Linux Env.**
 
    If the library is listed, the installation was successful.
 
-I. **If No Library is Detected, Move it to `/usr/local/lib32/`**
+III. **If No Library is Detected, Move it to `/usr/local/lib32/`**
 
    If your library is not detected after running `ldconfig -p`, try moving it to the `/usr/local/lib32/` directory for 32-bit libraries. Use the following command:
 

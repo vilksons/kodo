@@ -28,7 +28,7 @@ Usage `debug .` to debug server modes by server.cfg from `gamemode0`
 Usage `debug example` to debug server modes by files .amx from /gamemodes/
 
 Pawncc Installation
-https://github.com/vilksons/kodo/tree/main/pawncc.rst
+https://github.com/vilksons/kodo/blob/main/Documentation/pawncc.rst
 
 Compiler Options
 # Pawn Compiler 3.10.10
