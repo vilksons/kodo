@@ -193,43 +193,52 @@ int kodo_sef_fdir(const char *sef_path,
         char path_buff[SEF_PATH_SIZE];
         struct dirent *entry;
         struct stat statbuf;
-        int found = 0;
         DIR *dir;
 
         if ((dir = opendir(sef_path)) == NULL) {
                 perror("opendir");
                 kodo_main(0);
         }
-        
-        while ((entry = readdir(dir)) != NULL && kodo_sef_count < SEF_PATH_COUNT) {
+
+        while ((entry = readdir(dir)) != NULL) {
                 if (entry->d_name[0] == '.' && 
                    (entry->d_name[1] == '\0' || 
                    (entry->d_name[1] == '.' && entry->d_name[2] == '\0')))
                         continue;
-                
+
                 snprintf(path_buff, sizeof(path_buff), "%s/%s", sef_path, entry->d_name);
-                
-                if (entry->d_type == DT_DIR) found += kodo_sef_fdir(path_buff, sef_name); 
-                else if (entry->d_type == DT_REG) {
+
+                if (entry->d_type == DT_DIR) {
+                        if (kodo_sef_fdir(path_buff, sef_name)) {
+                                closedir(dir);
+                                return 1;
+                        }
+                } else if (entry->d_type == DT_REG) {
                         if (strcmp(entry->d_name, sef_name) == 0) {
                                 strncpy(kodo_sef_found[kodo_sef_count], path_buff, SEF_PATH_SIZE);
                                 kodo_sef_count++;
-                                found++;
+                                closedir(dir);
+                                return 1;
                         }
                 } else {
                         if (stat(path_buff, &statbuf) == -1)
                                 continue;
-                        if (S_ISDIR(statbuf.st_mode)) found += kodo_sef_fdir(path_buff, sef_name);
-                        else if (S_ISREG(statbuf.st_mode) && strcmp(entry->d_name, sef_name) == 0) {
+                        if (S_ISDIR(statbuf.st_mode)) {
+                                if (kodo_sef_fdir(path_buff, sef_name)) {
+                                        closedir(dir);
+                                        return 1;
+                                }
+                        } else if (S_ISREG(statbuf.st_mode) && strcmp(entry->d_name, sef_name) == 0) {
                                 strncpy(kodo_sef_found[kodo_sef_count], path_buff, SEF_PATH_SIZE);
                                 kodo_sef_count++;
-                                found++;
+                                closedir(dir);
+                                return 1;
                         }
                 }
         }
 
         closedir(dir);
-        return found; 
+        return 0;
 }
 
 int kodo_sef_wmv(const char *c_src,

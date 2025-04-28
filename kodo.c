@@ -265,7 +265,7 @@ void kodo_main(int sig_unused) {
                                     kd_gamemode_input = kodo_gmodes.u.s;
                                 }
                                 
-                                int find_gamemodes = kodo_sef_fdir(".", kd_gamemode_input);
+                                int find_gamemodes = kodo_sef_fdir("gamemodes/", kd_gamemode_input);
                                 if (find_gamemodes == 1) {
                                     char* container_output = strdup(kodo_sef_found[1]);
                                     char* f_last_slash_container = strrchr(container_output, '/');
@@ -322,7 +322,7 @@ void kodo_main(int sig_unused) {
                                     continue;
                                 }
                             } else {
-                                int find_gamemodes_arg1 = kodo_sef_fdir(".", compile_arg1);
+                                int find_gamemodes_arg1 = kodo_sef_fdir("gamemodes/", compile_arg1);
                                 if (find_gamemodes_arg1 == 1) {
                                     char* container_output = strdup(kodo_sef_found[1]);
                                     char* f_last_slash_container = strrchr(container_output, '/');
