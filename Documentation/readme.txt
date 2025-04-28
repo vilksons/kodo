@@ -34,7 +34,7 @@ notice
 - in WSL/WSL2 system, you can still maintain the .exe binary for pawncc or samp-server/open-mp server without having to use or replace it with this linux binary only applies without Docker on WSL/WSL2.
 
 Pawncc Installation
-https://github.com/vilksons/kodo/blob/main/Documentation/pawncc.rst
+https://github.com/vilksons/kodo/blob/main/Documentation/pawnc/readme.txt
 
 Compiler Options
 # Pawn Compiler 3.10.10
