@@ -197,21 +197,34 @@ int kodo_sef_fdir(const char *sef_path,
         }
         
         while ((entry = readdir(dir)) != NULL && kodo_sef_count < SEF_PATH_COUNT) {
-            if (!strcmp(entry->d_name, ".") ||
-                !strcmp(entry->d_name, ".."))
+                if (entry->d_name[0] == '.' && 
+                    (entry->d_name[1] == '\0' || 
+                     (entry->d_name[1] == '.' && entry->d_name[2] == '\0')))
                     continue;
-            snprintf(path_buff, sizeof(path_buff), "%s/%s",
-                    sef_path, entry->d_name);
-            if (stat(path_buff, &statbuf) == -1)
-                    continue;
-            if (S_ISDIR(statbuf.st_mode))
-                found += kodo_sef_fdir(path_buff, sef_name);
-            else if (strcmp(entry->d_name, sef_name) == 0) {
-                    strncpy(kodo_sef_found[kodo_sef_count], path_buff, SEF_PATH_SIZE);
-                    kodo_sef_count++;
-                    found++;
+            
+                snprintf(path_buff, sizeof(path_buff), "%s/%s", sef_path, entry->d_name);
+            
+                if (entry->d_type == DT_DIR) {
+                    found += kodo_sef_fdir(path_buff, sef_name);
+                } else if (entry->d_type == DT_REG) {
+                    if (strcmp(entry->d_name, sef_name) == 0) {
+                        strncpy(kodo_sef_found[kodo_sef_count], path_buff, SEF_PATH_SIZE);
+                        kodo_sef_count++;
+                        found++;
+                    }
+                } else {
+                    if (stat(path_buff, &statbuf) == -1)
+                        continue;
+                    if (S_ISDIR(statbuf.st_mode))
+                        found += kodo_sef_fdir(path_buff, sef_name);
+                    else if (S_ISREG(statbuf.st_mode) && strcmp(entry->d_name, sef_name) == 0) {
+                        strncpy(kodo_sef_found[kodo_sef_count], path_buff, SEF_PATH_SIZE);
+                        kodo_sef_count++;
+                        found++;
+                    }
+                }
             }
-        }
+            
 
         closedir(dir);
         return found; 
@@ -516,12 +529,15 @@ void install_pawncc_now(void) {
                 }
 
                 if (strcmp(str_lib_path, "/usr/local/lib") == 0) {
-                        int sys_sudo = system("sudo");
+                        int sys_sudo = system("which sudo > /dev/null 2>&1");
                         if (sys_sudo == 0) kodo_sys("sudo ldconfig");
                         else kodo_sys("ldconfig");
 
-                        kodo_sys("export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH");
-                        kodo_sys("source ~/.bashrc");
+                        const char *old_path_lib = getenv("LD_LIBRARY_PATH");
+                        char new_path_lib[1024];
+                        if (old_path_lib) snprintf(new_path_lib, sizeof(new_path_lib), "/usr/local/lib:%s", old_path_lib);
+                        else snprintf(new_path_lib, sizeof(new_path_lib), "/usr/local/lib");
+                        setenv("LD_LIBRARY_PATH", new_path_lib, 1);
 
                         FILE *procc_f;
                         char buff[520];
@@ -536,7 +552,7 @@ void install_pawncc_now(void) {
 
                         pclose(procc_f);
                         if (!found)  {
-                                printf_error("libpawnc NOT found.\n");
+                                printf_error("libpawnc not found.\n");
                                 struct stat st;
                                 if (stat("/usr/local/lib32", &st) == 0 && S_ISDIR(st.st_mode)) { 
                                         printf_info("moving libpawnc.so to /usr/local/lib32");
@@ -547,13 +563,20 @@ void install_pawncc_now(void) {
                                         if (sys_sudo == 0) kodo_sys("sudo ldconfig");
                                         else kodo_sys("ldconfig");
 
-                                        kodo_sys("export LD_LIBRARY_PATH=/usr/local/lib32:$LD_LIBRARY_PATH");
-                                        kodo_sys("source ~/.bashrc");
+                                        const char *old_path_lib32 = getenv("LD_LIBRARY_PATH");
+                                        char new_path_lib32[1024];
+                                        if (old_path_lib32) snprintf(new_path_lib32, sizeof(new_path_lib32), "/usr/local/lib32:%s", old_path_lib32);
+                                        else snprintf(new_path_lib32, sizeof(new_path_lib32), "/usr/local/lib32");
+                                        setenv("LD_LIBRARY_PATH", new_path_lib32, 1);
+
                                 }
                         }
                 } else if (strcmp(str_lib_path, "/data/data/com.termux/files/usr/local/lib/") == 0) {
-                        kodo_sys("export LD_LIBRARY_PATH=/data/data/com.termux/files/usr/local/lib:$LD_LIBRARY_PATH");
-                        kodo_sys("source ~/.bashrc");
+                        const char *old_path_lib_tr = getenv("LD_LIBRARY_PATH");
+                        char new_path_lib_tr[1024];
+                        if (old_path_lib_tr) snprintf(new_path_lib_tr, sizeof(new_path_lib_tr), "/data/data/com.termux/files/usr/local/lib:%s", old_path_lib_tr);
+                        else snprintf(new_path_lib_tr, sizeof(new_path_lib_tr), "/data/data/com.termux/files/usr/local/lib");
+                        setenv("LD_LIBRARY_PATH", new_path_lib_tr, 1);
                 }
         }
 

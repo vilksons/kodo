@@ -45,8 +45,9 @@ kodo_download_pawncc(const char *platform) {
         if (scanf(" %c", &version_selection) != 1) {
             return;
         }
-        int index = (version_selection >= 'B' ) ? version_selection - 'A'
-                : (version_selection >= 'b' ) ? version_selection - 'a' : -1;
+        int index = (version_selection >= 'A' && version_selection <= 'Z') ? version_selection - 'A' :
+             (version_selection >= 'a' && version_selection <= 'z') ? version_selection - 'a' :
+             -1;
 
         if (index < 0 || index >= 3) {
             printf("Invalid selection.\n");
