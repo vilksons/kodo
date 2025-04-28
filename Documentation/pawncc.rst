@@ -11,6 +11,8 @@ Linux - libpawnc.so installation
 
    .. code-block:: bash
 
+        sudo dpkg --add-architecture i386
+        sudo apt update
         sudo apt-get install libc6:i386 lib32gcc1
 
    If you're using a different distribution, make sure to install the appropriate `x86_64` or `lib32` packages.
