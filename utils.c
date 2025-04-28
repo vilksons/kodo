@@ -123,8 +123,9 @@ const char* kodo_detect_os(void) {
         os="unknown";
 
         if (getenv("OS") && strstr(getenv("OS"), "Windows_NT") ||
-            getenv("WSL_INTEROP") || getenv("WSL_DISTRO_NAME"))
-                os="windows";
+            getenv("WSL_INTEROP") || getenv("WSL_DISTRO_NAME")) {
+                return os="windows";
+        }
 
         struct utsname sys_info;
         if (!uname(&sys_info)) if (strstr(sys_info.sysname, "Linux")) os="linux";
@@ -198,33 +199,31 @@ int kodo_sef_fdir(const char *sef_path,
         
         while ((entry = readdir(dir)) != NULL && kodo_sef_count < SEF_PATH_COUNT) {
                 if (entry->d_name[0] == '.' && 
-                    (entry->d_name[1] == '\0' || 
-                     (entry->d_name[1] == '.' && entry->d_name[2] == '\0')))
-                    continue;
-            
-                snprintf(path_buff, sizeof(path_buff), "%s/%s", sef_path, entry->d_name);
-            
-                if (entry->d_type == DT_DIR) {
-                    found += kodo_sef_fdir(path_buff, sef_name);
-                } else if (entry->d_type == DT_REG) {
-                    if (strcmp(entry->d_name, sef_name) == 0) {
-                        strncpy(kodo_sef_found[kodo_sef_count], path_buff, SEF_PATH_SIZE);
-                        kodo_sef_count++;
-                        found++;
-                    }
-                } else {
-                    if (stat(path_buff, &statbuf) == -1)
+                        (entry->d_name[1] == '\0' || 
+                        (entry->d_name[1] == '.' && entry->d_name[2] == '\0')))
                         continue;
-                    if (S_ISDIR(statbuf.st_mode))
-                        found += kodo_sef_fdir(path_buff, sef_name);
-                    else if (S_ISREG(statbuf.st_mode) && strcmp(entry->d_name, sef_name) == 0) {
-                        strncpy(kodo_sef_found[kodo_sef_count], path_buff, SEF_PATH_SIZE);
-                        kodo_sef_count++;
-                        found++;
-                    }
+                
+                snprintf(path_buff, sizeof(path_buff), "%s/%s", sef_path, entry->d_name);
+                
+                if (entry->d_type == DT_DIR) found += kodo_sef_fdir(path_buff, sef_name); 
+                else if (entry->d_type == DT_REG) {
+                        if (strcmp(entry->d_name, sef_name) == 0) {
+                                strncpy(kodo_sef_found[kodo_sef_count], path_buff, SEF_PATH_SIZE);
+                                kodo_sef_count++;
+                                found++;
+                        }
+                } else {
+                        if (stat(path_buff, &statbuf) == -1)
+                        continue;
+                        if (S_ISDIR(statbuf.st_mode)) found += kodo_sef_fdir(path_buff, sef_name);
+                        else if (S_ISREG(statbuf.st_mode) && strcmp(entry->d_name, sef_name) == 0) {
+                                strncpy(kodo_sef_found[kodo_sef_count], path_buff, SEF_PATH_SIZE);
+                                kodo_sef_count++;
+                                found++;
+                        }
                 }
-            }
-            
+        }
+        
 
         closedir(dir);
         return found; 
@@ -491,7 +490,6 @@ void install_pawncc_now(void) {
                 snprintf(str_dest_path, sizeof(str_dest_path), "%s/pawncc", dest_path);
                 kodo_sef_wmv(str_finstall, str_dest_path);
         }
-
         if (find_pawndisasm_exe == 1 && find_pawndisasm == 1) {
                 snprintf(str_finstall, sizeof(str_finstall), "%s", kodo_sef_found[3]);
                 snprintf(str_dest_path, sizeof(str_dest_path), "%s/pawndisasm.exe", dest_path);
@@ -535,8 +533,11 @@ void install_pawncc_now(void) {
 
                         const char *old_path_lib = getenv("LD_LIBRARY_PATH");
                         char new_path_lib[1024];
-                        if (old_path_lib) snprintf(new_path_lib, sizeof(new_path_lib), "/usr/local/lib:%s", old_path_lib);
-                        else snprintf(new_path_lib, sizeof(new_path_lib), "/usr/local/lib");
+                        if (old_path_lib) snprintf(new_path_lib, sizeof(new_path_lib),
+                                "/usr/local/lib:%s",
+                                old_path_lib);
+                        else snprintf(new_path_lib, sizeof(new_path_lib),
+                                "/usr/local/lib");
                         setenv("LD_LIBRARY_PATH", new_path_lib, 1);
 
                         FILE *procc_f;
@@ -565,8 +566,11 @@ void install_pawncc_now(void) {
 
                                         const char *old_path_lib32 = getenv("LD_LIBRARY_PATH");
                                         char new_path_lib32[1024];
-                                        if (old_path_lib32) snprintf(new_path_lib32, sizeof(new_path_lib32), "/usr/local/lib32:%s", old_path_lib32);
-                                        else snprintf(new_path_lib32, sizeof(new_path_lib32), "/usr/local/lib32");
+                                        if (old_path_lib32) snprintf(new_path_lib32, sizeof(new_path_lib32),
+                                                "/usr/local/lib32:%s",
+                                                old_path_lib32);
+                                        else snprintf(new_path_lib32, sizeof(new_path_lib32),
+                                                "/usr/local/lib32");
                                         setenv("LD_LIBRARY_PATH", new_path_lib32, 1);
 
                                 }
@@ -574,8 +578,11 @@ void install_pawncc_now(void) {
                 } else if (strcmp(str_lib_path, "/data/data/com.termux/files/usr/local/lib/") == 0) {
                         const char *old_path_lib_tr = getenv("LD_LIBRARY_PATH");
                         char new_path_lib_tr[1024];
-                        if (old_path_lib_tr) snprintf(new_path_lib_tr, sizeof(new_path_lib_tr), "/data/data/com.termux/files/usr/local/lib:%s", old_path_lib_tr);
-                        else snprintf(new_path_lib_tr, sizeof(new_path_lib_tr), "/data/data/com.termux/files/usr/local/lib");
+                        if (old_path_lib_tr) snprintf(new_path_lib_tr, sizeof(new_path_lib_tr),
+                                "/data/data/com.termux/files/usr/local/lib:%s",
+                                old_path_lib_tr);
+                        else snprintf(new_path_lib_tr, sizeof(new_path_lib_tr), 
+                                "/data/data/com.termux/files/usr/local/lib");
                         setenv("LD_LIBRARY_PATH", new_path_lib_tr, 1);
                 }
         }

@@ -47,11 +47,9 @@
 void kodo_main(int sig_unused) {
         (void)sig_unused;
         signal(SIGINT, handle_sigint);
-
         kodo_title(NULL);
         kodo_toml_data();
         using_history();
-
         while (1) {
             char* pattern_COMMANDS = readline("kodo:~$ ");
             if (pattern_COMMANDS == NULL) break;
@@ -488,7 +486,6 @@ void kodo_main(int sig_unused) {
 
                     free(ptr_sigA);
                 }
-
                 if (format_prompt)
                     free(format_prompt);
             } else if (strcmp(pattern_COMMANDS, "stop") == 0) {
@@ -497,9 +494,7 @@ void kodo_main(int sig_unused) {
                 continue;
             } else if (strcmp(pattern_COMMANDS, "restart") == 0) {
                 kodo_server_stop_tasks();
-
                 sleep(2);
-
                 goto _running_
                     ;
             } else if (strcmp(pattern_COMMANDS, "kodo") == 0) {
