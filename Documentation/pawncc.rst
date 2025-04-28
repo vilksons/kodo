@@ -56,4 +56,5 @@ Linux - libpawnc.so installation
 notice
 ======
 - you can use automatic install pawncc without running manual commands here by "apply install pawncc" after the installation of pawncc archive from `pawncc` is complete.
+- How pawncc "auto apply" works is by searching for files from the extraction results and will copy (replace if there are already any).. from the results of the C*script loop (especially the first extraction file found *make sure there is only one folder or file that contains the appropriate file and is not a duplicate, for example if pawncc has two then the file is not installed).. paste it to the pawno/ folder for sa-mp and qawno/ for standard open.mp. and will also set libpawnc.so if the OS used is Linux to the /usr/local/lib environment area or if there is /usr/local/lib32 then it will be pasted to the lib32 area
 - in WSL/WSL2 system, you can still maintain the .exe binary for pawncc or samp-server/open-mp server without having to use or replace it with this linux binary only applies without Docker on WSL/WSL2.

@@ -24,7 +24,8 @@ kodo_download_pawncc(const char *platform) {
         char url[300], fname[256];
 
         const char *versions[] = {
-            "3.10.10", "3.10.9"
+            "3.10.10", "3.10.9", "3.10.8", "3.10.7", "3.10.6",
+            "3.10.5", "3.10.4", "3.10.3", "3.10.2", "3.10.1"
         };
 
         printf(":: Do you want to continue downloading PawnCC? (Yy/Nn)\n>> ");
@@ -36,22 +37,22 @@ kodo_download_pawncc(const char *platform) {
             return;
         }
 
+        ret:
         printf("Select the PawnCC version to download:\n");
-        for (int i = 0; i < 3 && i < sizeof(versions)/sizeof(versions[0]); i++) {
+        for (int i = 0; i < 10; i++) {
             printf("[%c/%c] PawnCC %s\n", 'A'+i, 'a'+i, versions[i]);
         }
-        
+
         printf(">> ");
         if (scanf(" %c", &version_selection) != 1) {
-            return;
+            goto ret;
         }
-        int index = (version_selection >= 'A' && version_selection <= 'Z') ? version_selection - 'A' :
-             (version_selection >= 'a' && version_selection <= 'z') ? version_selection - 'a' :
-             -1;
+        int index = (version_selection >= 'A' && version_selection <= 'J') ? version_selection - 'A'
+                : (version_selection >= 'a' && version_selection <= 'j') ? version_selection - 'a' : -1;
 
-        if (index < 0 || index >= 3) {
+        if (index < 0 || index >= 10) {
             printf("Invalid selection.\n");
-            return;
+            goto ret;
         } else {
             const char *archive_write = strcmp(platform, "linux") == 0 ? "tar.gz" : "zip";
 
@@ -128,6 +129,7 @@ kodo_download_samp(const char *platform) {
             }
         };
 
+        ret:
         printf("Select the SA-MP version to download:\n");
         for (int i = 0; i < sizeof(versions)/sizeof(versions[0]); i++) {
             printf("[%c/%c] %s\n", versions[i].key, versions[i].key + 32, versions[i].name);
@@ -136,7 +138,7 @@ kodo_download_samp(const char *platform) {
         printf(">> ");
         char version_choice;
         if (scanf(" %c", &version_choice) != 1) {
-            return;
+            goto ret;
         }
 
         VersionInfo *chosen = NULL;
@@ -149,8 +151,7 @@ kodo_download_samp(const char *platform) {
 
         if (!chosen) {
             printf("Invalid selection\n");
-            kodo_main(0);
-            return;
+            goto ret;
         } else {
             const char *url = strcmp(platform, "linux") == 0 ? chosen->linux_url : chosen->windows_url;
             const char *fname = strcmp(platform, "linux") == 0 ? chosen->linux_file : chosen->windows_file;

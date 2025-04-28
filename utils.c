@@ -26,16 +26,20 @@
 #include "utils.h"
 #include "kodo.h"
 
+int initialize_ipawncc = 0;
 int kodo_sef_count = 0;
 char kodo_sef_found[SEF_PATH_COUNT][SEF_PATH_SIZE];
-
-int initialize_ipawncc = 0;
-
 const char *kodo_os = NULL;
 const char *server_or_debug = NULL;
 const char *kd_compiler_opt = NULL;
 const char *kd_gamemode_input = NULL;
 const char *kd_gamemode_output = NULL;
+
+void reset_variables(void) {
+        initialize_ipawncc=0;
+        for (int i = 0; i < kodo_sef_count; i++)
+                memset(kodo_sef_found, 0, sizeof(kodo_sef_found));
+}
 
 inline int kodo_sys(const char *cmd) { return system(cmd); }
 
@@ -214,7 +218,7 @@ int kodo_sef_fdir(const char *sef_path,
                         }
                 } else {
                         if (stat(path_buff, &statbuf) == -1)
-                        continue;
+                                continue;
                         if (S_ISDIR(statbuf.st_mode)) found += kodo_sef_fdir(path_buff, sef_name);
                         else if (S_ISREG(statbuf.st_mode) && strcmp(entry->d_name, sef_name) == 0) {
                                 strncpy(kodo_sef_found[kodo_sef_count], path_buff, SEF_PATH_SIZE);
@@ -223,7 +227,6 @@ int kodo_sef_fdir(const char *sef_path,
                         }
                 }
         }
-        
 
         closedir(dir);
         return found; 
@@ -352,7 +355,7 @@ int kodo_extract_tar_gz(const char *tar_files) {
         return 0;
 }
 
-int kodo_extract_zip(
+void kodo_extract_zip(
                 const char *zip_path, const char *__dest_path)
 {
         struct archive *archives;
@@ -388,6 +391,7 @@ int kodo_extract_zip(
                         if (!has_error) {
                                 printf_error("during extraction: %s\n", archive_error_string(archive_write));
                                 has_error = 0x1;
+                                kodo_main(0);
                         }
                 } else {
                     const void *a_buff;
@@ -401,16 +405,14 @@ int kodo_extract_zip(
                         if (a_read < ARCHIVE_OK) {
                                 if (!has_error) {
                                         printf_error("reading block from archive: %s\n", archive_error_string(archives));
-                                        has_error = 0x1;
-                                        kodo_main(0);
+                                        has_error = 0x2;
                                 }
                         }
                         a_read = archive_write_data_block(archive_write, a_buff, size, offset);
                         if (a_read < ARCHIVE_OK) {
                                 if (!has_error) {
                                         printf_error("writing block to destination: %s\n", archive_error_string(archive_write));
-                                        has_error = 0x1;
-                                        kodo_main(0);
+                                        has_error = 0x3;
                                 }
                         }
                     }
@@ -421,8 +423,6 @@ int kodo_extract_zip(
         archive_read_free(archives);
         archive_write_close(archive_write);
         archive_write_free(archive_write);
-
-        return 0;
 }
 
 size_t write_file(void *ptr,
@@ -472,39 +472,49 @@ void install_pawncc_now(void) {
         
         sleep(2);
 
-        char str_finstall[1502];
+        char pawncc_dest_path[1024];
+        char pawncc_exe_dest_path[1024];
+        char pawndisasm_dest_path[1024];
+        char pawndisasm_exe_dest_path[1024];
 
+        for (int i = 0; i < kodo_sef_count; i++) {
+                if (strstr(kodo_sef_found[i], "pawncc") && strstr(kodo_sef_found[i], "pawncc.exe") == NULL) {
+                        snprintf(pawncc_dest_path, sizeof(pawncc_dest_path), "%s", kodo_sef_found[i]);
+                } if (strstr(kodo_sef_found[i], "pawncc.exe") && strstr(kodo_sef_found[i], "pawncc") &&
+                        strstr(kodo_sef_found[i], "pawncc.exe") == strstr(kodo_sef_found[i], "pawncc")) {
+                        snprintf(pawncc_exe_dest_path, sizeof(pawncc_exe_dest_path), "%s", kodo_sef_found[i]);
+                }
+                if (strstr(kodo_sef_found[i], "pawndisasm") && strstr(kodo_sef_found[i], "pawndisasm.exe") == NULL) { 
+                        snprintf(pawndisasm_dest_path, sizeof(pawndisasm_dest_path), "%s", kodo_sef_found[i]);
+                } if (strstr(kodo_sef_found[i], "pawndisasm.exe") && strstr(kodo_sef_found[i], "pawndisasm") &&
+                        strstr(kodo_sef_found[i], "pawndisasm.exe") == strstr(kodo_sef_found[i], "pawndisasm")) {
+                        snprintf(pawndisasm_exe_dest_path, sizeof(pawndisasm_exe_dest_path), "%s", kodo_sef_found[i]);
+                }
+        }
+        
         if (find_pawncc_exe == 1 && find_pawncc == 1) {
-                snprintf(str_finstall, sizeof(str_finstall), "%s", kodo_sef_found[0]);
                 snprintf(str_dest_path, sizeof(str_dest_path), "%s/pawncc.exe", dest_path);
-                kodo_sef_wmv(str_finstall, str_dest_path);
-                snprintf(str_finstall, sizeof(str_finstall), "%s", kodo_sef_found[1]);
+                kodo_sef_wmv(pawncc_exe_dest_path, str_dest_path);
                 snprintf(str_dest_path, sizeof(str_dest_path), "%s/pawncc", dest_path);
-                kodo_sef_wmv(str_finstall, str_dest_path);
+                kodo_sef_wmv(pawncc_dest_path, str_dest_path);
         } else if (find_pawncc_exe == 1) {
-                snprintf(str_finstall, sizeof(str_finstall), "%s", kodo_sef_found[0]);
                 snprintf(str_dest_path, sizeof(str_dest_path), "%s/pawncc.exe", dest_path);
-                kodo_sef_wmv(str_finstall, str_dest_path);
+                kodo_sef_wmv(pawncc_exe_dest_path, str_dest_path);
         } else if (find_pawncc == 1) {
-                snprintf(str_finstall, sizeof(str_finstall), "%s", kodo_sef_found[0]);
                 snprintf(str_dest_path, sizeof(str_dest_path), "%s/pawncc", dest_path);
-                kodo_sef_wmv(str_finstall, str_dest_path);
+                kodo_sef_wmv(pawncc_dest_path, str_dest_path);
         }
         if (find_pawndisasm_exe == 1 && find_pawndisasm == 1) {
-                snprintf(str_finstall, sizeof(str_finstall), "%s", kodo_sef_found[3]);
                 snprintf(str_dest_path, sizeof(str_dest_path), "%s/pawndisasm.exe", dest_path);
-                kodo_sef_wmv(str_finstall, str_dest_path);
-                snprintf(str_finstall, sizeof(str_finstall), "%s", kodo_sef_found[4]);
+                kodo_sef_wmv(pawndisasm_exe_dest_path, str_dest_path);
                 snprintf(str_dest_path, sizeof(str_dest_path), "%s/pawndisasm", dest_path);
-                kodo_sef_wmv(str_finstall, str_dest_path);
+                kodo_sef_wmv(pawndisasm_dest_path, str_dest_path);
         } else if (find_pawndisasm_exe == 1) {
-                snprintf(str_finstall, sizeof(str_finstall), "%s", kodo_sef_found[3]);
                 snprintf(str_dest_path, sizeof(str_dest_path), "%s/pawndisasm.exe", dest_path);
-                kodo_sef_wmv(str_finstall, str_dest_path);
+                kodo_sef_wmv(pawndisasm_exe_dest_path, str_dest_path);
         } else if (find_pawndisasm == 1) {
-                snprintf(str_finstall, sizeof(str_finstall), "%s", kodo_sef_found[4]);
                 snprintf(str_dest_path, sizeof(str_dest_path), "%s/pawndisasm", dest_path);
-                kodo_sef_wmv(str_finstall, str_dest_path);
+                kodo_sef_wmv(pawndisasm_dest_path, str_dest_path);
         }
 
         if (__kodo_os__ == 0x00) {
@@ -513,17 +523,30 @@ void install_pawncc_now(void) {
 
                 int find_libpawnc = kodo_sef_fdir(".", "libpawnc.so");
 
-                struct stat st;
-                if (stat("/usr/local/lib", &st) == 0 && S_ISDIR(st.st_mode))
-                        str_lib_path="/usr/local/lib";
-                if (stat("/data/data/com.termux/files/usr/local/lib/", &st) == 0 && S_ISDIR(st.st_mode))
-                        str_lib_path="/data/data/com.termux/files/usr/local/lib/";
+                char libpawnc_dest_path[1024];
 
-                snprintf(str_finstall, sizeof(str_finstall), "%s", kodo_sef_found[5]);
+                for (int i = 0; i < kodo_sef_count; i++) {
+                        if (strstr(kodo_sef_found[i], "libpawnc.so")) {
+                                snprintf(libpawnc_dest_path, sizeof(libpawnc_dest_path), "%s", kodo_sef_found[i]);
+                                break;
+                        }
+                }
+
+                struct stat st;
+                int lib_or_lib32 = 0;
+                if (stat("/usr/local/lib32", &st) == 0 && S_ISDIR(st.st_mode)) { 
+                        lib_or_lib32=2;
+                        str_lib_path="/usr/local/lib32";
+                } else if (stat("/data/data/com.termux/files/usr/local/lib/", &st) == 0 && S_ISDIR(st.st_mode))
+                        str_lib_path="/data/data/com.termux/files/usr/local/lib/";
+                else if (stat("/usr/local/lib", &st) == 0 && S_ISDIR(st.st_mode)) { 
+                        lib_or_lib32=1;
+                        str_lib_path="/usr/local/lib";
+                } else printf_error("Can't found ../usr/local/lib!");
 
                 if (find_libpawnc == 1) {
                         snprintf(str_full_dest_path, sizeof(str_full_dest_path), "%s/libpawnc.so", str_lib_path);
-                        kodo_sef_wmv(str_finstall, str_full_dest_path);
+                        kodo_sef_wmv(libpawnc_dest_path, str_full_dest_path);
                 }
 
                 if (strcmp(str_lib_path, "/usr/local/lib") == 0) {
@@ -531,49 +554,24 @@ void install_pawncc_now(void) {
                         if (sys_sudo == 0) kodo_sys("sudo ldconfig");
                         else kodo_sys("ldconfig");
 
-                        const char *old_path_lib = getenv("LD_LIBRARY_PATH");
-                        char new_path_lib[1024];
-                        if (old_path_lib) snprintf(new_path_lib, sizeof(new_path_lib),
-                                "/usr/local/lib:%s",
-                                old_path_lib);
-                        else snprintf(new_path_lib, sizeof(new_path_lib),
-                                "/usr/local/lib");
-                        setenv("LD_LIBRARY_PATH", new_path_lib, 1);
-
-                        FILE *procc_f;
-                        char buff[520];
-                        int found = 0;
-
-                        procc_f = popen("ldconfig -p | grep libpawnc", "r");
-                        if (procc_f == NULL) {
-                                perror("popen failed");
-                                kodo_main(0);
-                        }
-                        while (fgets(buff, sizeof(buff), procc_f) != NULL) found = 1;
-
-                        pclose(procc_f);
-                        if (!found)  {
-                                printf_error("libpawnc not found.\n");
-                                struct stat st;
-                                if (stat("/usr/local/lib32", &st) == 0 && S_ISDIR(st.st_mode)) { 
-                                        printf_info("moving libpawnc.so to /usr/local/lib32");
-
-                                        int find_libpawnc_new = kodo_sef_fdir("/usr/local/lib", "libpawnc.so");
-                                        if (find_libpawnc_new == 1) kodo_sef_wmwrm(kodo_sef_found[6], "/usr/local/lib32");
-
-                                        if (sys_sudo == 0) kodo_sys("sudo ldconfig");
-                                        else kodo_sys("ldconfig");
-
-                                        const char *old_path_lib32 = getenv("LD_LIBRARY_PATH");
-                                        char new_path_lib32[1024];
-                                        if (old_path_lib32) snprintf(new_path_lib32, sizeof(new_path_lib32),
-                                                "/usr/local/lib32:%s",
-                                                old_path_lib32);
-                                        else snprintf(new_path_lib32, sizeof(new_path_lib32),
-                                                "/usr/local/lib32");
-                                        setenv("LD_LIBRARY_PATH", new_path_lib32, 1);
-
-                                }
+                        if (lib_or_lib32 == 1) {
+                                const char *old_path_lib = getenv("LD_LIBRARY_PATH");
+                                char new_path_lib[1024];
+                                if (old_path_lib) snprintf(new_path_lib, sizeof(new_path_lib),
+                                        "/usr/local/lib:%s",
+                                        old_path_lib);
+                                else snprintf(new_path_lib, sizeof(new_path_lib),
+                                        "/usr/local/lib");
+                                setenv("LD_LIBRARY_PATH", new_path_lib, 1);
+                        } else if (lib_or_lib32 == 2) {
+                                const char *old_path_lib32 = getenv("LD_LIBRARY_PATH");
+                                char new_path_lib32[1024];
+                                if (old_path_lib32) snprintf(new_path_lib32, sizeof(new_path_lib32),
+                                        "/usr/local/lib32:%s",
+                                        old_path_lib32);
+                                else snprintf(new_path_lib32, sizeof(new_path_lib32),
+                                        "/usr/local/lib32");
+                                setenv("LD_LIBRARY_PATH", new_path_lib32, 1);
                         }
                 } else if (strcmp(str_lib_path, "/data/data/com.termux/files/usr/local/lib/") == 0) {
                         const char *old_path_lib_tr = getenv("LD_LIBRARY_PATH");

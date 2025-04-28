@@ -50,6 +50,7 @@ void kodo_main(int sig_unused) {
         kodo_title(NULL);
         kodo_toml_data();
         using_history();
+        reset_variables();
         while (1) {
             char* pattern_COMMANDS = readline("kodo:~$ ");
             if (pattern_COMMANDS == NULL) break;
@@ -202,6 +203,8 @@ void kodo_main(int sig_unused) {
                 else if (__kodo_os__ == 0x00)
                     ptr_pawncc = "pawncc";
 
+                FILE *procc_f = NULL;
+                char error_compiler_check[100];
                 char kodo_c_output_f_container[128];
                 int format_size_c_f_container = sizeof(kodo_c_output_f_container);
             
@@ -274,12 +277,45 @@ void kodo_main(int sig_unused) {
 
                                     kd_gamemode_input=strdup(kodo_sef_found[1]);
 
-                                    snprintf(_compiler_, format_size_compiler, "%s %s \"%s\" -o\"%s\" \"%s\"",
+                                    struct timespec start, end;
+                                    double compiler_dur;
+
+                                    snprintf(_compiler_, format_size_compiler, "%s %s \"%s\" -o\"%s\" \"%s\" > .kd_compiler.log 2>&1",
                                         kodo_sef_found[0],
                                         all_paths,
                                         kd_gamemode_input,
                                         kodo_c_output_f_container,
                                         kd_compiler_opt);
+
+                                    clock_gettime(CLOCK_MONOTONIC, &start);
+                                
+                                    kodo_sys(_compiler_);
+                                    
+                                    clock_gettime(CLOCK_MONOTONIC, &end);
+
+                                    procc_f = fopen(".kd_compiler.log", "r");
+                                    if (procc_f) {
+                                        int ch;
+                                        while ((ch = fgetc(procc_f)) != EOF) {
+                                            putchar(ch);
+                                        }
+                                    }
+                                    while (fscanf(procc_f, "%s", error_compiler_check) != EOF) {
+                                        if (strcmp(error_compiler_check, "error") == 0) {
+                                            FILE *c_output;
+                                            c_output = fopen(kodo_c_output_f_container, "r");
+                                            if (c_output)
+                                                remove(kodo_c_output_f_container);
+                                            break;
+                                        }
+                                    }
+                                
+                                    fclose(procc_f);
+
+                                    compiler_dur = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
+                                    printf("[Finished in %.3fs]\n", compiler_dur);
+                                    if (_compiler_)
+                                        free(_compiler_);
                                 } else {
                                     printf_color(COL_RED, "Can't locate: ");
                                     printf("%s\n", kd_gamemode_input);
@@ -298,24 +334,53 @@ void kodo_main(int sig_unused) {
 
                                     compile_arg1=strdup(kodo_sef_found[1]);
 
-                                    snprintf(_compiler_, format_size_compiler, "%s %s \"%s\" -o\"%s\" \"%s\"",
+                                    struct timespec start, end;
+                                    double compiler_dur;
+
+                                    snprintf(_compiler_, format_size_compiler, "%s %s \"%s\" -o\"%s\" \"%s\" > .kd_compiler.log 2>&1",
                                         kodo_sef_found[0],
                                         all_paths,
                                         compile_arg1,
                                         kodo_c_output_f_container,
                                         kd_compiler_opt);
+                                    
+                                    clock_gettime(CLOCK_MONOTONIC, &start);
+                                    
+                                    kodo_sys(_compiler_);
+                                    
+                                    clock_gettime(CLOCK_MONOTONIC, &end);
+
+                                    procc_f = fopen(".kd_compiler.log", "r");
+                                    if (procc_f) {
+                                        int ch;
+                                        while ((ch = fgetc(procc_f)) != EOF) {
+                                            putchar(ch);
+                                        }
+                                    }
+                                    while (fscanf(procc_f, "%s", error_compiler_check) != EOF) {
+                                        if (strcmp(error_compiler_check, "error") == 0) {
+                                            FILE *c_output;
+                                            c_output = fopen(kodo_c_output_f_container, "r");
+                                            if (c_output)
+                                                remove(kodo_c_output_f_container);
+                                            break;
+                                        }
+                                    }
+                                
+                                    fclose(procc_f);
+
+                                    compiler_dur = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
+                                    printf("[Finished in %.3fs]\n", compiler_dur);
+                                    
+                                    if (_compiler_)
+                                        free(_compiler_);
                                 } else {
                                     printf_color(COL_RED, "Can't locate: ");
                                     printf("%s\n", compile_arg1);
                                     continue;
                                 }
                             }
-                            
-                            if (_compiler_) 
-                                kodo_sys(_compiler_);
                         }
-                        if (_compiler_)
-                            free(_compiler_);
                     }
                 } else {
                     printf_error("pawncc not found!");

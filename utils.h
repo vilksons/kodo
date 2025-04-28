@@ -22,6 +22,7 @@ extern const char *server_or_debug;
 struct struct_of { int (*title)(const char *); };
 struct struct_of init_kodo(void);
 
+void reset_variables(void);
 int kodo_sys(const char *cmd);
 void handle_sigint(int sig);
 int kodo_title(const char *__title);
@@ -42,7 +43,7 @@ int kodo_sef_wmv(const char *c_src, const char *c_dest);
 int kodo_sef_wmwrm(const char *c_src, const char *c_dest);
 int kodo_sef_wcopy(const char *c_src, const char *c_dest);
 int kodo_extract_tar_gz(const char *fname);
-int kodo_extract_zip(const char *zip_path, const char *dest_path);
+void kodo_extract_zip(const char *zip_path, const char *dest_path);
 size_t write_file(void *ptr, size_t size, size_t nmemb, FILE *stream);
 int progress_callback(void *ptr, double dltotal, double dlnow, double ultotal, double ulnow);
 void kodo_download_file(const char *url, const char *fname);
