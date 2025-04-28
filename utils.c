@@ -199,8 +199,8 @@ int kodo_sef_fdir(const char *sef_path,
         
         while ((entry = readdir(dir)) != NULL && kodo_sef_count < SEF_PATH_COUNT) {
                 if (entry->d_name[0] == '.' && 
-                        (entry->d_name[1] == '\0' || 
-                        (entry->d_name[1] == '.' && entry->d_name[2] == '\0')))
+                   (entry->d_name[1] == '\0' || 
+                   (entry->d_name[1] == '.' && entry->d_name[2] == '\0')))
                         continue;
                 
                 snprintf(path_buff, sizeof(path_buff), "%s/%s", sef_path, entry->d_name);
