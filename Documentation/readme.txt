@@ -27,6 +27,12 @@ Debugger
 Usage `debug .` to debug server modes by server.cfg from `gamemode0`
 Usage `debug example` to debug server modes by files .amx from /gamemodes/
 
+notice
+======
+- you can use automatic install pawncc without running manual commands here by "apply install pawncc" after the installation of pawncc archive from `pawncc` is complete.
+- How pawncc "auto apply" works is by searching for files from the extraction results and will copy (replace if already exists).. from the results of the C*script loop (especially the first pawncc archive extraction files found).. paste them into the pawno/ folder for sa-mp and qawno/ for standard open.mp. and will also set libpawnc.so if the OS used is Linux to the /usr/local/lib environment area or if there is /usr/local/lib32 then it will be pasted into the lib32 area
+- in WSL/WSL2 system, you can still maintain the .exe binary for pawncc or samp-server/open-mp server without having to use or replace it with this linux binary only applies without Docker on WSL/WSL2.
+
 Pawncc Installation
 https://github.com/vilksons/kodo/blob/main/Documentation/pawncc.rst
 
