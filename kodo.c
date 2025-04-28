@@ -99,7 +99,7 @@ void kodo_main(int sig_unused) {
                 kodo_title("Kodo Toolchain | @ help");
 
                 static char *arg;
-                    arg = pattern_COMMANDS + 7;
+                    arg = pattern_COMMANDS + 4;
                 while (*arg == ' ') arg++;
 
                 if (strlen(arg) == 0) {
