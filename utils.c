@@ -26,19 +26,25 @@
 #include "utils.h"
 #include "kodo.h"
 
-int initialize_ipawncc = 0;
-int kodo_sef_count = 0;
-char kodo_sef_found[SEF_PATH_COUNT][SEF_PATH_SIZE];
-const char *kodo_os = NULL;
-const char *server_or_debug = NULL;
-const char *kd_compiler_opt = NULL;
-const char *kd_gamemode_input = NULL;
-const char *kd_gamemode_output = NULL;
+KodoConfig kodo_config = {
+        .init_ipc = 0,
+        .kodo_sef_count = 0,
+        .kodo_sef_found = { {0} },
+        .kodo_os = NULL,
+        .server_or_debug = NULL,
+        .kd_compiler_opt = NULL,
+        .kd_gamemode_input = NULL,
+        .kd_gamemode_output = NULL
+};
 
 void reset_variables(void) {
-        initialize_ipawncc=0;
-        for (int i = 0; i < kodo_sef_count; i++)
-                memset(kodo_sef_found, 0, sizeof(kodo_sef_found));
+        kodo_config.init_ipc=0;
+        kodo_config.server_or_debug=NULL;
+        kodo_config.kd_gamemode_input=NULL;
+        kodo_config.kd_gamemode_output=NULL;
+        for (int i = 0; i < kodo_config.kodo_sef_count; i++)
+                memset(kodo_config.kodo_sef_found, 0, sizeof(kodo_config.kodo_sef_found));
+        kodo_config.kodo_sef_count=0;
 }
 
 inline int kodo_sys(const char *cmd) { return system(cmd); }
@@ -138,9 +144,9 @@ const char* kodo_detect_os(void) {
 }
 
 int signal_system_os(void) {
-        if (strcmp(kodo_os, "windows") == 0)
+        if (strcmp(kodo_config.kodo_os, "windows") == 0)
                 return 0x01;
-        else if (strcmp(kodo_os, "linux") == 0)
+        else if (strcmp(kodo_config.kodo_os, "linux") == 0)
                 return 0x00;
         
         return 0;
@@ -181,7 +187,7 @@ int kodo_toml_data(void)
         toml_table_t *_kodo_general = toml_table_in(config, "general");
         if (_kodo_general) {
                 toml_datum_t os_val = toml_string_in(_kodo_general, "os");
-                if (os_val.ok) kodo_os = os_val.u.s;
+                if (os_val.ok) kodo_config.kodo_os = os_val.u.s;
         }
 
         return 0;
@@ -215,8 +221,8 @@ int kodo_sef_fdir(const char *sef_path,
                         }
                 } else if (entry->d_type == DT_REG) {
                         if (strcmp(entry->d_name, sef_name) == 0) {
-                                strncpy(kodo_sef_found[kodo_sef_count], path_buff, SEF_PATH_SIZE);
-                                kodo_sef_count++;
+                                strncpy(kodo_config.kodo_sef_found[kodo_config.kodo_sef_count], path_buff, SEF_PATH_SIZE);
+                                kodo_config.kodo_sef_count++;
                                 closedir(dir);
                                 return 1;
                         }
@@ -229,8 +235,8 @@ int kodo_sef_fdir(const char *sef_path,
                                         return 1;
                                 }
                         } else if (S_ISREG(statbuf.st_mode) && strcmp(entry->d_name, sef_name) == 0) {
-                                strncpy(kodo_sef_found[kodo_sef_count], path_buff, SEF_PATH_SIZE);
-                                kodo_sef_count++;
+                                strncpy(kodo_config.kodo_sef_found[kodo_config.kodo_sef_count], path_buff, SEF_PATH_SIZE);
+                                kodo_config.kodo_sef_count++;
                                 closedir(dir);
                                 return 1;
                         }
@@ -516,18 +522,18 @@ void install_pawncc_now(void) {
         char pawncc_dest_path[1024], pawncc_exe_dest_path[1024],
              pawndisasm_dest_path[1024], pawndisasm_exe_dest_path[1024];
 
-        for (int i = 0; i < kodo_sef_count; i++) {
-                if (strstr(kodo_sef_found[i], "pawncc") && strstr(kodo_sef_found[i], "pawncc.exe") == NULL) {
-                        snprintf(pawncc_dest_path, sizeof(pawncc_dest_path), "%s", kodo_sef_found[i]);
-                } if (strstr(kodo_sef_found[i], "pawncc.exe") && strstr(kodo_sef_found[i], "pawncc") &&
-                        strstr(kodo_sef_found[i], "pawncc.exe") == strstr(kodo_sef_found[i], "pawncc")) {
-                        snprintf(pawncc_exe_dest_path, sizeof(pawncc_exe_dest_path), "%s", kodo_sef_found[i]);
+        for (int i = 0; i < kodo_config.kodo_sef_count; i++) {
+                if (strstr(kodo_config.kodo_sef_found[i], "pawncc") && strstr(kodo_config.kodo_sef_found[i], "pawncc.exe") == NULL) {
+                        snprintf(pawncc_dest_path, sizeof(pawncc_dest_path), "%s", kodo_config.kodo_sef_found[i]);
+                } if (strstr(kodo_config.kodo_sef_found[i], "pawncc.exe") && strstr(kodo_config.kodo_sef_found[i], "pawncc") &&
+                        strstr(kodo_config.kodo_sef_found[i], "pawncc.exe") == strstr(kodo_config.kodo_sef_found[i], "pawncc")) {
+                        snprintf(pawncc_exe_dest_path, sizeof(pawncc_exe_dest_path), "%s", kodo_config.kodo_sef_found[i]);
                 }
-                if (strstr(kodo_sef_found[i], "pawndisasm") && strstr(kodo_sef_found[i], "pawndisasm.exe") == NULL) { 
-                        snprintf(pawndisasm_dest_path, sizeof(pawndisasm_dest_path), "%s", kodo_sef_found[i]);
-                } if (strstr(kodo_sef_found[i], "pawndisasm.exe") && strstr(kodo_sef_found[i], "pawndisasm") &&
-                        strstr(kodo_sef_found[i], "pawndisasm.exe") == strstr(kodo_sef_found[i], "pawndisasm")) {
-                        snprintf(pawndisasm_exe_dest_path, sizeof(pawndisasm_exe_dest_path), "%s", kodo_sef_found[i]);
+                if (strstr(kodo_config.kodo_sef_found[i], "pawndisasm") && strstr(kodo_config.kodo_sef_found[i], "pawndisasm.exe") == NULL) { 
+                        snprintf(pawndisasm_dest_path, sizeof(pawndisasm_dest_path), "%s", kodo_config.kodo_sef_found[i]);
+                } if (strstr(kodo_config.kodo_sef_found[i], "pawndisasm.exe") && strstr(kodo_config.kodo_sef_found[i], "pawndisasm") &&
+                        strstr(kodo_config.kodo_sef_found[i], "pawndisasm.exe") == strstr(kodo_config.kodo_sef_found[i], "pawndisasm")) {
+                        snprintf(pawndisasm_exe_dest_path, sizeof(pawndisasm_exe_dest_path), "%s", kodo_config.kodo_sef_found[i]);
                 }
         }
         
@@ -564,9 +570,9 @@ void install_pawncc_now(void) {
 
                 char libpawnc_dest_path[1024];
 
-                for (int i = 0; i < kodo_sef_count; i++) {
-                        if (strstr(kodo_sef_found[i], "libpawnc.so")) {
-                                snprintf(libpawnc_dest_path, sizeof(libpawnc_dest_path), "%s", kodo_sef_found[i]);
+                for (int i = 0; i < kodo_config.kodo_sef_count; i++) {
+                        if (strstr(kodo_config.kodo_sef_found[i], "libpawnc.so")) {
+                                snprintf(libpawnc_dest_path, sizeof(libpawnc_dest_path), "%s", kodo_config.kodo_sef_found[i]);
                                 break;
                         }
                 }
@@ -678,8 +684,8 @@ void kodo_download_file(const char *url,
                 fclose(procc_f);
                 curl_easy_cleanup(__curl);
 
-                if (initialize_ipawncc == 1) {
-                        initialize_ipawncc=0;
+                if (kodo_config.init_ipc == 1) {
+                        kodo_config.init_ipc=0;
 
                         char *ptr_sigA;
                         ptr_sigA = readline("apply pawncc now? [Y/n]: ");

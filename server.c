@@ -102,10 +102,8 @@ kodo_server_samp(const char *gamemode_arg,
         remove("server.cfg");
         rename(".server.cfg.bak", "server.cfg");
 
-        if (server_or_debug && !strcmp(server_or_debug, "debug")) {
-                server_or_debug = NULL;
+        if (kodo_config.server_or_debug && !strcmp(kodo_config.server_or_debug, "debug"))
                 kodo_sys("pkill -9 -f \"samp-server.exe\" && pkill -9 -f \"samp03svr\"");
-        }
 
         kodo_main(0);
 }
@@ -139,10 +137,11 @@ kodo_server_openmp(const char *gamemode_arg,
         long file_len = ftell(procc_f);
         fseek(procc_f, 0, SEEK_SET);
         json_data = malloc(file_len + 1);
+        
         size_t bytes_read = fread(json_data, 1, file_len, procc_f);
-        if (bytes_read != file_len) {
+        if (bytes_read != file_len)
                 perror("Failed to read the whole file");
-        }
+        
         json_data[file_len] = '\0';
         fclose(procc_f);
 
@@ -194,10 +193,8 @@ kodo_server_openmp(const char *gamemode_arg,
         remove("config.json");
         rename(".config.json.bak", "config.json");
 
-        if (server_or_debug && !strcmp(server_or_debug, "debug")) {
-                server_or_debug = NULL;
+        if (kodo_config.server_or_debug && !strcmp(kodo_config.server_or_debug, "debug"))
                 kodo_sys("pkill -9 -f \"omp-server.exe\" && pkill -9 -f \"omp-server\"");
-        }
 
         cJSON_Delete(root);
         free(json_data);

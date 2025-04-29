@@ -8,16 +8,18 @@
 #define SEF_PATH_COUNT 28
 #define SEF_PATH_SIZE 1024
 
-extern int kodo_sef_count;
-extern char kodo_sef_found[SEF_PATH_COUNT][SEF_PATH_SIZE];
+typedef struct {
+    int init_ipc;
+    int kodo_sef_count;
+    char kodo_sef_found[SEF_PATH_COUNT][SEF_PATH_SIZE];
+    const char *kodo_os;
+    const char *server_or_debug;
+    const char *kd_compiler_opt;
+    const char *kd_gamemode_input;
+    const char *kd_gamemode_output;
+} KodoConfig;
 
-extern int initialize_ipawncc;
-
-extern const char *kodo_os;
-extern const char *kd_compiler_opt;
-extern const char *kd_gamemode_input;
-extern const char *kd_gamemode_output;
-extern const char *server_or_debug;
+extern KodoConfig kodo_config;
 
 struct struct_of { int (*title)(const char *); };
 struct struct_of init_kodo(void);

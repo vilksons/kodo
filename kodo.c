@@ -236,12 +236,12 @@ void kodo_main(int sig_unused) {
                     if (kodo_compiler) {
                         toml_datum_t option_val = toml_string_in(kodo_compiler, "option");
                         if (option_val.ok) {
-                            kd_compiler_opt = option_val.u.s;
+                            kodo_config.kd_compiler_opt = option_val.u.s;
                         }
             
                         toml_datum_t output_val = toml_string_in(kodo_compiler, "output");
                         if (output_val.ok) {
-                            kd_gamemode_output = output_val.u.s;
+                            kodo_config.kd_gamemode_output = output_val.u.s;
                         }
             
                         toml_array_t *include_paths = toml_array_in(kodo_compiler, "include_path");
@@ -262,30 +262,30 @@ void kodo_main(int sig_unused) {
                             if (*arg == '\0' || arg == ".") {
                                 toml_datum_t kodo_gmodes = toml_string_in(kodo_compiler, "input");
                                 if (kodo_gmodes.ok) {
-                                    kd_gamemode_input = kodo_gmodes.u.s;
+                                    kodo_config.kd_gamemode_input = kodo_gmodes.u.s;
                                 }
                                 
-                                int find_gamemodes = kodo_sef_fdir("gamemodes/", kd_gamemode_input);
+                                int find_gamemodes = kodo_sef_fdir("gamemodes/", kodo_config.kd_gamemode_input);
                                 if (find_gamemodes == 1) {
-                                    char* container_output = strdup(kodo_sef_found[1]);
+                                    char* container_output = strdup(kodo_config.kodo_sef_found[1]);
                                     char* f_last_slash_container = strrchr(container_output, '/');
                                     if (f_last_slash_container != NULL && *(f_last_slash_container + 1) != '\0')
                                         *(f_last_slash_container + 1) = '\0';
 
                                     snprintf(kodo_c_output_f_container, format_size_c_f_container, "%s%s",
-                                        container_output, kd_gamemode_output);
+                                        container_output, kodo_config.kd_gamemode_output);
 
-                                    kd_gamemode_input=strdup(kodo_sef_found[1]);
+                                    kodo_config.kd_gamemode_input=strdup(kodo_config.kodo_sef_found[1]);
 
                                     struct timespec start, end;
                                     double compiler_dur;
 
                                     snprintf(_compiler_, format_size_compiler, "%s %s \"%s\" -o\"%s\" \"%s\" > .kd_compiler.log 2>&1",
-                                        kodo_sef_found[0],
+                                        kodo_config.kodo_sef_found[0],
                                         all_paths,
-                                        kd_gamemode_input,
+                                        kodo_config.kd_gamemode_input,
                                         kodo_c_output_f_container,
-                                        kd_compiler_opt);
+                                        kodo_config.kd_compiler_opt);
 
                                     clock_gettime(CLOCK_MONOTONIC, &start);
                                 
@@ -318,31 +318,31 @@ void kodo_main(int sig_unused) {
                                         free(_compiler_);
                                 } else {
                                     printf_color(COL_RED, "Can't locate: ");
-                                    printf("%s\n", kd_gamemode_input);
+                                    printf("%s\n", kodo_config.kd_gamemode_input);
                                     continue;
                                 }
                             } else {
                                 int find_gamemodes_arg1 = kodo_sef_fdir("gamemodes/", compile_arg1);
                                 if (find_gamemodes_arg1 == 1) {
-                                    char* container_output = strdup(kodo_sef_found[1]);
+                                    char* container_output = strdup(kodo_config.kodo_sef_found[1]);
                                     char* f_last_slash_container = strrchr(container_output, '/');
                                     if (f_last_slash_container != NULL && *(f_last_slash_container + 1) != '\0')
                                         *(f_last_slash_container + 1) = '\0';
 
                                     snprintf(kodo_c_output_f_container, format_size_c_f_container, "%s%s",
-                                        container_output, kd_gamemode_output);
+                                        container_output, kodo_config.kd_gamemode_output);
 
-                                    compile_arg1=strdup(kodo_sef_found[1]);
+                                    compile_arg1=strdup(kodo_config.kodo_sef_found[1]);
 
                                     struct timespec start, end;
                                     double compiler_dur;
 
                                     snprintf(_compiler_, format_size_compiler, "%s %s \"%s\" -o\"%s\" \"%s\" > .kd_compiler.log 2>&1",
-                                        kodo_sef_found[0],
+                                        kodo_config.kodo_sef_found[0],
                                         all_paths,
                                         compile_arg1,
                                         kodo_c_output_f_container,
-                                        kd_compiler_opt);
+                                        kodo_config.kd_compiler_opt);
                                     
                                     clock_gettime(CLOCK_MONOTONIC, &start);
                                     
@@ -411,7 +411,7 @@ void kodo_main(int sig_unused) {
             } else if (strncmp(pattern_COMMANDS, "running", 7) == 0 || strncmp(pattern_COMMANDS, "debug", 7) == 0) {
                 _running_:
                 if (strcmp(pattern_COMMANDS, "debug") == 0) {
-                    server_or_debug="debug";
+                    kodo_config.server_or_debug="debug";
                     kodo_title("Kodo Toolchain | @ debug");    
                 } else {
                     kodo_title("Kodo Toolchain | @ running");

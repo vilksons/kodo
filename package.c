@@ -59,7 +59,7 @@ kodo_download_pawncc(const char *platform) {
                     versions[index], versions[index], platform, archive_write);
             sprintf(fname, "pawnc-%s-%s.%s", versions[index], platform, archive_write);
     
-            initialize_ipawncc=1;
+            kodo_config.init_ipc=1;
     
             kodo_download_file(url, fname);
         }
