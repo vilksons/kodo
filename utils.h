@@ -19,6 +19,8 @@ typedef struct {
     const char *kd_gamemode_output;
 } KodoConfig;
 
+extern KodoConfig kodo_config;
+
 KodoConfig kodo_config = {
     .init_ipc = 0,
     .kodo_sef_count = 0,
@@ -30,12 +32,10 @@ KodoConfig kodo_config = {
     .kd_gamemode_output = NULL
 };
 
-extern KodoConfig kodo_config;
-
 struct struct_of { int (*title)(const char *); };
 struct struct_of init_kodo(void);
 
-void reset_variables(void);
+void null_variables(void);
 int kodo_sys(const char *cmd);
 void handle_sigint(int sig);
 int kodo_title(const char *__title);
@@ -57,8 +57,6 @@ int kodo_sef_wmwrm(const char *c_src, const char *c_dest);
 int kodo_sef_wcopy(const char *c_src, const char *c_dest);
 int kodo_extract_archive(const char *tar_files);
 void kodo_extract_zip(const char *zip_path, const char *dest_path);
-size_t write_file(void *ptr, size_t size, size_t nmemb, FILE *stream);
-int progress_callback(void *ptr, double dltotal, double dlnow, double ultotal, double ulnow);
 void kodo_download_file(const char *url, const char *fname);
 
 #endif

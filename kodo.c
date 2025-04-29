@@ -50,7 +50,7 @@ void kodo_main(int sig_unused) {
         kodo_title(NULL);
         kodo_toml_data();
         using_history();
-        reset_variables();
+        null_variables();
         while (1) {
             char* pattern_COMMANDS = readline("kodo:~$ ");
             if (pattern_COMMANDS == NULL) break;
@@ -209,7 +209,7 @@ void kodo_main(int sig_unused) {
                 int format_size_c_f_container = sizeof(kodo_c_output_f_container);
             
                 int find_pawncc = kodo_sef_fdir(".", ptr_pawncc);
-                if (find_pawncc == 1) {
+                if (find_pawncc) {
                     static char *_compiler_ = NULL;
                     static size_t format_size_compiler = 2048;
 
@@ -266,7 +266,7 @@ void kodo_main(int sig_unused) {
                                 }
                                 
                                 int find_gamemodes = kodo_sef_fdir("gamemodes/", kodo_config.kd_gamemode_input);
-                                if (find_gamemodes == 1) {
+                                if (find_gamemodes) {
                                     char* container_output = strdup(kodo_config.kodo_sef_found[1]);
                                     char* f_last_slash_container = strrchr(container_output, '/');
                                     if (f_last_slash_container != NULL && *(f_last_slash_container + 1) != '\0')
@@ -323,7 +323,7 @@ void kodo_main(int sig_unused) {
                                 }
                             } else {
                                 int find_gamemodes_arg1 = kodo_sef_fdir("gamemodes/", compile_arg1);
-                                if (find_gamemodes_arg1 == 1) {
+                                if (find_gamemodes_arg1) {
                                     char* container_output = strdup(kodo_config.kodo_sef_found[1]);
                                     char* f_last_slash_container = strrchr(container_output, '/');
                                     if (f_last_slash_container != NULL && *(f_last_slash_container + 1) != '\0')

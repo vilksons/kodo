@@ -26,25 +26,16 @@
 #include "utils.h"
 #include "kodo.h"
 
-void reset_variables(void) {
-        kodo_config.init_ipc=0;
-        kodo_config.server_or_debug=NULL;
-        kodo_config.kd_gamemode_input=NULL;
-        kodo_config.kd_gamemode_output=NULL;
-        for (int i = 0; i < kodo_config.kodo_sef_count; i++)
-                memset(kodo_config.kodo_sef_found, 0, sizeof(kodo_config.kodo_sef_found));
-        kodo_config.kodo_sef_count=0;
-}
-
+inline void null_variables(void) { KodoConfig kodo_config = {0}; }
 inline int kodo_sys(const char *cmd) { return system(cmd); }
 
-void handle_sigint(int sig)
+inline void handle_sigint(int sig)
 {
         println("Exit?, You only exit with use a \"exit\"");
         kodo_main(0);
 }
 
-int kodo_title(const char *__title)
+inline int kodo_title(const char *__title)
 {
         const char *title = __title ? __title : "Kodo Toolchain";
         printf("\033]0;%s\007", title);
@@ -210,7 +201,8 @@ int kodo_sef_fdir(const char *sef_path,
                         }
                 } else if (entry->d_type == DT_REG) {
                         if (strcmp(entry->d_name, sef_name) == 0) {
-                                strncpy(kodo_config.kodo_sef_found[kodo_config.kodo_sef_count], path_buff, SEF_PATH_SIZE);
+                                strncpy(kodo_config.kodo_sef_found[kodo_config.kodo_sef_count],
+                                        path_buff, SEF_PATH_SIZE);
                                 kodo_config.kodo_sef_count++;
                                 closedir(dir);
                                 return 1;
@@ -224,7 +216,9 @@ int kodo_sef_fdir(const char *sef_path,
                                         return 1;
                                 }
                         } else if (S_ISREG(statbuf.st_mode) && strcmp(entry->d_name, sef_name) == 0) {
-                                strncpy(kodo_config.kodo_sef_found[kodo_config.kodo_sef_count], path_buff, SEF_PATH_SIZE);
+                                strncpy(kodo_config.kodo_sef_found[kodo_config.kodo_sef_count],
+                                        path_buff,
+                                        SEF_PATH_SIZE);
                                 kodo_config.kodo_sef_count++;
                                 closedir(dir);
                                 return 1;
@@ -308,7 +302,7 @@ int kodo_sef_wcopy(const char *c_src,
         return 0;
 }
 
-int arch_copy_data(struct archive *ar, struct archive *aw) {
+static int arch_copy_data(struct archive *ar, struct archive *aw) {
         int a_read;
         const void *a_buff;
         size_t size;
@@ -360,20 +354,23 @@ int kodo_extract_archive(const char *tar_files) {
             a_read = archive_read_next_header(archives, &entry);
             if (a_read == ARCHIVE_EOF) break;
             if (a_read != ARCHIVE_OK) {
-                        printf_error("header: %s\n", archive_error_string(archives));
+                        printf_error("header: %s\n",
+                                archive_error_string(archives));
                         break;
             }
     
             a_read = archive_write_header(archive_write, entry);
             if (a_read != ARCHIVE_OK) {
-                        printf_error("header: %s\n", archive_error_string(archive_write));
+                        printf_error("header: %s\n",
+                                archive_error_string(archive_write));
                         break;
             }
     
             if (archive_entry_size(entry) > 0) {
                 a_read = arch_copy_data(archives, archive_write);
                 if (a_read != ARCHIVE_OK) {
-                        printf_error("data: %s\n", archive_error_string(archives));
+                        printf_error("data: %s\n",
+                                archive_error_string(archives));
                         break;
                 }
             }
@@ -389,8 +386,7 @@ int kodo_extract_archive(const char *tar_files) {
         return (a_read == ARCHIVE_EOF) ? 0 : -1;
 }
 
-void kodo_extract_zip(
-                const char *zip_path, const char *__dest_path)
+void kodo_extract_zip(const char *zip_path, const char *__dest_path)
 {
         struct archive *archives;
         struct archive *archive_write;
@@ -423,7 +419,8 @@ void kodo_extract_zip(
                 a_read = archive_write_header(archive_write, entry);
                 if (a_read != ARCHIVE_OK) {
                         if (!has_error) {
-                                printf_error("during extraction: %s\n", archive_error_string(archive_write));
+                                printf_error("during extraction: %s\n",
+                                        archive_error_string(archive_write));
                                 has_error = 0x1;
                                 break;
                         }
@@ -438,7 +435,8 @@ void kodo_extract_zip(
                                 break;
                         if (a_read < ARCHIVE_OK) {
                                 if (!has_error) {
-                                        printf_error("reading block from archive: %s\n", archive_error_string(archives));
+                                        printf_error("reading block from archive: %s\n",
+                                                archive_error_string(archives));
                                         has_error = 0x2;
                                         break;
                                 }
@@ -446,7 +444,8 @@ void kodo_extract_zip(
                         a_read = archive_write_data_block(archive_write, a_buff, size, offset);
                         if (a_read < ARCHIVE_OK) {
                                 if (!has_error) {
-                                        printf_error("writing block to destination: %s\n", archive_error_string(archive_write));
+                                        printf_error("writing block to destination: %s\n",
+                                                archive_error_string(archive_write));
                                         has_error = 0x3;
                                         break;
                                 }
@@ -461,7 +460,7 @@ void kodo_extract_zip(
         archive_write_free(archive_write);
 }
 
-size_t write_file(void *ptr,
+static size_t write_file(void *ptr,
                   size_t size,
                   size_t nmemb,
                   FILE *stream
@@ -469,7 +468,7 @@ size_t write_file(void *ptr,
         size_t written = fwrite(ptr, size, nmemb, stream);
         return written;
 }
-int progress_callback(void *ptr,
+static int progress_callback(void *ptr,
                       double dltotal,
                       double dlnow,
                       double ultotal, 
@@ -482,12 +481,12 @@ int progress_callback(void *ptr,
         return 0;
 }
 
-void install_pawncc_now(void) {
+static void install_pawncc_now(void) {
         int __kodo_os__ = signal_system_os();
-        int find_pawncc_exe = kodo_sef_fdir(".", "pawncc.exe");
-        int find_pawncc = kodo_sef_fdir(".", "pawncc");
-        int find_pawndisasm_exe = kodo_sef_fdir(".", "pawndisasm.exe");
-        int find_pawndisasm = kodo_sef_fdir(".", "pawndisasm");
+        int find_pawncc_exe = kodo_sef_fdir(".", "pawncc.exe"),
+            find_pawncc = kodo_sef_fdir(".", "pawncc"),
+            find_pawndisasm_exe = kodo_sef_fdir(".", "pawndisasm.exe"),
+            find_pawndisasm = kodo_sef_fdir(".", "pawndisasm");
 
         int dir_pawno=0, dir_qawno=0;
 
@@ -513,40 +512,44 @@ void install_pawncc_now(void) {
 
         for (int i = 0; i < kodo_config.kodo_sef_count; i++) {
                 if (strstr(kodo_config.kodo_sef_found[i], "pawncc") && strstr(kodo_config.kodo_sef_found[i], "pawncc.exe") == NULL) {
-                        snprintf(pawncc_dest_path, sizeof(pawncc_dest_path), "%s", kodo_config.kodo_sef_found[i]);
+                        snprintf(pawncc_dest_path, sizeof(pawncc_dest_path), "%s",
+                                kodo_config.kodo_sef_found[i]);
                 } if (strstr(kodo_config.kodo_sef_found[i], "pawncc.exe") && strstr(kodo_config.kodo_sef_found[i], "pawncc") &&
                         strstr(kodo_config.kodo_sef_found[i], "pawncc.exe") == strstr(kodo_config.kodo_sef_found[i], "pawncc")) {
-                        snprintf(pawncc_exe_dest_path, sizeof(pawncc_exe_dest_path), "%s", kodo_config.kodo_sef_found[i]);
+                        snprintf(pawncc_exe_dest_path, sizeof(pawncc_exe_dest_path), "%s",
+                                kodo_config.kodo_sef_found[i]);
                 }
                 if (strstr(kodo_config.kodo_sef_found[i], "pawndisasm") && strstr(kodo_config.kodo_sef_found[i], "pawndisasm.exe") == NULL) { 
-                        snprintf(pawndisasm_dest_path, sizeof(pawndisasm_dest_path), "%s", kodo_config.kodo_sef_found[i]);
+                        snprintf(pawndisasm_dest_path, sizeof(pawndisasm_dest_path), "%s",
+                                kodo_config.kodo_sef_found[i]);
                 } if (strstr(kodo_config.kodo_sef_found[i], "pawndisasm.exe") && strstr(kodo_config.kodo_sef_found[i], "pawndisasm") &&
                         strstr(kodo_config.kodo_sef_found[i], "pawndisasm.exe") == strstr(kodo_config.kodo_sef_found[i], "pawndisasm")) {
-                        snprintf(pawndisasm_exe_dest_path, sizeof(pawndisasm_exe_dest_path), "%s", kodo_config.kodo_sef_found[i]);
+                        snprintf(pawndisasm_exe_dest_path, sizeof(pawndisasm_exe_dest_path), "%s",
+                                kodo_config.kodo_sef_found[i]);
                 }
         }
         
-        if (find_pawncc_exe == 1 && find_pawncc == 1) {
+        if (find_pawncc_exe && find_pawncc) {
                 snprintf(str_dest_path, sizeof(str_dest_path), "%s/pawncc.exe", dest_path);
                 kodo_sef_wmv(pawncc_exe_dest_path, str_dest_path);
                 snprintf(str_dest_path, sizeof(str_dest_path), "%s/pawncc", dest_path);
                 kodo_sef_wmv(pawncc_dest_path, str_dest_path);
-        } else if (find_pawncc_exe == 1) {
+        } else if (find_pawncc_exe) {
                 snprintf(str_dest_path, sizeof(str_dest_path), "%s/pawncc.exe", dest_path);
                 kodo_sef_wmv(pawncc_exe_dest_path, str_dest_path);
-        } else if (find_pawncc == 1) {
+        } else if (find_pawncc) {
                 snprintf(str_dest_path, sizeof(str_dest_path), "%s/pawncc", dest_path);
                 kodo_sef_wmv(pawncc_dest_path, str_dest_path);
         }
-        if (find_pawndisasm_exe == 1 && find_pawndisasm == 1) {
+        if (find_pawndisasm_exe && find_pawndisasm) {
                 snprintf(str_dest_path, sizeof(str_dest_path), "%s/pawndisasm.exe", dest_path);
                 kodo_sef_wmv(pawndisasm_exe_dest_path, str_dest_path);
                 snprintf(str_dest_path, sizeof(str_dest_path), "%s/pawndisasm", dest_path);
                 kodo_sef_wmv(pawndisasm_dest_path, str_dest_path);
-        } else if (find_pawndisasm_exe == 1) {
+        } else if (find_pawndisasm_exe) {
                 snprintf(str_dest_path, sizeof(str_dest_path), "%s/pawndisasm.exe", dest_path);
                 kodo_sef_wmv(pawndisasm_exe_dest_path, str_dest_path);
-        } else if (find_pawndisasm == 1) {
+        } else if (find_pawndisasm) {
                 snprintf(str_dest_path, sizeof(str_dest_path), "%s/pawndisasm", dest_path);
                 kodo_sef_wmv(pawndisasm_dest_path, str_dest_path);
         }
@@ -556,9 +559,7 @@ void install_pawncc_now(void) {
                 char str_full_dest_path[1502];
 
                 int find_libpawnc = kodo_sef_fdir(".", "libpawnc.so");
-
                 char libpawnc_dest_path[1024];
-
                 for (int i = 0; i < kodo_config.kodo_sef_count; i++) {
                         if (strstr(kodo_config.kodo_sef_found[i], "libpawnc.so")) {
                                 snprintf(libpawnc_dest_path, sizeof(libpawnc_dest_path), "%s", kodo_config.kodo_sef_found[i]);
