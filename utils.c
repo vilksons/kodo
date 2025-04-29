@@ -430,7 +430,7 @@ void kodo_extract_zip(
                         if (!has_error) {
                                 printf_error("during extraction: %s\n", archive_error_string(archive_write));
                                 has_error = 0x1;
-                                kodo_main(0);
+                                break;
                         }
                 } else {
                     const void *a_buff;
@@ -445,6 +445,7 @@ void kodo_extract_zip(
                                 if (!has_error) {
                                         printf_error("reading block from archive: %s\n", archive_error_string(archives));
                                         has_error = 0x2;
+                                        break;
                                 }
                         }
                         a_read = archive_write_data_block(archive_write, a_buff, size, offset);
@@ -452,6 +453,7 @@ void kodo_extract_zip(
                                 if (!has_error) {
                                         printf_error("writing block to destination: %s\n", archive_error_string(archive_write));
                                         has_error = 0x3;
+                                        break;
                                 }
                         }
                     }
@@ -511,10 +513,8 @@ void install_pawncc_now(void) {
         
         sleep(2);
 
-        char pawncc_dest_path[1024];
-        char pawncc_exe_dest_path[1024];
-        char pawndisasm_dest_path[1024];
-        char pawndisasm_exe_dest_path[1024];
+        char pawncc_dest_path[1024], pawncc_exe_dest_path[1024],
+             pawndisasm_dest_path[1024], pawndisasm_exe_dest_path[1024];
 
         for (int i = 0; i < kodo_sef_count; i++) {
                 if (strstr(kodo_sef_found[i], "pawncc") && strstr(kodo_sef_found[i], "pawncc.exe") == NULL) {
@@ -662,7 +662,7 @@ void kodo_download_file(const char *url,
                 printf("\nDownload completed successfully.\n");
 
                 if (strstr(fname, ".tar") || strstr(fname, ".tar.gz"))
-                kodo_extract_archive(fname);
+                        kodo_extract_archive(fname);
                 else if (strstr(fname, ".zip")) {
                         char zip_of_pos[120];
 
