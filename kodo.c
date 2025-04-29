@@ -265,6 +265,12 @@ void kodo_main(int sig_unused) {
                                     kodo_config.kd_gamemode_input = kodo_gmodes.u.s;
                                 }
                                 
+                                // Search for the specified gamemode file inside the "gamemodes/" directory.
+                                // 'kodo_config.kd_gamemode_input' holds the name of the gamemode to find.
+                                // The result is stored in 'find_gamemodes':
+                                //     - If the file is found, 'find_gamemodes' will be set to 1.
+                                //     - If the file is not found, 'find_gamemodes' will be set to 0.
+                                // This is typically used to verify that the gamemode exists before proceeding.
                                 int find_gamemodes = kodo_sef_fdir("gamemodes/", kodo_config.kd_gamemode_input);
                                 if (find_gamemodes) {
                                     char* container_output = strdup(kodo_config.kodo_sef_found[1]);
@@ -322,6 +328,12 @@ void kodo_main(int sig_unused) {
                                     continue;
                                 }
                             } else {
+                                // Search for the specified gamemode file inside the "gamemodes/" directory.
+                                // 'kodo_config.kd_gamemode_input' holds the name of the gamemode to find.
+                                // The result is stored in 'find_gamemodes_arg1':
+                                //     - If the file is found, 'find_gamemodes_arg1' will be set to 1.
+                                //     - If the file is not found, 'find_gamemodes_arg1' will be set to 0.
+                                // This is typically used to verify that the gamemode exists before proceeding.
                                 int find_gamemodes_arg1 = kodo_sef_fdir("gamemodes/", compile_arg1);
                                 if (find_gamemodes_arg1) {
                                     char* container_output = strdup(kodo_config.kodo_sef_found[1]);
