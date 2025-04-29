@@ -109,6 +109,33 @@ void printf_crit(const char *format, ...) {
 }
 
 const char* kodo_detect_os(void) {
+        /*
+         * The function kodo_detect_os attempts to detect the current operating system at runtime
+         * and returns a string representing the OS name.
+         *
+         * Detailed behavior:
+         * 
+         * 1. Initialize a char pointer `os` with the default value "unknown".
+         *    - This acts as a fallback in case detection fails.
+         *
+         * 2. Check if the environment variable "OS" exists and contains "Windows_NT",
+         *    OR if the "WSL_INTEROP" or "WSL_DISTRO_NAME" environment variables are set:
+         *    - These environment variables indicate a Windows or WSL (Windows Subsystem for Linux) environment.
+         *    - If any of these conditions are true, immediately return "windows".
+         *
+         * 3. If not detected as Windows/WSL:
+         *    - Use `uname()` to retrieve system information into a `utsname` structure.
+         *    - If `uname` succeeds and `sys_info.sysname` contains "Linux", set `os` to "linux".
+         *
+         * 4. Finally, return the detected OS string ("windows", "linux", or "unknown").
+         *
+         * Notes:
+         * - The detection method uses both environment variables and system calls for broader compatibility.
+         * - `getenv` is used multiple times without storing its result; for better performance, it could be called once and cached.
+         * - `uname` is only available on POSIX systems (Linux/macOS/Unix); if compiled on Windows without WSL, it may fail.
+         * - Minor redundancy: when returning `os="windows"`, the assignment to `os` is technically unnecessary if directly returning the string.
+         */
+
         char *os;
         os="unknown";
 
@@ -134,6 +161,50 @@ int signal_system_os(void) {
 
 int kodo_toml_data(void)
 {
+        /*
+         * The function kodo_toml_data is responsible for handling the "kodo.toml" configuration file.
+         * It ensures the file exists, generates a default configuration if it doesn't, and then reads
+         * and parses the contents of the TOML file into the application's configuration.
+         *
+         * Here are the detailed steps:
+         *
+         * 1. Attempt to open "kodo.toml" in read mode ("r").
+         *    - If the file exists and opens successfully, immediately close it; no changes are needed.
+         *    - If the file does not exist (fopen returns NULL), proceed to create it.
+         *
+         * 2. If creating a new file:
+         *    - Open "kodo.toml" in write mode ("w").
+         *    - If the file opens successfully:
+         *        - Detect the current operating system using `kodo_detect_os()`.
+         *        - Write a default TOML configuration into the file. This includes:
+         *          - A [general] section specifying the detected OS.
+         *          - A [compiler] section specifying:
+         *              - Compiler options.
+         *              - Include paths as an array of strings.
+         *              - Default input and output file names.
+         *        - After writing, close the file.
+         *
+         * 3. Re-open "kodo.toml" in read mode to process it.
+         *    - If opening fails, an error is printed and the process likely stops (via `printf_error`).
+         *
+         * 4. Parse the opened TOML file into a `toml_table_t` structure using `toml_parse_file`.
+         *    - If parsing fails, an error is printed containing details from the error buffer.
+         *
+         * 5. If parsing succeeds:
+         *    - Access the "general" table section from the parsed TOML.
+         *    - From "general", retrieve the value associated with the "os" key.
+         *    - If successful, assign the OS value to the global `kodo_config.kodo_os`.
+         *
+         * 6. Finally, return 0 to indicate successful execution.
+         *
+         * Notes:
+         * - The function ensures a fallback mechanism: if the configuration file is missing, it will generate
+         *   a default one with sensible settings, preventing failures in later parts of the program.
+         * - Error handling is minimal but direct: errors on file operations or TOML parsing are immediately reported.
+         * - Memory management caution: `toml_parse_file` might allocate resources that should eventually be freed.
+         *   (In the current code snippet, freeing the `config` object is not shown.)
+         */
+
         const char *fname = "kodo.toml";
         FILE *toml_files;
 
@@ -482,6 +553,55 @@ static int progress_callback(void *ptr,
 }
 
 static void install_pawncc_now(void) {
+        /*
+         * install_pawncc_now - Install or move the pawncc-related binaries into a usable structure.
+         *
+         * Workflow Overview:
+         * ------------------
+         * 1. Detect operating system type (Linux or Windows).
+         * 2. Search the current directory (".") for:
+         *    - pawncc
+         *    - pawncc.exe
+         *    - pawndisasm
+         *    - pawndisasm.exe
+         *    - libpawnc.so (Linux only)
+         *
+         * 3. Find or create a destination directory:
+         *    - Prefer using an existing "pawno" or "qawno" directory.
+         *    - If neither exists, create "pawno".
+         *
+         * 4. Move (`kodo_sef_wmv`) the found binaries to the destination directory:
+         *    - Move both pawncc and pawncc.exe if they exist.
+         *    - Move both pawndisasm and pawndisasm.exe if they exist.
+         *
+         * 5. On Linux/Termux:
+         *    - Move `libpawnc.so` to an appropriate library folder:
+         *      - Prefer `/usr/local/lib32/` if it exists.
+         *      - Otherwise, use `/usr/local/lib/`.
+         *      - Special handling for Termux environments (`/data/data/com.termux/...`).
+         *    - After moving:
+         *      - Run `ldconfig` (with `sudo` if available) to update library cache.
+         *      - Update `LD_LIBRARY_PATH` environment variable to include the new lib directory.
+         *
+         * 6. Print "apply finished!" in yellow color.
+         *
+         * 7. Call `kodo_main(0)` to continue/reset program flow.
+         *
+         * Key behaviors and decisions:
+         * -----------------------------
+         * - Checks for both `.exe` and non-`.exe` versions to support Windows/Linux automatically.
+         * - Prefers not to overwrite unless necessary.
+         * - Tries to make the system immediately able to run pawncc without manual steps.
+         * - Careful with directory detection and library paths.
+         *
+         * Assumptions:
+         * ------------
+         * - `kodo_sef_fdir`, `kodo_sef_wmv`, `kodo_sys`, `kodo_main`, `printf_color`, `printf_error` are properly defined elsewhere.
+         * - `kodo_config.kodo_sef_found` and `kodo_config.kodo_sef_count` are populated correctly.
+         * - `COL_YELLOW` is a constant for color printing.
+         * - The environment provides access to `stat`, `sleep`, `mkdir`, and common C standard functions.
+         */
+
         int __kodo_os__ = signal_system_os();
         int find_pawncc_exe = kodo_sef_fdir(".", "pawncc.exe"),
             find_pawncc = kodo_sef_fdir(".", "pawncc"),
