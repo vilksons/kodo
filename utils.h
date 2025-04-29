@@ -19,6 +19,17 @@ typedef struct {
     const char *kd_gamemode_output;
 } KodoConfig;
 
+KodoConfig kodo_config = {
+    .init_ipc = 0,
+    .kodo_sef_count = 0,
+    .kodo_sef_found = { {0} },
+    .kodo_os = NULL,
+    .server_or_debug = NULL,
+    .kd_compiler_opt = NULL,
+    .kd_gamemode_input = NULL,
+    .kd_gamemode_output = NULL
+};
+
 extern KodoConfig kodo_config;
 
 struct struct_of { int (*title)(const char *); };

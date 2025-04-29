@@ -26,17 +26,6 @@
 #include "utils.h"
 #include "kodo.h"
 
-KodoConfig kodo_config = {
-        .init_ipc = 0,
-        .kodo_sef_count = 0,
-        .kodo_sef_found = { {0} },
-        .kodo_os = NULL,
-        .server_or_debug = NULL,
-        .kd_compiler_opt = NULL,
-        .kd_gamemode_input = NULL,
-        .kd_gamemode_output = NULL
-};
-
 void reset_variables(void) {
         kodo_config.init_ipc=0;
         kodo_config.server_or_debug=NULL;
