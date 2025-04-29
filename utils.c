@@ -29,6 +29,17 @@
 inline void null_variables(void) { KodoConfig kodo_config = {0}; }
 inline int kodo_sys(const char *cmd) { return system(cmd); }
 
+KodoConfig kodo_config = {
+    .init_ipc = 0,
+    .kodo_sef_count = 0,
+    .kodo_sef_found = { {0} },
+    .kodo_os = NULL,
+    .server_or_debug = NULL,
+    .kd_compiler_opt = NULL,
+    .kd_gamemode_input = NULL,
+    .kd_gamemode_output = NULL
+};
+
 inline void handle_sigint(int sig)
 {
         println("Exit?, You only exit with use a \"exit\"");

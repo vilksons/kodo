@@ -1,7 +1,3 @@
-#include <stdio.h>
-#include <sys/types.h>
-#include <sys/stat.h>
- 
 #ifndef UTILS_H
 #define UTILS_H
 
@@ -20,17 +16,6 @@ typedef struct {
 } KodoConfig;
 
 extern KodoConfig kodo_config;
-
-KodoConfig kodo_config = {
-    .init_ipc = 0,
-    .kodo_sef_count = 0,
-    .kodo_sef_found = { {0} },
-    .kodo_os = NULL,
-    .server_or_debug = NULL,
-    .kd_compiler_opt = NULL,
-    .kd_gamemode_input = NULL,
-    .kd_gamemode_output = NULL
-};
 
 struct struct_of { int (*title)(const char *); };
 struct struct_of init_kodo(void);
@@ -54,9 +39,9 @@ int kodo_sef_fdir(const char *sef_path, const char *sef_name);
 int kodo_sef_wcopy(const char *c_src, const char *c_dest);
 int kodo_sef_wmv(const char *c_src, const char *c_dest);
 int kodo_sef_wmwrm(const char *c_src, const char *c_dest);
-int kodo_sef_wcopy(const char *c_src, const char *c_dest);
 int kodo_extract_archive(const char *tar_files);
 void kodo_extract_zip(const char *zip_path, const char *dest_path);
 void kodo_download_file(const char *url, const char *fname);
 
 #endif
+
