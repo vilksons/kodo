@@ -1,0 +1,6 @@
+[submodule "tomlc99"]
+    path = tomlc99
+    url = https://github.com/cktan/tomlc99
+[submodule "cJson"]
+    path = cJson
+    url = https://github.com/DaveGamble/cJSON

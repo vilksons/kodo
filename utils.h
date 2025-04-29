@@ -42,7 +42,7 @@ int kodo_sef_wcopy(const char *c_src, const char *c_dest);
 int kodo_sef_wmv(const char *c_src, const char *c_dest);
 int kodo_sef_wmwrm(const char *c_src, const char *c_dest);
 int kodo_sef_wcopy(const char *c_src, const char *c_dest);
-int kodo_extract_tar_gz(const char *fname);
+int kodo_extract_archive(const char *tar_files);
 void kodo_extract_zip(const char *zip_path, const char *dest_path);
 size_t write_file(void *ptr, size_t size, size_t nmemb, FILE *stream);
 int progress_callback(void *ptr, double dltotal, double dlnow, double ultotal, double ulnow);
